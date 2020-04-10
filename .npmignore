@@ -36,6 +36,3 @@ Thumbs.db
 
 # ignore yarn.lock
 yarn.lock
-
-# NOT FOR NPM PUBLISH: Ignore built ts files
-dist
