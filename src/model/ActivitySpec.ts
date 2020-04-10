@@ -1,6 +1,6 @@
 
 /**
- * The ActivitySpec determines the parameters and properties of an Activity and its corresponding generated ResultEvents.
+ * The ActivitySpec determines the parameters and properties of an Activity and its corresponding generated ActivityEvents.
  */
 export class ActivitySpec {
     
@@ -20,14 +20,14 @@ export class ActivitySpec {
     scriptContents?: string
     
     /**
-     * The static data definition of an ActivitySpec.
+     * The data definition of an ActivitySpec.
      */
-    staticDataSchema?: any
+    dataSchema?: any
     
     /**
-     * The temporal event data definition of an ActivitySpec.
+     * The temporal slice data definition of an ActivitySpec.
      */
-    temporalEventSchema?: any
+    temporalSliceSchema?: any
     
     /**
      * The Activity settings definition of an ActivitySpec.

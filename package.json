@@ -1,10 +1,10 @@
 {
   "name": "lamp-core",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": "BIDMC Division of Digital Psychiatry <team@digitalpsych.org>",
   "description": "The JavaScript and TypeScript API client for the LAMP Platform.",
   "homepage": "https://docs.lamp.digital/",
-  "license": "BSD-3",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "https://github.com/BIDMCDigitalPsychiatry/LAMP-js.git"
@@ -12,17 +12,19 @@
   "bugs": {
     "url": "https://github.com/BIDMCDigitalPsychiatry/LAMP-js/issues"
   },
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "dependencies": {
     "url-search-params-polyfill": "^7.0.0"
   },
   "devDependencies": {
-    "typescript": "3.8.0",
+    "typescript": "^3.7.0",
     "source-map-support": "^0.5.16"
   },
   "scripts": {
-    "start": "tsc-watch --onSuccess \"node -r source-map-support/register ./build/index.js\"",
+    "start": "tsc-watch --onSuccess \"node -r source-map-support/register ./dist/index.js\"",
     "build": "tsc",
+    "prepublishOnly": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

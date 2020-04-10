@@ -2,13 +2,15 @@ import {
     Researcher, 
     Participant 
 } from './model/index'
-import { 
+import {  
+    APIService,
     ActivityService, 
+    ActivityEventService, 
     ActivitySpecService, 
     CredentialService, 
     ParticipantService, 
-    ResearcherService, 
-    ResultEventService, 
+    ResearcherService,
+    SensorService,  
     SensorEventService, 
     SensorSpecService, 
     StudyService, 
@@ -32,26 +34,30 @@ interface IAuth {
  * The root type in LAMP. You must use `LAMP.connect(...)` to begin using any LAMP classes.
  */
 export default class LAMP {
-    public static Activity = new ActivityService()
-    public static ActivitySpec = new ActivitySpecService()
+    public static API = new APIService()
+    public static Type = new TypeService()
     public static Credential = new CredentialService()
-    public static Participant = new ParticipantService()
     public static Researcher = new ResearcherService()
-    public static ResultEvent = new ResultEventService()
+    public static Participant = new ParticipantService()
+    public static Study = new StudyService()
+    public static Activity = new ActivityService()
+    public static ActivityEvent = new ActivityEventService()
+    public static ActivitySpec = new ActivitySpecService()
+    public static Sensor = new SensorService()
     public static SensorEvent = new SensorEventService()
     public static SensorSpec = new SensorSpecService()
-    public static Study = new StudyService()
-    public static Type = new TypeService()
     private static get configuration(): Configuration | undefined {
-        return LAMP.Type.configuration
+        return LAMP.API.configuration
     }
     private static set configuration(configuration: Configuration | undefined) {
+        LAMP.API.configuration = configuration
         LAMP.Activity.configuration = configuration
+        LAMP.ActivityEvent.configuration = configuration
         LAMP.ActivitySpec.configuration = configuration
         LAMP.Credential.configuration = configuration
         LAMP.Participant.configuration = configuration
         LAMP.Researcher.configuration = configuration
-        LAMP.ResultEvent.configuration = configuration
+        LAMP.Sensor.configuration = configuration
         LAMP.SensorEvent.configuration = configuration
         LAMP.SensorSpec.configuration = configuration
         LAMP.Study.configuration = configuration
@@ -66,8 +72,20 @@ export default class LAMP {
 
 
     // Shorthand for console/data analysis usage.
-    public static async function connect(identity: { serverAddress: string | undefined; accessKey: string | null; secretKey: string | null; } = { serverAddress: null, accessKey: null, secretKey: undefined }) {
-        return await LAMP.Auth.set_identity({ id: accessKey, password: secretKey, serverAddress })
+    public static async connect(identity: { 
+        serverAddress: string | undefined; 
+        accessKey: string | null; 
+        secretKey: string | null; 
+    } = { 
+        serverAddress: undefined, 
+        accessKey: null, 
+        secretKey: null 
+    }) {
+        return await LAMP.Auth.set_identity({ 
+            id: identity.accessKey, 
+            password: identity.secretKey, 
+            serverAddress: identity.serverAddress 
+        })
     }
 
     public static Auth = class {
@@ -151,7 +169,7 @@ export default class LAMP {
             }
         }
 
-        private static async refresh_identity() {
+        public static async refresh_identity() {
             let _saved = JSON.parse(sessionStorage.getItem('LAMP._auth') || 'null') || LAMP.Auth._auth
             await LAMP.Auth.set_identity({ id: _saved.id, password: _saved.password, serverAddress: _saved.serverAddress })
         }

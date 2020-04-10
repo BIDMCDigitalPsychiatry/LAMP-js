@@ -1,9 +1,9 @@
 import { Fetch, Configuration } from './Fetch'
 import { Identifier } from '../model/Type'
-import { ResultEvent } from '../model/ResultEvent'
+import { ActivityEvent } from '../model/ActivityEvent'
 import { Demo } from './Demo'
 
-export class ResultEventService {
+export class ActivityEventService {
     public configuration?: Configuration
 
     /**
@@ -13,7 +13,7 @@ export class ResultEventService {
      * @param from 
      * @param to 
      */
-    public async allByParticipant(participantId: Identifier, origin?: string, from?: number, to?: number): Promise<ResultEvent[]> {
+    public async allByParticipant(participantId: Identifier, origin?: string, from?: number, to?: number): Promise<ActivityEvent[]> {
         if (participantId === null || participantId === undefined)
             throw new Error('Required parameter participantId was null or undefined when calling resultEventAllByParticipant.')
 
@@ -34,12 +34,12 @@ export class ResultEventService {
                 participantId = credential.length > 0 ? credential[0]['origin'] : participantId
 
             if (Demo.Participant.filter(x => x['id'] === participantId).length > 0) {
-                return Promise.resolve(Demo.ActivityEvent.filter(x => x['#parent'] === participantId && (!!origin ? x['spec'] === origin : true)).map(x => Object.assign(new ResultEvent(), x)))
+                return Promise.resolve(Demo.ActivityEvent.filter(x => x['#parent'] === participantId && (!!origin ? x['spec'] === origin : true)).map(x => Object.assign(new ActivityEvent(), x)))
             } else {
                 return Promise.resolve({ 'error': '404.not-found' } as any)
             }
         }
-        return (await Fetch.get<{data: any[]}>(`/participant/${participantId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ResultEvent(), x))
+        return (await Fetch.get<{data: any[]}>(`/participant/${participantId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
     }
 
     /**
@@ -49,7 +49,7 @@ export class ResultEventService {
      * @param from 
      * @param to 
      */
-    public async allByResearcher(researcherId: Identifier, origin?: string, from?: number, to?: number): Promise<ResultEvent[]> {
+    public async allByResearcher(researcherId: Identifier, origin?: string, from?: number, to?: number): Promise<ActivityEvent[]> {
         if (researcherId === null || researcherId === undefined)
             throw new Error('Required parameter researcherId was null or undefined when calling resultEventAllByResearcher.')
 
@@ -71,13 +71,13 @@ export class ResultEventService {
 
             if (Demo.Researcher.filter(x => x['id'] === researcherId).length > 0) {
                 let participants = Demo.Study.filter(x => x['#parent'] === researcherId).map(x => Demo.Participant.filter(y => y['#parent'] === x['id'])).flat(1)
-                let fn = (id: string) => Demo.ActivityEvent.filter(x => x['#parent'] === id && (!!origin ? x['spec'] === origin : true)).map(x => Object.assign(new ResultEvent(), x))
+                let fn = (id: string) => Demo.ActivityEvent.filter(x => x['#parent'] === id && (!!origin ? x['spec'] === origin : true)).map(x => Object.assign(new ActivityEvent(), x))
                 return Promise.resolve(participants.reduce((all, participant) => ({ ...all, [participant['id']]: fn(participant['id']) }), {}) as any)
             } else {
                 return Promise.resolve({ 'error': '404.not-found' } as any)
             }
         }
-        return (await Fetch.get<{data: any[]}>(`/researcher/${researcherId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ResultEvent(), x))
+        return (await Fetch.get<{data: any[]}>(`/researcher/${researcherId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
     }
 
     /**
@@ -87,7 +87,7 @@ export class ResultEventService {
      * @param from 
      * @param to 
      */
-    public async allByStudy(studyId: Identifier, origin?: string, from?: number, to?: number): Promise<ResultEvent[]> {
+    public async allByStudy(studyId: Identifier, origin?: string, from?: number, to?: number): Promise<ActivityEvent[]> {
         if (studyId === null || studyId === undefined)
             throw new Error('Required parameter studyId was null or undefined when calling resultEventAllByStudy.')
 
@@ -109,21 +109,21 @@ export class ResultEventService {
 
             if (Demo.Study.filter(x => x['id'] === studyId).length > 0) {
                 let participants = Demo.Participant.filter(x => x['#parent'] === studyId)
-                let fn = (id: string) => Demo.ActivityEvent.filter(x => x['#parent'] === id && (!!origin ? x['spec'] === origin : true)).map(x => Object.assign(new ResultEvent(), x))
+                let fn = (id: string) => Demo.ActivityEvent.filter(x => x['#parent'] === id && (!!origin ? x['spec'] === origin : true)).map(x => Object.assign(new ActivityEvent(), x))
                 return Promise.resolve(participants.reduce((all, participant) => ({ ...all, [participant['id']]: fn(participant['id']) }), {}) as any)
             } else {
                 return Promise.resolve({ 'error': '404.not-found' } as any)
             }
         }
-        return (await Fetch.get<{data: any[]}>(`/study/${studyId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ResultEvent(), x))
+        return (await Fetch.get<{data: any[]}>(`/study/${studyId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
     }
 
     /**
-     * Create a new ResultEvent for the given Participant.
+     * Create a new ActivityEvent for the given Participant.
      * @param participantId 
      * @param resultEvent 
      */
-    public async create(participantId: Identifier, resultEvent: ResultEvent): Promise<Identifier> {
+    public async create(participantId: Identifier, resultEvent: ActivityEvent): Promise<Identifier> {
         if (participantId === null || participantId === undefined)
             throw new Error('Required parameter participantId was null or undefined when calling resultEventCreate.')
         if (resultEvent === null || resultEvent === undefined)
@@ -152,7 +152,7 @@ export class ResultEventService {
     }
 
     /**
-     * Delete a ResultEvent.
+     * Delete a ActivityEvent.
      * @param participantId 
      * @param origin 
      * @param from 
