@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { 
     Researcher, 
     Participant 
@@ -176,4 +174,13 @@ export default class LAMP {
             await LAMP.Auth.set_identity({ id: _saved.id, password: _saved.password, serverAddress: _saved.serverAddress })
         }
     }
+}
+
+export const main = () => {
+    if (process === undefined) {
+        console.error('This function cannot be invoked from within the library.')
+        return
+    }
+    console.log('This command-line tool is currently disabled.')
+    process?.exit(1)
 }
