@@ -586,7 +586,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -647,7 +647,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 2,
@@ -722,7 +722,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 1,
@@ -783,7 +783,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -844,7 +844,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 2,
@@ -905,7 +905,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -980,7 +980,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -1055,7 +1055,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 2,
@@ -1116,7 +1116,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -1191,7 +1191,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -1252,7 +1252,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -1313,7 +1313,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -1388,7 +1388,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -1449,7 +1449,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -1524,7 +1524,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -1585,7 +1585,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -1660,7 +1660,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -1714,7 +1714,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -1775,7 +1775,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -1850,7 +1850,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 1,
@@ -1925,7 +1925,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -2000,7 +2000,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -2061,7 +2061,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -2122,7 +2122,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -2197,7 +2197,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -2258,7 +2258,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -2319,7 +2319,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -2394,7 +2394,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -2448,7 +2448,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -2523,7 +2523,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 1,
@@ -2584,7 +2584,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 2,
@@ -2659,7 +2659,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -2713,7 +2713,7 @@
             "static_data": {
                 "survey_name": "Water and Nutrition"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Do you feel like you've had nutritious meals today?",
                     "value": "Maybe",
@@ -2739,7 +2739,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -2800,7 +2800,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 0,
@@ -2861,7 +2861,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -2922,7 +2922,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -2997,7 +2997,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -3051,7 +3051,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -3126,7 +3126,7 @@
             "static_data": {
                 "survey_name": "Water and Nutrition"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Do you feel like you've had nutritious meals today?",
                     "value": "No",
@@ -3152,7 +3152,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 0,
@@ -3213,7 +3213,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -3288,7 +3288,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 0,
@@ -3349,7 +3349,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -3424,7 +3424,7 @@
             "static_data": {
                 "survey_name": "Water and Nutrition"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Do you feel like you've had nutritious meals today?",
                     "value": "Maybe",
@@ -3450,7 +3450,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -3504,7 +3504,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -3565,7 +3565,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -3640,7 +3640,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -3701,7 +3701,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -3755,7 +3755,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -3830,7 +3830,7 @@
             "static_data": {
                 "survey_name": "Water and Nutrition"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Do you feel like you've had nutritious meals today?",
                     "value": "No",
@@ -3856,7 +3856,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -3882,7 +3882,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -3943,7 +3943,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -4018,7 +4018,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 0,
@@ -4079,7 +4079,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -4133,7 +4133,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -4208,7 +4208,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -4269,7 +4269,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -4344,7 +4344,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 0,
@@ -4405,7 +4405,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -4459,7 +4459,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -4534,7 +4534,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -4595,7 +4595,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -4670,7 +4670,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 0,
@@ -4731,7 +4731,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 0,
@@ -4785,7 +4785,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -4860,7 +4860,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -4921,7 +4921,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 0,
@@ -4982,7 +4982,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 0,
@@ -5036,7 +5036,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -5111,7 +5111,7 @@
             "static_data": {
                 "survey_name": "Water and Nutrition"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Do you feel like you've had nutritious meals today?",
                     "value": "No",
@@ -5137,7 +5137,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -5198,7 +5198,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 1,
@@ -5273,7 +5273,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 3,
@@ -5334,7 +5334,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -5388,7 +5388,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -5463,7 +5463,7 @@
             "static_data": {
                 "survey_name": "Water and Nutrition"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Do you feel like you've had nutritious meals today?",
                     "value": "Maybe",
@@ -5489,7 +5489,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 0,
@@ -5550,7 +5550,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -5625,7 +5625,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 0,
@@ -5679,7 +5679,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -5754,7 +5754,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 3,
@@ -5815,7 +5815,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 1,
@@ -5890,7 +5890,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -5944,7 +5944,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -6019,7 +6019,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -6080,7 +6080,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 1,
@@ -6155,7 +6155,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -6209,7 +6209,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -6284,7 +6284,7 @@
             "static_data": {
                 "survey_name": "Water and Nutrition"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Do you feel like you've had nutritious meals today?",
                     "value": "No",
@@ -6310,7 +6310,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -6371,7 +6371,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -6446,7 +6446,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 2,
@@ -6507,7 +6507,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 1,
@@ -6561,7 +6561,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -6636,7 +6636,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -6697,7 +6697,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -6772,7 +6772,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 0,
@@ -6833,7 +6833,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -6908,7 +6908,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -6969,7 +6969,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 1,
@@ -7044,7 +7044,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 1,
@@ -7105,7 +7105,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -7180,7 +7180,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 2,
@@ -7241,7 +7241,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -7302,7 +7302,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -7377,7 +7377,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 1,
@@ -7438,7 +7438,7 @@
             "static_data": {
                 "survey_name": "App Usability"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "I trust this app to guide me towards my personal goals",
                     "value": 0,
@@ -7492,7 +7492,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -7567,7 +7567,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": 1,
@@ -7628,7 +7628,7 @@
             "static_data": {
                 "survey_name": "Mood"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel little interest or pleasure",
                     "value": 0,
@@ -7703,7 +7703,7 @@
             "static_data": {
                 "survey_name": "Sleep and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Last night I have had trouble falling asleep",
                     "value": 0,
@@ -7764,7 +7764,7 @@
             "static_data": {
                 "survey_name": "Psychosis and Social"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I have heard voices or saw things others cannot",
                     "value": 3,
@@ -7839,7 +7839,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": "1",
@@ -7893,7 +7893,7 @@
             "static_data": {
                 "survey_name": "Anxiety"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "Today I feel anxious",
                     "value": "2",
@@ -7950,7 +7950,7 @@
                 "score": "43",
                 "total_attempts": 3
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -8007,7 +8007,7 @@
                 "score": "57",
                 "total_attempts": 4
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -8071,7 +8071,7 @@
                 "score": "0",
                 "total_attempts": 0
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8086,7 +8086,7 @@
                 "wrong_answers": 3,
                 "type": 2
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": 5,
                     "value": 1,
@@ -8116,7 +8116,7 @@
                 "wrong_answers": 5,
                 "type": 1
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": 15,
                     "value": 1,
@@ -8195,7 +8195,7 @@
                 "total_questions": 5,
                 "version": 1
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8210,7 +8210,7 @@
                 "total_questions": 5,
                 "version": 2
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8225,7 +8225,7 @@
                 "total_questions": 5,
                 "version": 3
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8240,7 +8240,7 @@
                 "total_questions": 5,
                 "version": 4
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8255,7 +8255,7 @@
                 "total_questions": 5,
                 "version": 1
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8270,7 +8270,7 @@
                 "total_questions": 5,
                 "version": 2
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8285,7 +8285,7 @@
                 "total_questions": 5,
                 "version": 1
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8298,7 +8298,7 @@
                 "game_name": "5457e3cb-aa02-6832-2de9-5250466d3c2f",
                 "drawn_figure": "https://psych.digital/LampWeb/Games/User3DFigures/507_6a6e058c-d752-4a37-8ee1-ed46b1233be2.png"
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8311,7 +8311,7 @@
                 "game_name": "5457e3cb-aa02-6832-2de9-5250466d3c2f",
                 "drawn_figure": "https://psych.digital/LampWeb/Games/User3DFigures/507_73d08548-c248-4cd0-ac5f-a9564fb5ed6a.png"
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8324,7 +8324,7 @@
                 "game_name": "5457e3cb-aa02-6832-2de9-5250466d3c2f",
                 "drawn_figure": "https://psych.digital/LampWeb/Games/User3DFigures/507_d41b31a5-fe2c-4c92-a2de-7974378f16dc.png"
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8337,7 +8337,7 @@
                 "game_name": "5457e3cb-aa02-6832-2de9-5250466d3c2f",
                 "drawn_figure": "https://psych.digital/LampWeb/Games/User3DFigures/507_a7a9383f-b50d-4faf-8a05-2787e194c032.png"
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8352,7 +8352,7 @@
                 "total_questions": 5,
                 "version": 1
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8367,7 +8367,7 @@
                 "total_questions": 5,
                 "version": 2
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8382,7 +8382,7 @@
                 "total_questions": 5,
                 "version": 3
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8397,7 +8397,7 @@
                 "total_questions": 5,
                 "version": 4
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8412,7 +8412,7 @@
                 "total_questions": 5,
                 "version": 1
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8427,7 +8427,7 @@
                 "wrong_answers": 0,
                 "type": 1
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8441,7 +8441,7 @@
                 "correct_answers": 25,
                 "wrong_answers": 20
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8456,7 +8456,7 @@
                 "wrong_answers": 1,
                 "version": 2
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8471,7 +8471,7 @@
                 "wrong_answers": 2,
                 "version": 3
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8486,7 +8486,7 @@
                 "wrong_answers": 11,
                 "total_questions": 11
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8501,7 +8501,7 @@
                 "wrong_answers": 11,
                 "total_questions": 11
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8516,7 +8516,7 @@
                 "total_attempts": 3,
                 "version": 2
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -8580,7 +8580,7 @@
                 "score": "13",
                 "total_attempts": 9
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -8624,7 +8624,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8639,7 +8639,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": []
+            "temporal_slices": []
         },
         {
             "#type": "ActivityEvent",
@@ -8654,7 +8654,7 @@
                 "total_bonus_collected": "27",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -8845,7 +8845,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -8952,7 +8952,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -9052,7 +9052,7 @@
                 "total_bonus_collected": "68",
                 "total_jewels_collected": "15"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -9173,7 +9173,7 @@
                 "total_bonus_collected": "51",
                 "total_jewels_collected": "16"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -9301,7 +9301,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -9401,7 +9401,7 @@
                 "total_bonus_collected": "68",
                 "total_jewels_collected": "17"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -9536,7 +9536,7 @@
                 "total_bonus_collected": "48",
                 "total_jewels_collected": "18"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -9734,7 +9734,7 @@
                 "total_bonus_collected": "68",
                 "total_jewels_collected": "18"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -9876,7 +9876,7 @@
                 "total_bonus_collected": "70",
                 "total_jewels_collected": "19"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -10025,7 +10025,7 @@
                 "total_bonus_collected": "54",
                 "total_jewels_collected": "20"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -10181,7 +10181,7 @@
                 "total_bonus_collected": "29",
                 "total_jewels_collected": "21"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -10442,7 +10442,7 @@
                 "total_bonus_collected": "55",
                 "total_jewels_collected": "21"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -10682,7 +10682,7 @@
                 "total_bonus_collected": "19",
                 "total_jewels_collected": "22"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -10943,7 +10943,7 @@
                 "total_bonus_collected": "54",
                 "total_jewels_collected": "22"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -11113,7 +11113,7 @@
                 "total_bonus_collected": "41",
                 "total_jewels_collected": "23"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -11297,7 +11297,7 @@
                 "total_bonus_collected": "62",
                 "total_jewels_collected": "23"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -11474,7 +11474,7 @@
                 "total_bonus_collected": "22",
                 "total_jewels_collected": "24"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -11679,7 +11679,7 @@
                 "total_bonus_collected": "50",
                 "total_jewels_collected": "24"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -11863,7 +11863,7 @@
                 "total_bonus_collected": "55",
                 "total_jewels_collected": "24"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -12047,7 +12047,7 @@
                 "total_bonus_collected": "49",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -12238,7 +12238,7 @@
                 "total_bonus_collected": "46",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -12443,7 +12443,7 @@
                 "total_bonus_collected": "60",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -12634,7 +12634,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -12755,7 +12755,7 @@
                 "total_bonus_collected": "32",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -13002,7 +13002,7 @@
                 "total_bonus_collected": "64",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -13193,7 +13193,7 @@
                 "total_bonus_collected": "63",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -13391,7 +13391,7 @@
                 "total_bonus_collected": "55",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -13582,7 +13582,7 @@
                 "total_bonus_collected": "59",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -13773,7 +13773,7 @@
                 "total_bonus_collected": "34",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -14020,7 +14020,7 @@
                 "total_bonus_collected": "51",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -14218,7 +14218,7 @@
                 "total_bonus_collected": "35",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -14430,7 +14430,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -14523,7 +14523,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -14679,7 +14679,7 @@
                 "total_bonus_collected": "42",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -14891,7 +14891,7 @@
                 "total_bonus_collected": "54",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -15089,7 +15089,7 @@
                 "total_bonus_collected": "28",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -15315,7 +15315,7 @@
                 "total_bonus_collected": "58",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -15506,7 +15506,7 @@
                 "total_bonus_collected": "54",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -15704,7 +15704,7 @@
                 "total_bonus_collected": "43",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -15916,7 +15916,7 @@
                 "total_bonus_collected": "56",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -16107,7 +16107,7 @@
                 "total_bonus_collected": "45",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -16312,7 +16312,7 @@
                 "total_bonus_collected": "57",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -16503,7 +16503,7 @@
                 "total_bonus_collected": "14",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -16715,7 +16715,7 @@
                 "total_bonus_collected": "47",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -16920,7 +16920,7 @@
                 "total_bonus_collected": "40",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -17118,7 +17118,7 @@
                 "total_bonus_collected": "46",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -17316,7 +17316,7 @@
                 "total_bonus_collected": "49",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -17507,7 +17507,7 @@
                 "total_bonus_collected": "46",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -17698,7 +17698,7 @@
                 "total_bonus_collected": "32",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -17896,7 +17896,7 @@
                 "total_bonus_collected": "48",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -18087,7 +18087,7 @@
                 "total_bonus_collected": "58",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -18285,7 +18285,7 @@
                 "total_bonus_collected": "48",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -18476,7 +18476,7 @@
                 "total_bonus_collected": "47",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -18667,7 +18667,7 @@
                 "total_bonus_collected": "7",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -18865,7 +18865,7 @@
                 "total_bonus_collected": "5",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -19056,7 +19056,7 @@
                 "total_bonus_collected": "1",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -19254,7 +19254,7 @@
                 "total_bonus_collected": "58",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -19445,7 +19445,7 @@
                 "total_bonus_collected": "63",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -19636,7 +19636,7 @@
                 "total_bonus_collected": "51",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -19848,7 +19848,7 @@
                 "total_bonus_collected": "48",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -20039,7 +20039,7 @@
                 "total_bonus_collected": "38",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -20230,7 +20230,7 @@
                 "total_bonus_collected": "51",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -20421,7 +20421,7 @@
                 "total_bonus_collected": "16",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -20647,7 +20647,7 @@
                 "total_bonus_collected": "40",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -20845,7 +20845,7 @@
                 "total_bonus_collected": "39",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -21036,7 +21036,7 @@
                 "total_bonus_collected": "51",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -21227,7 +21227,7 @@
                 "total_bonus_collected": "29",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -21418,7 +21418,7 @@
                 "total_bonus_collected": "35",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -21609,7 +21609,7 @@
                 "total_bonus_collected": "28",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -21800,7 +21800,7 @@
                 "total_bonus_collected": "39",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -21991,7 +21991,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -22126,7 +22126,7 @@
                 "total_bonus_collected": "43",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -22324,7 +22324,7 @@
                 "total_bonus_collected": "40",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -22515,7 +22515,7 @@
                 "total_bonus_collected": "45",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -22727,7 +22727,7 @@
                 "total_bonus_collected": "50",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -22918,7 +22918,7 @@
                 "total_bonus_collected": "16",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -23109,7 +23109,7 @@
                 "total_bonus_collected": "62",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -23307,7 +23307,7 @@
                 "total_bonus_collected": "54",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -23505,7 +23505,7 @@
                 "total_bonus_collected": "42",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -23731,7 +23731,7 @@
                 "total_bonus_collected": "57",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -23922,7 +23922,7 @@
                 "total_bonus_collected": "57",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -24113,7 +24113,7 @@
                 "total_bonus_collected": "61",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -24311,7 +24311,7 @@
                 "total_bonus_collected": "47",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -24516,7 +24516,7 @@
                 "total_bonus_collected": "47",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -24707,7 +24707,7 @@
                 "total_bonus_collected": "44",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -24898,7 +24898,7 @@
                 "total_bonus_collected": "45",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -25089,7 +25089,7 @@
                 "total_bonus_collected": "51",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -25294,7 +25294,7 @@
                 "total_bonus_collected": "53",
                 "total_jewels_collected": "25"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -25485,7 +25485,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -25543,7 +25543,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -25587,7 +25587,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -25715,7 +25715,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -25836,7 +25836,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -25950,7 +25950,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -26078,7 +26078,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -26192,7 +26192,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -26369,7 +26369,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -26798,7 +26798,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -26912,7 +26912,7 @@
                 "total_bonus_collected": "136",
                 "total_jewels_collected": "15"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -27082,7 +27082,7 @@
                 "total_bonus_collected": "92",
                 "total_jewels_collected": "16"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -27385,7 +27385,7 @@
                 "total_bonus_collected": "100",
                 "total_jewels_collected": "17"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -27597,7 +27597,7 @@
                 "total_bonus_collected": "126",
                 "total_jewels_collected": "18"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -27830,7 +27830,7 @@
                 "total_bonus_collected": "114",
                 "total_jewels_collected": "19"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -28049,7 +28049,7 @@
                 "total_bonus_collected": "118",
                 "total_jewels_collected": "20"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -28289,7 +28289,7 @@
                 "total_bonus_collected": "0",
                 "total_jewels_collected": "0"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -28382,7 +28382,7 @@
                 "total_bonus_collected": "105",
                 "total_jewels_collected": "21"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,
@@ -28629,7 +28629,7 @@
                 "total_bonus_collected": "113",
                 "total_jewels_collected": "22"
             },
-            "temporal_events": [
+            "temporal_slices": [
                 {
                     "item": "1",
                     "value": null,

@@ -1,6 +1,6 @@
 {
   "name": "lamp-core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "BIDMC Division of Digital Psychiatry <team@digitalpsych.org>",
   "description": "The JavaScript and TypeScript API client for the LAMP Platform.",
   "homepage": "https://docs.lamp.digital/",
@@ -14,6 +14,9 @@
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "lamp": "dist/index.js"
+  },
   "dependencies": {
     "url-search-params-polyfill": "^7.0.0"
   },

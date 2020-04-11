@@ -52,12 +52,12 @@ export class ActivityEvent {
     activity?: Identifier
     
     /**
-     * The summary information for the result event as determined by the  activity that created this result event.
+     * The summary information for the activity event as determined by the  activity that created this activity event.
      */
-    data?: any
+    static_data?: any
     
     /**
-     * The specific interaction details of the result event.
+     * The specific interaction details of the activity event.
      */
     temporalSlices?: Array<any>
 }

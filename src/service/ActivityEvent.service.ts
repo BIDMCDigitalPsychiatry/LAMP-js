@@ -7,7 +7,7 @@ export class ActivityEventService {
     public configuration?: Configuration
 
     /**
-     * Get the set of all result events produced by a  given participant, by identifier.
+     * Get the set of all activity events produced by a  given participant, by identifier.
      * @param participantId 
      * @param origin 
      * @param from 
@@ -15,7 +15,7 @@ export class ActivityEventService {
      */
     public async allByParticipant(participantId: Identifier, origin?: string, from?: number, to?: number): Promise<ActivityEvent[]> {
         if (participantId === null || participantId === undefined)
-            throw new Error('Required parameter participantId was null or undefined when calling resultEventAllByParticipant.')
+            throw new Error('Required parameter participantId was null or undefined when calling activityEventAllByParticipant.')
 
         let queryParameters = new URLSearchParams()
         if (origin !== undefined && origin !== null)
@@ -39,11 +39,11 @@ export class ActivityEventService {
                 return Promise.resolve({ 'error': '404.not-found' } as any)
             }
         }
-        return (await Fetch.get<{data: any[]}>(`/participant/${participantId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
+        return (await Fetch.get<{data: any[]}>(`/participant/${participantId}/activity_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
     }
 
     /**
-     * Get the set of all result events produced by participants  of any study conducted by a researcher, by researcher identifier.
+     * Get the set of all activity events produced by participants  of any study conducted by a researcher, by researcher identifier.
      * @param researcherId 
      * @param origin 
      * @param from 
@@ -51,7 +51,7 @@ export class ActivityEventService {
      */
     public async allByResearcher(researcherId: Identifier, origin?: string, from?: number, to?: number): Promise<ActivityEvent[]> {
         if (researcherId === null || researcherId === undefined)
-            throw new Error('Required parameter researcherId was null or undefined when calling resultEventAllByResearcher.')
+            throw new Error('Required parameter researcherId was null or undefined when calling activityEventAllByResearcher.')
 
         let queryParameters = new URLSearchParams()
         if (origin !== undefined && origin !== null)
@@ -77,11 +77,11 @@ export class ActivityEventService {
                 return Promise.resolve({ 'error': '404.not-found' } as any)
             }
         }
-        return (await Fetch.get<{data: any[]}>(`/researcher/${researcherId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
+        return (await Fetch.get<{data: any[]}>(`/researcher/${researcherId}/activity_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
     }
 
     /**
-     * Get the set of all result events produced by participants  participants of a single study, by study identifier.
+     * Get the set of all activity events produced by participants of a single study, by study identifier.
      * @param studyId 
      * @param origin 
      * @param from 
@@ -89,7 +89,7 @@ export class ActivityEventService {
      */
     public async allByStudy(studyId: Identifier, origin?: string, from?: number, to?: number): Promise<ActivityEvent[]> {
         if (studyId === null || studyId === undefined)
-            throw new Error('Required parameter studyId was null or undefined when calling resultEventAllByStudy.')
+            throw new Error('Required parameter studyId was null or undefined when calling activityEventAllByStudy.')
 
         let queryParameters = new URLSearchParams()
         if (origin !== undefined && origin !== null)
@@ -115,19 +115,19 @@ export class ActivityEventService {
                 return Promise.resolve({ 'error': '404.not-found' } as any)
             }
         }
-        return (await Fetch.get<{data: any[]}>(`/study/${studyId}/result_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
+        return (await Fetch.get<{data: any[]}>(`/study/${studyId}/activity_event?${queryParameters.toString()}`, this.configuration)).data.map(x => Object.assign(new ActivityEvent(), x))
     }
 
     /**
      * Create a new ActivityEvent for the given Participant.
      * @param participantId 
-     * @param resultEvent 
+     * @param activityEvent 
      */
-    public async create(participantId: Identifier, resultEvent: ActivityEvent): Promise<Identifier> {
+    public async create(participantId: Identifier, activityEvent: ActivityEvent): Promise<Identifier> {
         if (participantId === null || participantId === undefined)
-            throw new Error('Required parameter participantId was null or undefined when calling resultEventCreate.')
-        if (resultEvent === null || resultEvent === undefined)
-            throw new Error('Required parameter resultEvent was null or undefined when calling resultEventCreate.')
+            throw new Error('Required parameter participantId was null or undefined when calling activityEventCreate.')
+        if (activityEvent === null || activityEvent === undefined)
+            throw new Error('Required parameter activityEvent was null or undefined when calling activityEventCreate.')
 
         if (this.configuration.base === 'https://demo.lamp.digital') { // DEMO
             let auth = (this.configuration.authorization || ':').split(':')
@@ -141,14 +141,14 @@ export class ActivityEventService {
                 Demo.ActivityEvent.push({
                     "#type": "ActivityEvent",
                     "#parent": participantId,
-                    ...resultEvent as any
+                    ...activityEvent as any
                 })
                 return Promise.resolve({} as any)
             } else {
                 return Promise.resolve({ 'error': '404.not-found' } as any)
             }
         }
-        return (await Fetch.post(`/participant/${participantId}/result_event`, resultEvent, this.configuration))
+        return (await Fetch.post(`/participant/${participantId}/activity_event`, activityEvent, this.configuration))
     }
 
     /**
@@ -160,7 +160,7 @@ export class ActivityEventService {
      */
     public async delete(participantId: Identifier, origin?: string, from?: number, to?: number): Promise<Identifier> {
         if (participantId === null || participantId === undefined)
-            throw new Error('Required parameter participantId was null or undefined when calling resultEventDelete.')
+            throw new Error('Required parameter participantId was null or undefined when calling activityEventDelete.')
 
         let queryParameters = new URLSearchParams()
         if (origin !== undefined && origin !== null)
@@ -184,6 +184,6 @@ export class ActivityEventService {
                 return Promise.resolve({ 'error': '404.not-found' } as any)
             }
         }
-        return (await Fetch.delete(`/participant/${participantId}/result_event?${queryParameters.toString()}`, this.configuration))
+        return (await Fetch.delete(`/participant/${participantId}/activity_event?${queryParameters.toString()}`, this.configuration))
     }
 }
