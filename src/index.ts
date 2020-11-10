@@ -14,6 +14,7 @@ import {
   TypeService
 } from "./service/index"
 import { Configuration } from "./service/Fetch"
+import { Demo } from "./service/Demo"
 
 export * from "./service/index"
 export * from "./model/index"
@@ -28,7 +29,7 @@ interface IAuth {
 }
 
 //
-const _bus: HTMLElement = document.createElement("_lamp_fake")
+const _bus: HTMLElement = typeof document !== "undefined" ? document.createElement("_lamp_fake") : undefined
 
 /**
  * The root type in LAMP. You must use `LAMP.connect(...)` to begin using any LAMP classes.
@@ -72,6 +73,25 @@ export default class LAMP {
   }
   public static dispatchEvent(event: string, detail: any = null) {
     _bus?.dispatchEvent(new CustomEvent(event, { detail }))
+  }
+
+  //
+  // [Demo API]
+  //
+
+  public static initializeDemoDB(db: { [key: string]: any; }) {
+    db = JSON.parse(JSON.stringify(db)) // make a deep copy first!
+    Demo.ActivitySpec = db.ActivitySpec ?? []
+    Demo.SensorSpec = db.SensorSpec ?? []
+    Demo.Researcher = db.Researcher ?? []
+    Demo.Study = db.Study ?? []
+    Demo.Participant = db.Participant ?? []
+    Demo.Activity = db.Activity ?? []
+    Demo.Sensor = db.Sensor ?? []
+    Demo.ActivityEvent = db.ActivityEvent ?? []
+    Demo.SensorEvent = db.SensorEvent ?? []
+    Demo.Credential = db.Credential ?? []
+    Demo.Tags = db.Tags ?? []
   }
 
   //

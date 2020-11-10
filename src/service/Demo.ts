@@ -5,5 +5,16 @@
 //       (3) support root operations.
 //       (4) encrypt any data.
 //
-import db from "./demo_db.json"
-export let Demo = db
+export let Demo = {
+    ActivitySpec: [],
+    SensorSpec: [],
+    Researcher: [],
+    Study: [],
+    Participant: [],
+    Activity: [],
+    Sensor: [],
+    ActivityEvent: [],
+    SensorEvent: [],
+    Credential: [],
+    Tags: []
+}
