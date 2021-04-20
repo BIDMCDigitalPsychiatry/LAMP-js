@@ -1,3 +1,4 @@
+import 'isomorphic-fetch'
 import { Researcher, Participant } from "./model/index"
 import {
   APIService,
@@ -29,7 +30,7 @@ interface IAuth {
 }
 
 //
-const _bus: HTMLElement = typeof document !== "undefined" ? document.createElement("_lamp_fake") : undefined
+const _bus: HTMLElement | undefined = (global as any).document?.createElement("_lamp_fake")
 
 /**
  * The root type in LAMP. You must use `LAMP.connect(...)` to begin using any LAMP classes.
@@ -110,11 +111,16 @@ export default class LAMP {
       secretKey: null
     }
   ) {
-    return await LAMP.Auth.set_identity({
-      id: identity.accessKey,
-      password: identity.secretKey,
-      serverAddress: identity.serverAddress
-    })
+    // Propogate the authorization.
+    LAMP.Auth._auth = {
+        id: identity.accessKey,
+        password: identity.secretKey,
+        serverAddress: identity.serverAddress
+    }
+    LAMP.configuration = {
+        base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
+        authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined
+    }
   }
 
   public static Auth = class {
@@ -197,12 +203,12 @@ export default class LAMP {
         throw new Error("invalid id or password")
       } finally {
         // Save the authorization in sessionStorage for later.
-        sessionStorage?.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
+        (global as any).sessionStorage?.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
       }
     }
 
     public static async refresh_identity() {
-      let _saved = JSON.parse(sessionStorage?.getItem("LAMP._auth") ?? "null") || LAMP.Auth._auth
+      let _saved = JSON.parse((global as any).sessionStorage?.getItem("LAMP._auth") ?? "null") || LAMP.Auth._auth
       await LAMP.Auth.set_identity({
         id: _saved.id,
         password: _saved.password,
