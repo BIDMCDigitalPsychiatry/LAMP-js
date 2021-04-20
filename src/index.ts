@@ -197,12 +197,12 @@ export default class LAMP {
         throw new Error("invalid id or password")
       } finally {
         // Save the authorization in sessionStorage for later.
-        sessionStorage.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
+        sessionStorage?.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
       }
     }
 
     public static async refresh_identity() {
-      let _saved = JSON.parse(sessionStorage.getItem("LAMP._auth") || "null") || LAMP.Auth._auth
+      let _saved = JSON.parse(sessionStorage?.getItem("LAMP._auth") ?? "null") || LAMP.Auth._auth
       await LAMP.Auth.set_identity({
         id: _saved.id,
         password: _saved.password,
