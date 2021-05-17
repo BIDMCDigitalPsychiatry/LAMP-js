@@ -30,10 +30,10 @@ export class ActivityService {
    * Get the set of all activities available to a participant,  by participant identifier.
    * @param participantId
    */
-  public async allByParticipant(participantId: Identifier, transform?: string): Promise<Activity[]> {
+  public async allByParticipant(participantId: Identifier, transform?: string, ignore_binary?: boolean): Promise<Activity[]> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
-
+    if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -54,7 +54,7 @@ export class ActivityService {
       }
     }
     return (
-      await Fetch.get<{ data: any[] }>(`/participant/${participantId}/activity`, this.configuration)
+      await Fetch.get<{ data: any[] }>(`/participant/${participantId}/activity?ignore_binary=${ignore_binary}`, this.configuration)
     ).data.map(x => Object.assign(new Activity(), x))
   }
 
@@ -98,10 +98,10 @@ export class ActivityService {
    * Get the set of all activities available to  participants of a single study, by study identifier.
    * @param studyId
    */
-  public async allByStudy(studyId: Identifier, transform?: string): Promise<Activity[]> {
+  public async allByStudy(studyId: Identifier, transform?: string, ignore_binary?: boolean): Promise<Activity[]> {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling activityAllByStudy.")
-
+    if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -117,7 +117,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/activity`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/activity?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
       Object.assign(new Activity(), x)
     )
   }
@@ -231,10 +231,10 @@ export class ActivityService {
    * Get a single activity, by identifier.
    * @param activityId
    */
-  public async view(activityId: Identifier, transform?: string): Promise<Activity> {
+  public async view(activityId: Identifier, transform?: string, ignore_binary?:boolean): Promise<Activity> {
     if (activityId === null || activityId === undefined)
       throw new Error("Required parameter activityId was null or undefined when calling activityView.")
-
+    if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -251,7 +251,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity/${activityId}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
       Object.assign(new Activity(), x)
     )[0]
   }
