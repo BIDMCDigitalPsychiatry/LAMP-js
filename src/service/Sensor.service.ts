@@ -30,10 +30,10 @@ export class SensorService {
    * Get the set of all activities available to a participant,  by participant identifier.
    * @param participantId
    */
-  public async allByParticipant(participantId: Identifier, transform?: string): Promise<Sensor[]> {
+  public async allByParticipant(participantId: Identifier, transform?: string, ignore_binary?: boolean): Promise<Sensor[]> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling sensorAllByParticipant.")
-
+    if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -53,7 +53,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}/sensor`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}/sensor?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -98,10 +98,10 @@ export class SensorService {
    * Get the set of all activities available to  participants of a single study, by study identifier.
    * @param studyId
    */
-  public async allByStudy(studyId: Identifier, transform?: string): Promise<Sensor[]> {
+  public async allByStudy(studyId: Identifier, transform?: string, ignore_binary?: boolean): Promise<Sensor[]> {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling sensorAllByStudy.")
-
+    if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -117,7 +117,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/sensor`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/sensor?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -229,10 +229,10 @@ export class SensorService {
    * Get a single sensor, by identifier.
    * @param sensorId
    */
-  public async view(sensorId: Identifier, transform?: string): Promise<Sensor> {
+  public async view(sensorId: Identifier, transform?: string, ignore_binary?:boolean): Promise<Sensor> {
     if (sensorId === null || sensorId === undefined)
       throw new Error("Required parameter sensorId was null or undefined when calling sensorView.")
-
+    if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -249,7 +249,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor/${sensorId}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor/${sensorId}?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
       Object.assign(new Sensor(), x)
     )[0]
   }
