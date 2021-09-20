@@ -18,8 +18,6 @@ export class CredentialService {
     secretKey: string,
     description?: string
   ): Promise<Credential> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling credentialCreate.")
     if (accessKey === null || accessKey === undefined)
       throw new Error("Required parameter accessKey was null or undefined when calling credentialCreate.")
     if (secretKey === null || secretKey === undefined)
@@ -65,8 +63,6 @@ export class CredentialService {
    * @param accessKey
    */
   public async delete(typeId: Identifier, accessKey: string): Promise<Identifier> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling credentialDelete.")
     if (accessKey === null || accessKey === undefined)
       throw new Error("Required parameter accessKey was null or undefined when calling credentialDelete.")
 
@@ -93,9 +89,7 @@ export class CredentialService {
    * @param typeId
    */
   public async list(typeId: Identifier, transform?: string): Promise<Credential[]> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling credentialList.")
-
+   
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -135,8 +129,6 @@ export class CredentialService {
     secretKey: string,
     description?: string
   ): Promise<Identifier> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling credentialUpdate.")
     if (accessKey === null || accessKey === undefined)
       throw new Error("Required parameter accessKey was null or undefined when calling credentialUpdate.")
     if (secretKey === null || secretKey === undefined)

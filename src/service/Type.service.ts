@@ -13,8 +13,6 @@ export class TypeService {
    * @param attachmentKey
    */
   public async getAttachment(typeId: Identifier, attachmentKey: string): Promise<any[]> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling typeGetAttachment.")
     if (attachmentKey === null || attachmentKey === undefined)
       throw new Error("Required parameter attachmentKey was null or undefined when calling typeGetAttachment.")
 
@@ -72,8 +70,6 @@ export class TypeService {
     includeLogs: boolean,
     ignoreOutput: boolean
   ): Promise<DynamicAttachment[]> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling typeGetDynamicAttachment.")
     if (attachmentKey === null || attachmentKey === undefined)
       throw new Error("Required parameter attachmentKey was null or undefined when calling typeGetDynamicAttachment.")
     if (invokeAlways === null || invokeAlways === undefined)
@@ -103,9 +99,7 @@ export class TypeService {
    * @param typeId
    */
   public async listAttachments(typeId: Identifier): Promise<any[]> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling typeListAttachments.")
-
+   
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -147,9 +141,7 @@ export class TypeService {
    * @param typeId
    */
   public async parent(typeId: Identifier, transform?: string): Promise<any> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling typeParent.")
-
+   
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
@@ -210,8 +202,6 @@ export class TypeService {
     attachmentKey: string,
     attachmentValue: any
   ): Promise<Identifier> {
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling typeSetAttachment.")
     if (target === null || target === undefined)
       throw new Error("Required parameter target was null or undefined when calling typeSetAttachment.")
     if (attachmentKey === null || attachmentKey === undefined)
@@ -284,8 +274,6 @@ export class TypeService {
   ): Promise<Identifier> {
     if (invokeOnce === null || invokeOnce === undefined)
       throw new Error("Required parameter invokeOnce was null or undefined when calling typeSetDynamicAttachment.")
-    if (typeId === null || typeId === undefined)
-      throw new Error("Required parameter typeId was null or undefined when calling typeSetDynamicAttachment.")
     if (target === null || target === undefined)
       throw new Error("Required parameter target was null or undefined when calling typeSetDynamicAttachment.")
     if (attachmentKey === null || attachmentKey === undefined)
