@@ -41,5 +41,5 @@ export class ActivitySpec {
     /**
      * The tab settings definition of an ActivitySpec.
      */
-    category?: Tab | null
+    category?: Tab[] | null
 }

@@ -84,5 +84,5 @@ export class Activity {
     /**
      * The tab settings for the activity.
      */
-    category?: Tab | null
+    category?: Tab[] | null
 }
