@@ -1,3 +1,7 @@
+/**
+ * tab setting for Activity Spec
+ */
+ type Tab = 'learn' | 'assess' | 'manage' | 'prevent'
 
 /**
  * The ActivitySpec determines the parameters and properties of an Activity and its corresponding generated ActivityEvents.
@@ -33,4 +37,9 @@ export class ActivitySpec {
      * The Activity settings definition of an ActivitySpec.
      */
     settingsSchema?: any
+
+    /**
+     * The tab settings definition of an ActivitySpec.
+     */
+    category?: Tab | null
 }

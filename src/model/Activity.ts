@@ -48,6 +48,10 @@ export class DurationIntervalLegacy {
 }
 
 /**
+ * tab setting for Activity
+ */
+type Tab = 'learn' | 'assess' | 'manage' | 'prevent'
+/**
  * An activity that may be performed by a participant in a study.
  */
 export class Activity { 
@@ -76,4 +80,9 @@ export class Activity {
      * The configuration settings for the activity.
      */
     settings?: any
+
+    /**
+     * The tab settings for the activity.
+     */
+    category?: Tab | null
 }
