@@ -42,4 +42,8 @@ export class ActivitySpec {
      * The tab settings definition of an ActivitySpec.
      */
     category?: Tab[] | null
+    /**
+     * The encoded HTML content to be loaded for this ActivitySpec.
+     */
+     executable?: Tab[] | null
 }
