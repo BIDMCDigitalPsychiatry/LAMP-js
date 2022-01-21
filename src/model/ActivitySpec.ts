@@ -45,5 +45,5 @@ export class ActivitySpec {
     /**
      * The encoded HTML content to be loaded for this ActivitySpec.
      */
-     executable?: Tab[] | null
+     executable?: string | null
 }
