@@ -19,11 +19,6 @@ export class ActivitySpec {
     helpContents?: string
     
     /**
-     * The WebView-compatible script that provides this Activity on mobile or desktop (IFrame) clients.
-     */
-    scriptContents?: string
-    
-    /**
      * The data definition of an ActivitySpec.
      */
     dataSchema?: any
@@ -36,7 +31,7 @@ export class ActivitySpec {
     /**
      * The Activity settings definition of an ActivitySpec.
      */
-    settingsSchema?: any
+    settings?: any
 
     /**
      * The tab settings definition of an ActivitySpec.
