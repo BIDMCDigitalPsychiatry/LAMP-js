@@ -31,7 +31,7 @@ export class ActivitySpec {
     /**
      * The temporal slice data definition of an ActivitySpec.
      */
-    temporalSlice?: any
+    temporalSlices?: any
     
     /**
      * The Activity settings definition of an ActivitySpec.
