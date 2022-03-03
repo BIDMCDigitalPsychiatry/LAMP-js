@@ -16,17 +16,22 @@ export class ActivitySpec {
     /**
      * Either a binary blob containing a document or video, or a string containing instructional aid about the Activity.
      */
-    helpContents?: string
+    description?: string
+    
+    /**
+     * The WebView-compatible script that provides this Activity on mobile or desktop (IFrame) clients.
+     */
+    executable?: string | null
     
     /**
      * The data definition of an ActivitySpec.
      */
-    dataSchema?: any
+    data?: any
     
     /**
      * The temporal slice data definition of an ActivitySpec.
      */
-    temporalSliceSchema?: any
+    temporalSlice?: any
     
     /**
      * The Activity settings definition of an ActivitySpec.
@@ -36,9 +41,5 @@ export class ActivitySpec {
     /**
      * The tab settings definition of an ActivitySpec.
      */
-    category?: Tab[] | null
-    /**
-     * The encoded HTML content to be loaded for this ActivitySpec.
-     */
-     executable?: string | null
+    category?: Tab[] | null    
 }
