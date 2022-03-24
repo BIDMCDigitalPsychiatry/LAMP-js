@@ -1,15 +1,16 @@
 import 'isomorphic-fetch'
 import { Researcher, Participant } from "./model/index"
 import {
-  APIService,
-  ActivityService,
   ActivityEventService,
+  ActivityService,
   ActivitySpecService,
+  APIService,
   CredentialService,
+  OAuthService,
   ParticipantService,
   ResearcherService,
-  SensorService,
   SensorEventService,
+  SensorService,
   SensorSpecService,
   StudyService,
   TypeService
@@ -36,27 +37,29 @@ const _bus: HTMLElement | undefined = (global as any).document?.createElement("_
  * The root type in LAMP. You must use `LAMP.connect(...)` to begin using any LAMP classes.
  */
 export default class LAMP {
-  public static API = new APIService()
-  public static Type = new TypeService()
-  public static Credential = new CredentialService()
-  public static Researcher = new ResearcherService()
-  public static Participant = new ParticipantService()
-  public static Study = new StudyService()
   public static Activity = new ActivityService()
   public static ActivityEvent = new ActivityEventService()
   public static ActivitySpec = new ActivitySpecService()
+  public static API = new APIService()
+  public static Credential = new CredentialService()
+  public static OAuth = new OAuthService()
+  public static Participant = new ParticipantService()
+  public static Researcher = new ResearcherService()
   public static Sensor = new SensorService()
   public static SensorEvent = new SensorEventService()
   public static SensorSpec = new SensorSpecService()
+  public static Study = new StudyService()
+  public static Type = new TypeService()
   private static get configuration(): Configuration | undefined {
     return LAMP.API.configuration
   }
   private static set configuration(configuration: Configuration | undefined) {
-    LAMP.API.configuration = configuration
     LAMP.Activity.configuration = configuration
     LAMP.ActivityEvent.configuration = configuration
     LAMP.ActivitySpec.configuration = configuration
+    LAMP.API.configuration = configuration
     LAMP.Credential.configuration = configuration
+    LAMP.OAuth.configuration = configuration
     LAMP.Participant.configuration = configuration
     LAMP.Researcher.configuration = configuration
     LAMP.Sensor.configuration = configuration
