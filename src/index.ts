@@ -30,6 +30,11 @@ interface IAuth {
   serverAddress: string | undefined
 }
 
+interface OAuthParams {
+  serverAddress: string | undefined
+  codeVerifier: string | undefined
+}
+
 //
 const _bus: HTMLElement | undefined = (global as any).document?.createElement("_lamp_fake")
 
@@ -128,8 +133,21 @@ export default class LAMP {
 
   public static Auth = class {
     public static _auth: IAuth = { id: null, password: null, serverAddress: null }
+    public static _oauth: OAuthParams = { serverAddress: undefined, codeVerifier: undefined }
     public static _me: Researcher[] | Researcher | Participant | null | undefined
     public static _type: "admin" | "researcher" | "participant" | null = null
+
+    public static async set_oauth_params(params: OAuthParams) {
+      LAMP.configuration = {
+        base: !!params.serverAddress ? `https://${params.serverAddress}` : "https://api.lamp.digital"
+      }
+
+      // Propagate the authorization.
+      LAMP.Auth._oauth = params
+
+      // Save the authorization in sessionStorage for later.
+      sessionStorage?.setItem("LAMP._oauth", JSON.stringify(LAMP.Auth._oauth))
+    }
 
     /**
      * Authenticate/authorize as a user of a given `type`.
