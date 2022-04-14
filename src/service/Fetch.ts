@@ -25,19 +25,20 @@ async function _fetch<ResultType>(
   body?: any
 ): Promise<ResultType> {
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
-
+  let protocol = configuration!.base.includes("api") ? "https" : "http" // TODO: Remove after we move to https only
   var result = await (
-    await fetch(`${configuration!.base}${route}`, {
+    await fetch(`${protocol}://${configuration!.base}${route}`, {
       method: method,
       headers: new Headers({
         "Content-Type": "application/json",
         Accept: "application/json",
         ...(configuration!.headers || {}),
-        Authorization: !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
+        Authorization: !!configuration!.authorization ? `${configuration!.authorization}` : undefined
       } as any),
       body: body !== undefined ? JSON.stringify(body) : undefined
     })
   ).json()
+  
 
   //if (result['error'] !== undefined)
   //    throw new Error(result['error'])
