@@ -27,7 +27,8 @@ export * from "./model/index"
 interface IAuth {
   id: string | null
   password: string | null
-  serverAddress: string | undefined
+  serverAddress: string | undefined,
+  accessToken?: string | null
 }
 
 interface OAuthParams {
@@ -35,6 +36,12 @@ interface OAuthParams {
   codeVerifier: string | undefined
 }
 
+interface IdentityObj {
+  id?: string | null,
+  password?: string | null,
+  serverAddress?: string | null,
+  accessToken?: string | null,
+}
 //
 const _bus: HTMLElement | undefined = (global as any).document?.createElement("_lamp_fake")
 
@@ -126,20 +133,21 @@ export default class LAMP {
         serverAddress: identity.serverAddress
     }
     LAMP.configuration = {
-        base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
+        base: !!identity.serverAddress ? identity.serverAddress : "api.lamp.digital",
         authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined
     }
   }
 
   public static Auth = class {
-    public static _auth: IAuth = { id: null, password: null, serverAddress: null }
+    public static _auth: IAuth = { id: null, password: null, serverAddress: null, accessToken: null }
     public static _oauth: OAuthParams = { serverAddress: undefined, codeVerifier: undefined }
     public static _me: Researcher[] | Researcher | Participant | null | undefined
     public static _type: "admin" | "researcher" | "participant" | null = null
 
     public static async set_oauth_params(params: OAuthParams) {
       LAMP.configuration = {
-        base: !!params.serverAddress ? `https://${params.serverAddress}` : "https://api.lamp.digital"
+        ...LAMP.configuration,
+        base: !!params.serverAddress ? params.serverAddress : "api.lamp.digital"
       }
 
       // Propagate the authorization.
@@ -154,34 +162,55 @@ export default class LAMP {
      * If all values are null (especially `type`), the authorization is cleared.
      */
     public static async set_identity(
-      identity: { id: string | null; password: string | null; serverAddress: string | undefined } = {
+      identity: IdentityObj = {
         id: null,
         password: null,
-        serverAddress: undefined
+        serverAddress: null,
+        accessToken: null
       }
     ) {
-      LAMP.configuration = {
-        base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital"
+      let serverAddress
+      if(!!identity.serverAddress) {
+        serverAddress = identity.serverAddress.replace("http://", "").replace("https://", "")
+      } else if(!!LAMP.configuration?.base) {
+        serverAddress = LAMP.configuration?.base
+      } else if(!!LAMP.Auth._oauth.serverAddress) {
+        serverAddress = LAMP.Auth._oauth.serverAddress
+      } else {
+        serverAddress = "api.lamp.digital"
       }
 
+      LAMP.configuration = {
+        ...LAMP.configuration,
+        base: serverAddress
+      }
+      
       // Ensure there's actually a change to process.
-      let l: IAuth = LAMP.Auth._auth || { id: null, password: null, serverAddress: null }
-      if (l.id === identity.id && l.password === identity.password && l.serverAddress === identity.serverAddress) return
+      let l: IAuth = LAMP.Auth._auth || { id: null, password: null, serverAddress: null, accessToken: null }
+      if (l.id === identity.id && l.password === identity.password && l.serverAddress === identity.serverAddress && l.accessToken == identity.accessToken) return
 
       // Propogate the authorization.
       LAMP.Auth._auth = {
         id: identity.id,
         password: identity.password,
-        serverAddress: identity.serverAddress
-      }
-      LAMP.configuration = {
-        ...(LAMP.configuration || { base: undefined, headers: undefined }),
-        authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined
+        serverAddress: serverAddress,
+        accessToken: identity.accessToken
       }
 
+      if(!!identity.accessToken) {
+        LAMP.configuration = {
+          ...LAMP.configuration,
+          authorization: `Bearer ${identity.accessToken}`
+        }
+      } else {
+        LAMP.configuration = {
+          ...(LAMP.configuration || { base: undefined, headers: undefined }),
+          authorization: !!LAMP.Auth._auth.id ? `Basic ${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined
+        }
+      }
       try {
         // If we aren't clearing the credential, get the "self" identity.
-        if (!!identity.id && !!identity.password) {
+        if ((!!identity.id && !!identity.password) || !!identity.accessToken) {
           // Get our 'me' context so we know what object type we are.
           let typeData
           try {
@@ -195,7 +224,6 @@ export default class LAMP {
               : !!typeData.data
               ? "participant"
               : null
-
           // Get our 'me' object now that we figured out our type.
           LAMP.Auth._me = await (LAMP.Auth._type === "admin"
             ? { id: identity.id }
@@ -214,6 +242,7 @@ export default class LAMP {
           })
         }
       } catch (err) {
+        
         // We failed: clear and propogate the authorization.
         LAMP.Auth._auth = { id: null, password: null, serverAddress: null }
         if (!!LAMP.configuration) LAMP.configuration.authorization = undefined
@@ -233,7 +262,8 @@ export default class LAMP {
       await LAMP.Auth.set_identity({
         id: _saved.id,
         password: _saved.password,
-        serverAddress: _saved.serverAddress
+        serverAddress: _saved.serverAddress,
+        accessToken: _saved.accessToken
       })
     }
   }

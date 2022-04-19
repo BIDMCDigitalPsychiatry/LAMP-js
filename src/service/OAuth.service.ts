@@ -10,8 +10,8 @@ export class OAuthService {
     public async requestAuthorization(
       code: string,
       codeVerifier: string
-    ) : Promise<void> {
-      await Fetch.post(
+    ) : Promise<string> {
+      return await Fetch.post(
         "/oauth/authenticate",
         {
           code: code,
