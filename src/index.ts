@@ -31,11 +31,6 @@ interface IAuth {
   accessToken?: string | null
 }
 
-interface OAuthParams {
-  serverAddress: string | undefined
-  codeVerifier: string | undefined
-}
-
 interface IdentityObj {
   id?: string | null,
   password?: string | null,
@@ -140,22 +135,8 @@ export default class LAMP {
 
   public static Auth = class {
     public static _auth: IAuth = { id: null, password: null, serverAddress: null, accessToken: null }
-    public static _oauth: OAuthParams = { serverAddress: undefined, codeVerifier: undefined }
     public static _me: Researcher[] | Researcher | Participant | null | undefined
     public static _type: "admin" | "researcher" | "participant" | null = null
-
-    public static async set_oauth_params(params: OAuthParams) {
-      LAMP.configuration = {
-        ...LAMP.configuration,
-        base: !!params.serverAddress ? params.serverAddress : "api.lamp.digital"
-      }
-
-      // Propagate the authorization.
-      LAMP.Auth._oauth = params
-
-      // Save the authorization in sessionStorage for later.
-      sessionStorage?.setItem("LAMP._oauth", JSON.stringify(LAMP.Auth._oauth))
-    }
 
     /**
      * Authenticate/authorize as a user of a given `type`.
@@ -174,8 +155,6 @@ export default class LAMP {
         serverAddress = identity.serverAddress.replace("http://", "").replace("https://", "")
       } else if(!!LAMP.configuration?.base) {
         serverAddress = LAMP.configuration?.base
-      } else if(!!LAMP.Auth._oauth.serverAddress) {
-        serverAddress = LAMP.Auth._oauth.serverAddress
       } else {
         serverAddress = "api.lamp.digital"
       }
