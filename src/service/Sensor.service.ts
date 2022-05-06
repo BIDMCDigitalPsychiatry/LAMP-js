@@ -1,27 +1,26 @@
-import { Fetch, Configuration } from "./Fetch"
+import { Fetch } from "./Fetch"
 import { Sensor } from "../model/Sensor"
 import { Identifier } from "../model/Type"
 import { Participant } from "../model/Participant"
 import { Demo } from "./Demo"
+import LAMP from '../index'
 import jsonata from "jsonata"
 
 export class SensorService {
-  public configuration?: Configuration
 
   /**
    * Get the set of all activities.
    */
   public async all(transform?: string): Promise<Sensor[]> {
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       let output = Demo.Sensor.map(x => Object.assign(new Sensor(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -34,10 +33,9 @@ export class SensorService {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling sensorAllByParticipant.")
     if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -53,7 +51,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}/sensor?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}/sensor?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -66,10 +64,9 @@ export class SensorService {
     if (researcherId === null || researcherId === undefined)
       throw new Error("Required parameter researcherId was null or undefined when calling sensorAllByResearcher.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) {
         return Promise.resolve({ error: "403.invalid-credentials" } as any)
       }
@@ -89,7 +86,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/sensor`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/sensor`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -102,10 +99,9 @@ export class SensorService {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling sensorAllByStudy.")
     if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -117,7 +113,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/sensor?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/sensor?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -133,10 +129,9 @@ export class SensorService {
     if (sensor === null || sensor === undefined)
       throw new Error("Required parameter sensor was null or undefined when calling sensorCreate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -157,7 +152,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/study/${studyId}/sensor`, sensor, this.configuration)
+    return await Fetch.post(`/study/${studyId}/sensor`, sensor, LAMP.Auth._auth)
   }
 
   /**
@@ -168,10 +163,9 @@ export class SensorService {
     if (sensorId === null || sensorId === undefined)
       throw new Error("Required parameter sensorId was null or undefined when calling sensorDelete.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (sensorId === "me") sensorId = credential.length > 0 ? credential[0]["origin"] : sensorId
 
@@ -186,7 +180,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/sensor/${sensorId}`, this.configuration)
+    return await Fetch.delete(`/sensor/${sensorId}`, LAMP.Auth._auth)
   }
 
   /**
@@ -200,10 +194,9 @@ export class SensorService {
     if (sensor === null || sensor === undefined)
       throw new Error("Required parameter sensor was null or undefined when calling sensorUpdate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (sensorId === "me") sensorId = credential.length > 0 ? credential[0]["origin"] : sensorId
 
@@ -222,7 +215,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/sensor/${sensorId}`, sensor, this.configuration)
+    return await Fetch.put(`/sensor/${sensorId}`, sensor, LAMP.Auth._auth)
   }
 
   /**
@@ -233,10 +226,9 @@ export class SensorService {
     if (sensorId === null || sensorId === undefined)
       throw new Error("Required parameter sensorId was null or undefined when calling sensorView.")
     if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (sensorId === "me") sensorId = credential.length > 0 ? credential[0]["origin"] : sensorId
 
@@ -249,7 +241,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor/${sensorId}?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor/${sensorId}?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new Sensor(), x)
     )[0]
   }
