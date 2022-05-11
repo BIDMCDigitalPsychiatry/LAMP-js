@@ -17,7 +17,7 @@ export class SensorSpecService {
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor_spec`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor_spec`)).data.map(x =>
       Object.assign(new SensorSpec(), x)
     )
   }
@@ -34,7 +34,7 @@ export class SensorSpecService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.post(`/sensor_spec`, sensorSpec, LAMP.Auth._auth)
+    return await Fetch.post(`/sensor_spec`, sensorSpec)
   }
 
   /**
@@ -49,7 +49,7 @@ export class SensorSpecService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.delete(`/sensor_spec/${sensorSpecName}`, LAMP.Auth._auth)
+    return await Fetch.delete(`/sensor_spec/${sensorSpecName}`)
   }
 
   /**
@@ -67,7 +67,7 @@ export class SensorSpecService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.put(`/sensor_spec/${sensorSpecName}`, sensorSpec, LAMP.Auth._auth)
+    return await Fetch.put(`/sensor_spec/${sensorSpecName}`, sensorSpec)
   }
 
   /**
@@ -89,7 +89,7 @@ export class SensorSpecService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor_spec/${sensorSpecName}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor_spec/${sensorSpecName}`)).data.map(x =>
       Object.assign(new SensorSpec(), x)
     )[0]
   }

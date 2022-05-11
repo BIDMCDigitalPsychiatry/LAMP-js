@@ -21,7 +21,7 @@ export class ActivityService {
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity`)).data.map(x =>
       Object.assign(new Activity(), x)
     )
   }
@@ -53,7 +53,7 @@ export class ActivityService {
       }
     }
     return (
-      await Fetch.get<{ data: any[] }>(`/participant/${participantId}/activity?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)
+      await Fetch.get<{ data: any[] }>(`/participant/${participantId}/activity?ignore_binary=${ignore_binary}`)
     ).data.map(x => Object.assign(new Activity(), x))
   }
 
@@ -87,7 +87,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/activity`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/activity`)).data.map(x =>
       Object.assign(new Activity(), x)
     )
   }
@@ -114,7 +114,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/activity?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/activity?ignore_binary=${ignore_binary}`)).data.map(x =>
       Object.assign(new Activity(), x)
     )
   }
@@ -153,7 +153,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/study/${studyId}/activity`, activity, LAMP.Auth._auth)
+    return await Fetch.post(`/study/${studyId}/activity`, activity)
   }
 
   /**
@@ -181,7 +181,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/activity/${activityId}`, LAMP.Auth._auth)
+    return await Fetch.delete(`/activity/${activityId}`)
   }
 
   /**
@@ -218,7 +218,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/activity/${activityId}`, activity, LAMP.Auth._auth)
+    return await Fetch.put(`/activity/${activityId}`, activity)
   }
 
   /**
@@ -244,7 +244,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`)).data.map(x =>
       Object.assign(new Activity(), x)
     )[0]
   }

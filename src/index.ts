@@ -18,7 +18,7 @@ import {
 import { Demo } from "./service/Demo"
 import { Fetch } from "./service/Fetch"
 
-import jwt_decode from "jwt-decode"
+import { decode } from "jsonwebtoken"
 
 export * from "./service/index"
 export * from "./model/index"
@@ -27,20 +27,19 @@ export * from "./model/index"
  *
  */
 interface IAuth {
-  accessToken?: string,
-  id?: null,
-  password?: null,
-  serverAddress?: string,
+  id?: null
+  password?: null
+  accessToken?: string
+  refreshToken?: string
+  serverAddress?: string
 }
 
 interface IdentityObj {
-  accessToken?: string,
-  serverAddress?: string,
-}
-
-interface UserAttributes {
-  id: string,
-  roles: ("admin" | "researcher" | "participant")[]
+  id?: string
+  password?: string
+  accessToken?: string
+  refreshToken?: string
+  serverAddress?: string
 }
 
 //
@@ -124,19 +123,7 @@ export default class LAMP {
      * Authenticate/authorize as a user of a given `type`.
      * If all values are null (especially `type`), the authorization is cleared.
      */
-    public static async set_identity(
-      identity: IdentityObj = {
-        accessToken: null,
-        serverAddress: null,
-      }
-    ) {
-      let attributes: UserAttributes
-      if (!!identity.accessToken) {
-        attributes = getUserAttributes(identity.accessToken)
-      } else {
-        attributes = null
-      }
-
+    public static async set_identity(identity: IdentityObj = {}) {
       let serverAddress
       if (!!identity.serverAddress) {
         serverAddress = identity.serverAddress.replace("http://", "").replace("https://", "")
@@ -144,37 +131,48 @@ export default class LAMP {
         serverAddress = LAMP.Auth._auth.serverAddress
       }
 
-      // Ensure there's actually a change to process.
-      let l: IAuth = LAMP.Auth._auth || { accessToken: null, serverAddress: null }
-      if (l.accessToken === identity.accessToken && l.serverAddress === serverAddress) return
-
       // Propogate the authorization.
       LAMP.Auth._auth = {
         accessToken: identity.accessToken,
+        refreshToken: identity.refreshToken,
         serverAddress: serverAddress,
       }
 
       try {
         // If we aren't clearing the credential, get the "self" identity.
-        if (!!attributes) {
-          // Get our 'me' context and 'me' object
-          if (attributes.roles.includes("admin")) {
-            this._type = "admin"
-            this._me = { id: attributes.id }
-          } else if (attributes.roles.includes("researcher")) {
-            this._type = "researcher"
-            this._me = await LAMP.Researcher.view("me")
-          } else if (attributes.roles.includes("participant")) {
-            this._type = "participant"
-            this._me = await LAMP.Participant.view("me")
-          } else {
-            this._type = null
-            this._me = null
+        if (!!identity.accessToken) {
+          let payload: any
+          try {
+            payload = decode(identity.accessToken)
+          } catch {
+            throw Error("Invalid access token")
           }
 
           const authorization = !!identity.accessToken ?
             `Bearer ${identity.accessToken}`
             : `Basic ${identity.id}:${identity.password}`
+
+          // Get our 'me' context so we know what object type we are.
+          let typeData
+          try {
+            typeData = await LAMP.Type.parent("me")
+          } catch (e) {}
+
+          LAMP.Auth._type =
+            typeData.error === "400.context-substitution-failed"
+              ? "admin"
+              : Object.entries(typeData.data).length === 0
+              ? "researcher"
+              : !!typeData.data
+              ? "participant"
+              : null
+          // Get our 'me' object now that we figured out our type.
+          LAMP.Auth._me = await (LAMP.Auth._type === "admin"
+            ? { id: payload.id }
+            : LAMP.Auth._type === "researcher"
+            ? LAMP.Researcher.view("me")
+            : LAMP.Participant.view("me"))
+
           LAMP.dispatchEvent("LOGIN", {
             authorizationToken: authorization,
             identityObject: LAMP.Auth._me,
@@ -201,39 +199,19 @@ export default class LAMP {
 
     public static async refresh_identity() {
       let _saved = JSON.parse((global as any).sessionStorage?.getItem("LAMP._auth") ?? "null") || LAMP.Auth._auth
-      await LAMP.Auth.set_identity({
-        accessToken: _saved.accessToken,
-        serverAddress: _saved.serverAddress,
-      })
+      await LAMP.Auth.set_identity(_saved)
     }
 
     public static async get_legacy_token(
       identity: { id: string; password: string },
-      serverAddress: string
     ): Promise<string> {
-      LAMP.Auth._auth = {
-        ...LAMP.Auth._auth,
-        serverAddress: serverAddress,
-      }
-
       const body = await Fetch.post<any>(
         "/token",
         { id: identity.id, password: identity.password },
-        LAMP.Auth._auth,
       )
 
       return body.access_token
     }
-  }
-}
-
-const getUserAttributes = (accessToken: string): UserAttributes => {
-  try {
-    const payload = jwt_decode<any>(accessToken)
-    const { id, roles } = payload
-    return { id, roles }
-  } catch {
-    throw Error("Invalid access token")
   }
 }
 

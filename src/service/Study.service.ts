@@ -20,7 +20,7 @@ export class StudyService {
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/study`, LAMP.Auth._auth)).data.map(x => Object.assign(new Study(), x))
+    return (await Fetch.get<{ data: any[] }>(`/study`)).data.map(x => Object.assign(new Study(), x))
   }
 
   /**
@@ -45,7 +45,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/study`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/study`)).data.map(x =>
       Object.assign(new Study(), x)
     )
   }
@@ -73,7 +73,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/researcher/${researcherId}/study`, study, LAMP.Auth._auth)
+    return await Fetch.post(`/researcher/${researcherId}/study`, study)
   }
 
   /**
@@ -96,7 +96,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/study/${studyId}`, LAMP.Auth._auth)
+    return await Fetch.delete(`/study/${studyId}`)
   }
 
   /**
@@ -122,7 +122,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/study/${studyId}`, study, LAMP.Auth._auth)
+    return await Fetch.put(`/study/${studyId}`, study)
   }
 
   /**
@@ -148,7 +148,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}`)).data.map(x =>
       Object.assign(new Study(), x)
     )[0]
   }

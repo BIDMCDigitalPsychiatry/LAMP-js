@@ -52,7 +52,6 @@ export class SensorEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/participant/${participantId}/sensor_event?${queryParameters.toString()}`,
-        LAMP.Auth._auth
       )
     )?.data?.map(x => Object.assign(new SensorEvent(), x))
   }
@@ -108,7 +107,6 @@ export class SensorEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/researcher/${researcherId}/sensor_event?${queryParameters.toString()}`,
-        LAMP.Auth._auth
       )
     )?.data?.map(x => Object.assign(new SensorEvent(), x))
   }
@@ -162,7 +160,6 @@ export class SensorEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/study/${studyId}/sensor_event?${queryParameters.toString()}`,
-        LAMP.Auth._auth
       )
     )?.data?.map(x => Object.assign(new SensorEvent(), x))
   }
@@ -195,7 +192,7 @@ export class SensorEventService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/participant/${participantId}/sensor_event`, sensorEvent, LAMP.Auth._auth)
+    return await Fetch.post(`/participant/${participantId}/sensor_event`, sensorEvent)
   }
 
   /**
@@ -228,7 +225,6 @@ export class SensorEventService {
     }
     return await Fetch.delete(
       `/participant/${participantId}/sensor_event?${queryParameters.toString()}`,
-      LAMP.Auth._auth
     )
   }
 }

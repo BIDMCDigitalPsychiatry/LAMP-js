@@ -20,7 +20,7 @@ export class ResearcherService {
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher`)).data.map(x =>
       Object.assign(new Researcher(), x)
     )
   }
@@ -37,7 +37,7 @@ export class ResearcherService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.post(`/researcher`, researcher, LAMP.Auth._auth)
+    return await Fetch.post(`/researcher`, researcher)
   }
 
   /**
@@ -52,7 +52,7 @@ export class ResearcherService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.delete(`/researcher/${researcherId}`, LAMP.Auth._auth)
+    return await Fetch.delete(`/researcher/${researcherId}`)
   }
 
   /**
@@ -70,7 +70,7 @@ export class ResearcherService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.put(`/researcher/${researcherId}`, researcher, LAMP.Auth._auth)
+    return await Fetch.put(`/researcher/${researcherId}`, researcher)
   }
 
   /**
@@ -96,7 +96,7 @@ export class ResearcherService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}`)).data.map(x =>
       Object.assign(new Researcher(), x)
     )[0]
   }

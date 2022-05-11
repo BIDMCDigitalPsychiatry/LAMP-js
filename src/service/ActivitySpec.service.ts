@@ -17,7 +17,7 @@ export class ActivitySpecService {
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity_spec`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity_spec`)).data.map(x =>
       Object.assign(new ActivitySpec(), x)
     )
   }
@@ -34,7 +34,7 @@ export class ActivitySpecService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.post(`/activity_spec`, activitySpec, LAMP.Auth._auth)
+    return await Fetch.post(`/activity_spec`, activitySpec)
   }
 
   /**
@@ -49,7 +49,7 @@ export class ActivitySpecService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.delete(`/activity_spec/${activitySpecName}`, LAMP.Auth._auth)
+    return await Fetch.delete(`/activity_spec/${activitySpecName}`)
   }
 
   /**
@@ -67,7 +67,7 @@ export class ActivitySpecService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.put(`/activity_spec/${activitySpecName}`, activitySpec, LAMP.Auth._auth)
+    return await Fetch.put(`/activity_spec/${activitySpecName}`, activitySpec)
   }
 
   /**
@@ -91,7 +91,7 @@ export class ActivitySpecService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity_spec/${activitySpecName}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity_spec/${activitySpecName}`)).data.map(x =>
       Object.assign(new ActivitySpec(), x)
     )[0]
   }
