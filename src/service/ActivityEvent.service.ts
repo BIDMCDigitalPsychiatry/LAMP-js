@@ -52,7 +52,6 @@ export class ActivityEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/participant/${participantId}/activity_event?${queryParameters.toString()}`,
-        LAMP.Auth._auth
       )
     ).data.map(x => Object.assign(new ActivityEvent(), x))
   }
@@ -110,7 +109,6 @@ export class ActivityEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/researcher/${researcherId}/activity_event?${queryParameters.toString()}`,
-        LAMP.Auth._auth
       )
     ).data.map(x => Object.assign(new ActivityEvent(), x))
   }
@@ -164,7 +162,6 @@ export class ActivityEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/study/${studyId}/activity_event?${queryParameters.toString()}`,
-        LAMP.Auth._auth
       )
     ).data.map(x => Object.assign(new ActivityEvent(), x))
   }
@@ -197,7 +194,7 @@ export class ActivityEventService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/participant/${participantId}/activity_event`, activityEvent, LAMP.Auth._auth)
+    return await Fetch.post(`/participant/${participantId}/activity_event`, activityEvent)
   }
 
   /**
@@ -230,7 +227,6 @@ export class ActivityEventService {
     }
     return await Fetch.delete(
       `/participant/${participantId}/activity_event?${queryParameters.toString()}`,
-      LAMP.Auth._auth
     )
   }
 }

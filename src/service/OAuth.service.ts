@@ -37,7 +37,7 @@ export class OAuthService {
   public async start_flow(): Promise<URL>{
     let url: URL
 
-    const urlString = (await Fetch.get<{url: string}>("/oauth/start", LAMP.Auth._auth)).url
+    const urlString = (await Fetch.get<{url: string}>("/oauth/start")).url
     if (!urlString) {
       url = null
     } else {
@@ -59,7 +59,6 @@ export class OAuthService {
         code: code,
         code_verifier: this.params.codeVerifier
       },
-      LAMP.Auth._auth
     )
   }
 }

@@ -51,7 +51,7 @@ export class TypeService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.get(`/type/${typeId}/attachment/${attachmentKey}`, LAMP.Auth._auth)
+    return await Fetch.get(`/type/${typeId}/attachment/${attachmentKey}`)
   }
 
   /**
@@ -89,7 +89,6 @@ export class TypeService {
     }
     return await Fetch.get(
       `/type/${typeId}/attachment/dynamic/${attachmentKey}?${queryParameters.toString()}`,
-      LAMP.Auth._auth
     )
   }
 
@@ -131,7 +130,7 @@ export class TypeService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.get(`/type/${typeId}/attachment`, LAMP.Auth._auth)
+    return await Fetch.get(`/type/${typeId}/attachment`)
   }
 
   /**
@@ -183,7 +182,7 @@ export class TypeService {
       }
       return Promise.resolve({ error: "404.not-found" } as any)
     }
-    return await Fetch.get(`/type/${typeId}/parent`, LAMP.Auth._auth)
+    return await Fetch.get(`/type/${typeId}/parent`)
   }
 
   /**
@@ -250,7 +249,7 @@ export class TypeService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/type/${typeId}/attachment/${attachmentKey}/${target}`, attachmentValue, LAMP.Auth._auth)
+    return await Fetch.put(`/type/${typeId}/attachment/${attachmentKey}/${target}`, attachmentValue)
   }
 
   /**
@@ -287,7 +286,6 @@ export class TypeService {
     return await Fetch.put(
       `/type/${typeId}/attachment/dynamic/${attachmentKey}/${target}?${queryParameters.toString()}`,
       attachmentValue,
-      LAMP.Auth._auth
     )
   }
 }

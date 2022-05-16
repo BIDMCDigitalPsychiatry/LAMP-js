@@ -20,7 +20,7 @@ export class ParticipantService {
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant`)).data.map(x =>
       Object.assign(new Participant(), x)
     )
   }
@@ -52,7 +52,7 @@ export class ParticipantService {
       }
     }
     return (
-      await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/participant`, LAMP.Auth._auth)
+      await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/participant`)
     ).data.map(x => Object.assign(new Participant(), x))
   }
 
@@ -80,7 +80,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/participant`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/participant`)).data.map(x =>
       Object.assign(new Participant(), x)
     )
   }
@@ -122,7 +122,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/study/${studyId}/participant`, participant, LAMP.Auth._auth)
+    return await Fetch.post(`/study/${studyId}/participant`, participant)
   }
 
   /**
@@ -151,7 +151,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/participant/${participantId}`, LAMP.Auth._auth)
+    return await Fetch.delete(`/participant/${participantId}`)
   }
 
   /**
@@ -177,7 +177,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/participant/${participantId}`, participant, LAMP.Auth._auth)
+    return await Fetch.put(`/participant/${participantId}`, participant)
   }
 
   /**
@@ -203,7 +203,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}`)).data.map(x =>
       Object.assign(new Participant(), x)
     )[0]
   }

@@ -52,7 +52,6 @@ export class CredentialService {
     return await Fetch.post(
       `/type/${typeId}/credential`,
       { origin: typeId, access_key: accessKey, secret_key: secretKey, description: description },
-      LAMP.Auth._auth
     )
   }
 
@@ -79,7 +78,7 @@ export class CredentialService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/type/${typeId}/credential/${accessKey}`, LAMP.Auth._auth)
+    return await Fetch.delete(`/type/${typeId}/credential/${accessKey}`)
   }
 
   /**
@@ -109,7 +108,7 @@ export class CredentialService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/type/${typeId}/credential`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/type/${typeId}/credential`)).data.map(x =>
       Object.assign(new Credential(), x)
     )
   }
@@ -152,6 +151,6 @@ export class CredentialService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/type/${typeId}/credential/${accessKey}`, secretKey, LAMP.Auth._auth)
+    return await Fetch.put(`/type/${typeId}/credential/${accessKey}`, secretKey)
   }
 }

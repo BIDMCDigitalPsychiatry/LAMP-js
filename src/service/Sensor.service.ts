@@ -20,7 +20,7 @@ export class SensorService {
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor`)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -51,7 +51,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}/sensor?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}/sensor?ignore_binary=${ignore_binary}`)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -86,7 +86,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/sensor`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/sensor`)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -113,7 +113,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/sensor?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/sensor?ignore_binary=${ignore_binary}`)).data.map(x =>
       Object.assign(new Sensor(), x)
     )
   }
@@ -152,7 +152,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/study/${studyId}/sensor`, sensor, LAMP.Auth._auth)
+    return await Fetch.post(`/study/${studyId}/sensor`, sensor)
   }
 
   /**
@@ -180,7 +180,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/sensor/${sensorId}`, LAMP.Auth._auth)
+    return await Fetch.delete(`/sensor/${sensorId}`)
   }
 
   /**
@@ -215,7 +215,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/sensor/${sensorId}`, sensor, LAMP.Auth._auth)
+    return await Fetch.put(`/sensor/${sensorId}`, sensor)
   }
 
   /**
@@ -241,7 +241,7 @@ export class SensorService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor/${sensorId}?ignore_binary=${ignore_binary}`, LAMP.Auth._auth)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor/${sensorId}?ignore_binary=${ignore_binary}`)).data.map(x =>
       Object.assign(new Sensor(), x)
     )[0]
   }

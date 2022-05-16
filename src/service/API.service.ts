@@ -13,7 +13,7 @@ export class APIService {
       // DEMO
       return Promise.resolve({ error: "500.demo-unavailable" } as any)
     }
-    return await Fetch.post<{}>(`/`, transform, LAMP.Auth._auth)
+    return await Fetch.post<{}>(`/`, transform)
   }
 
   /**
@@ -24,6 +24,6 @@ export class APIService {
       // DEMO
       return Promise.resolve({ error: "500.demo-unavailable" } as any)
     }
-    return await Fetch.get<{}>(`/`, LAMP.Auth._auth)
+    return await Fetch.get<{}>(`/`)
   }
 }
