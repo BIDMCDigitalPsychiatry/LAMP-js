@@ -1,27 +1,26 @@
-import { Fetch, Configuration } from "./Fetch"
+import { Fetch } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { Study } from "../model/Study"
 import { Demo } from "./Demo"
+import LAMP from '../index'
 import jsonata from "jsonata"
 
 export class StudyService {
-  public configuration?: Configuration
 
   /**
    * Get the set of all studies.
    */
   public async all(transform?: string): Promise<Study[]> {
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
 
       let output = Demo.Study.map(x => Object.assign(new Study(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/study`, this.configuration)).data.map(x => Object.assign(new Study(), x))
+    return (await Fetch.get<{ data: any[] }>(`/study`, LAMP.Auth._auth)).data.map(x => Object.assign(new Study(), x))
   }
 
   /**
@@ -32,10 +31,9 @@ export class StudyService {
     if (researcherId === null || researcherId === undefined)
       throw new Error("Required parameter researcherId was null or undefined when calling studyAllByResearcher.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
@@ -47,7 +45,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/study`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/study`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new Study(), x)
     )
   }
@@ -63,10 +61,9 @@ export class StudyService {
     if (study === null || study === undefined)
       throw new Error("Required parameter study was null or undefined when calling studyCreate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
@@ -76,7 +73,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/researcher/${researcherId}/study`, study, this.configuration)
+    return await Fetch.post(`/researcher/${researcherId}/study`, study, LAMP.Auth._auth)
   }
 
   /**
@@ -87,10 +84,9 @@ export class StudyService {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling studyDelete.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -100,7 +96,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/study/${studyId}`, this.configuration)
+    return await Fetch.delete(`/study/${studyId}`, LAMP.Auth._auth)
   }
 
   /**
@@ -114,10 +110,9 @@ export class StudyService {
     if (study === null || study === undefined)
       throw new Error("Required parameter study was null or undefined when calling studyUpdate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -127,7 +122,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/study/${studyId}`, study, this.configuration)
+    return await Fetch.put(`/study/${studyId}`, study, LAMP.Auth._auth)
   }
 
   /**
@@ -138,10 +133,9 @@ export class StudyService {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling studyView.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -154,7 +148,7 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new Study(), x)
     )[0]
   }

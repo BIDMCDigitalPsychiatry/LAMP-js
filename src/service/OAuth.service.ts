@@ -1,7 +1,7 @@
-import { Fetch, Configuration } from './Fetch';
+import { Fetch } from './Fetch';
+import LAMP from '../index';
 
 export interface OAuthParams {
-  serverAddress?: string
   codeVerifier?: string
   codeChallenge?: string
 }
@@ -12,7 +12,6 @@ export interface AuthResponse {
   refresh_token: string | undefined,
 }
 export class OAuthService {
-  public configuration?: Configuration
   
   public get is_enabled(): boolean {
     return JSON.parse(sessionStorage?.getItem("LAMP._oauth_enabled")) as boolean ?? false
@@ -26,19 +25,11 @@ export class OAuthService {
     try {
       return JSON.parse(sessionStorage?.getItem("LAMP._oauth"))
     } catch {
-      return { serverAddress: null, codeVerifier: null }
+      return {}
     }
   }
 
   public set params(value: OAuthParams) {
-    this.configuration = {
-      ...this.configuration,
-      base: value.serverAddress ?? "api.lamp.digital"
-    }
-    sessionStorage?.setItem("LAMP._auth", JSON.stringify({
-      serverAddress: value.serverAddress
-    }))
-
     // Save the authorization in sessionStorage for later.
     sessionStorage?.setItem("LAMP._oauth", JSON.stringify(value))
   }
@@ -46,7 +37,7 @@ export class OAuthService {
   public async start_flow(): Promise<URL>{
     let url: URL
 
-    const urlString = (await Fetch.get<{url: string}>("/oauth/start", this.configuration)).url
+    const urlString = (await Fetch.get<{url: string}>("/oauth/start", LAMP.Auth._auth)).url
     if (!urlString) {
       url = null
     } else {
@@ -68,7 +59,7 @@ export class OAuthService {
         code: code,
         code_verifier: this.params.codeVerifier
       },
-      this.configuration
+      LAMP.Auth._auth
     )
   }
 }

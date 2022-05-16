@@ -1,23 +1,23 @@
-import { Fetch, Configuration } from "./Fetch"
+import { Fetch } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { SensorSpec } from "../model/SensorSpec"
 import { Demo } from "./Demo"
+import LAMP from '../index'
 import jsonata from "jsonata"
 
 export class SensorSpecService {
-  public configuration?: Configuration
 
   /**
    * Get all SensorSpecs registered by any Researcher.
    */
   public async all(transform?: string): Promise<SensorSpec[]> {
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
       let output = Demo.SensorSpec.map(x => Object.assign(new SensorSpec(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor_spec`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor_spec`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new SensorSpec(), x)
     )
   }
@@ -30,11 +30,11 @@ export class SensorSpecService {
     if (sensorSpec === null || sensorSpec === undefined)
       throw new Error("Required parameter sensorSpec was null or undefined when calling sensorSpecCreate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.post(`/sensor_spec`, sensorSpec, this.configuration)
+    return await Fetch.post(`/sensor_spec`, sensorSpec, LAMP.Auth._auth)
   }
 
   /**
@@ -45,11 +45,11 @@ export class SensorSpecService {
     if (sensorSpecName === null || sensorSpecName === undefined)
       throw new Error("Required parameter sensorSpecName was null or undefined when calling sensorSpecDelete.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.delete(`/sensor_spec/${sensorSpecName}`, this.configuration)
+    return await Fetch.delete(`/sensor_spec/${sensorSpecName}`, LAMP.Auth._auth)
   }
 
   /**
@@ -63,11 +63,11 @@ export class SensorSpecService {
     if (sensorSpec === null || sensorSpec === undefined)
       throw new Error("Required parameter sensorSpec was null or undefined when calling sensorSpecUpdate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    return await Fetch.put(`/sensor_spec/${sensorSpecName}`, sensorSpec, this.configuration)
+    return await Fetch.put(`/sensor_spec/${sensorSpecName}`, sensorSpec, LAMP.Auth._auth)
   }
 
   /**
@@ -78,7 +78,7 @@ export class SensorSpecService {
     if (sensorSpecName === null || sensorSpecName === undefined)
       throw new Error("Required parameter sensorSpecName was null or undefined when calling sensorSpecView.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
       let data = Demo.SensorSpec.filter(x => x["name"] === sensorSpecName).map(x => Object.assign(new SensorSpec(), x))
       if (data.length > 0) {
@@ -89,7 +89,7 @@ export class SensorSpecService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor_spec/${sensorSpecName}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor_spec/${sensorSpecName}`, LAMP.Auth._auth)).data.map(x =>
       Object.assign(new SensorSpec(), x)
     )[0]
   }

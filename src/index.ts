@@ -15,8 +15,8 @@ import {
   StudyService,
   TypeService
 } from "./service/index"
-import { Configuration, Fetch } from './service/Fetch';
 import { Demo } from "./service/Demo"
+import { Fetch } from "./service/Fetch"
 
 import jwt_decode from "jwt-decode"
 
@@ -63,24 +63,6 @@ export default class LAMP {
   public static SensorSpec = new SensorSpecService()
   public static Study = new StudyService()
   public static Type = new TypeService()
-  private static get configuration(): Configuration | undefined {
-    return LAMP.API.configuration
-  }
-  private static set configuration(configuration: Configuration | undefined) {
-    LAMP.Activity.configuration = configuration
-    LAMP.ActivityEvent.configuration = configuration
-    LAMP.ActivitySpec.configuration = configuration
-    LAMP.API.configuration = configuration
-    LAMP.Credential.configuration = configuration
-    LAMP.OAuth.configuration = configuration
-    LAMP.Participant.configuration = configuration
-    LAMP.Researcher.configuration = configuration
-    LAMP.Sensor.configuration = configuration
-    LAMP.SensorEvent.configuration = configuration
-    LAMP.SensorSpec.configuration = configuration
-    LAMP.Study.configuration = configuration
-    LAMP.Type.configuration = configuration
-  }
 
   public static addEventListener(event: string, callback: (any) => void) {
     _bus?.addEventListener(event, callback)
@@ -131,14 +113,10 @@ export default class LAMP {
     LAMP.Auth._auth = {
       serverAddress: identity.serverAddress,
     }
-    LAMP.configuration = {
-      base: !!identity.serverAddress ? identity.serverAddress : "api.lamp.digital",
-      authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined,
-    }
   }
 
   public static Auth = class {
-    public static _auth: IAuth = { id: null, password: null, serverAddress: null, accessToken: null }
+    public static _auth: IAuth = { id: null, password: null, serverAddress: "api.lamp.digital", accessToken: null }
     public static _me: Researcher[] | Researcher | Participant | null | undefined
     public static _type: "admin" | "researcher" | "participant" | null = null
 
@@ -160,17 +138,10 @@ export default class LAMP {
       }
 
       let serverAddress
-      if(!!identity.serverAddress) {
+      if (!!identity.serverAddress) {
         serverAddress = identity.serverAddress.replace("http://", "").replace("https://", "")
-      } else if(!!LAMP.configuration?.base) {
-        serverAddress = LAMP.configuration?.base
       } else {
-        serverAddress = "api.lamp.digital"
-      }
-
-      LAMP.configuration = {
-        ...LAMP.configuration,
-        base: serverAddress,
+        serverAddress = LAMP.Auth._auth.serverAddress
       }
 
       // Ensure there's actually a change to process.
@@ -181,11 +152,6 @@ export default class LAMP {
       LAMP.Auth._auth = {
         accessToken: identity.accessToken,
         serverAddress: serverAddress,
-      }
-
-      LAMP.configuration = {
-        ...LAMP.configuration,
-        authorization: `Bearer ${identity.accessToken}`,
       }
 
       try {
@@ -206,10 +172,13 @@ export default class LAMP {
             this._me = null
           }
 
+          const authorization = !!identity.accessToken ?
+            `Bearer ${identity.accessToken}`
+            : `Basic ${identity.id}:${identity.password}`
           LAMP.dispatchEvent("LOGIN", {
-            authorizationToken: LAMP.configuration.authorization,
+            authorizationToken: authorization,
             identityObject: LAMP.Auth._me,
-            serverAddress: LAMP.configuration.base,
+            serverAddress: serverAddress
           })
         } else {
           LAMP.dispatchEvent("LOGOUT", {
@@ -219,7 +188,6 @@ export default class LAMP {
       } catch (err) {
         // We failed: clear and propogate the authorization.
         LAMP.Auth._auth = { id: null, password: null, serverAddress: null }
-        if (!!LAMP.configuration) LAMP.configuration.authorization = undefined
 
         // Delete the "self" identity and throw the error we received.
         LAMP.Auth._me = null
@@ -243,15 +211,15 @@ export default class LAMP {
       identity: { id: string; password: string },
       serverAddress: string
     ): Promise<string> {
-      LAMP.configuration = {
-        ...LAMP.configuration,
-        base: serverAddress,
+      LAMP.Auth._auth = {
+        ...LAMP.Auth._auth,
+        serverAddress: serverAddress,
       }
 
       const body = await Fetch.post<any>(
         "/token",
         { id: identity.id, password: identity.password },
-        LAMP.configuration
+        LAMP.Auth._auth,
       )
 
       return body.access_token

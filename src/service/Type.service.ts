@@ -1,11 +1,11 @@
-import { Fetch, Configuration } from "./Fetch"
+import { Fetch } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { DynamicAttachment } from "../model/DynamicAttachment"
 import { Demo } from "./Demo"
+import LAMP from '../index'
 import jsonata from "jsonata"
 
 export class TypeService {
-  public configuration?: Configuration
 
   /**
    *
@@ -16,10 +16,9 @@ export class TypeService {
     if (attachmentKey === null || attachmentKey === undefined)
       throw new Error("Required parameter attachmentKey was null or undefined when calling typeGetAttachment.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
@@ -52,7 +51,7 @@ export class TypeService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.get(`/type/${typeId}/attachment/${attachmentKey}`, this.configuration)
+    return await Fetch.get(`/type/${typeId}/attachment/${attachmentKey}`, LAMP.Auth._auth)
   }
 
   /**
@@ -84,13 +83,13 @@ export class TypeService {
     if (includeLogs !== undefined && includeLogs !== null) queryParameters.set("include_logs", <any>includeLogs)
     if (ignoreOutput !== undefined && ignoreOutput !== null) queryParameters.set("ignore_output", <any>ignoreOutput)
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
     return await Fetch.get(
       `/type/${typeId}/attachment/dynamic/${attachmentKey}?${queryParameters.toString()}`,
-      this.configuration
+      LAMP.Auth._auth
     )
   }
 
@@ -100,10 +99,9 @@ export class TypeService {
    */
   public async listAttachments(typeId: Identifier): Promise<any[]> {
    
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
@@ -133,7 +131,7 @@ export class TypeService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.get(`/type/${typeId}/attachment`, this.configuration)
+    return await Fetch.get(`/type/${typeId}/attachment`, LAMP.Auth._auth)
   }
 
   /**
@@ -142,10 +140,9 @@ export class TypeService {
    */
   public async parent(typeId: Identifier, transform?: string): Promise<any> {
    
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
@@ -186,7 +183,7 @@ export class TypeService {
       }
       return Promise.resolve({ error: "404.not-found" } as any)
     }
-    return await Fetch.get(`/type/${typeId}/parent`, this.configuration)
+    return await Fetch.get(`/type/${typeId}/parent`, LAMP.Auth._auth)
   }
 
   /**
@@ -209,10 +206,9 @@ export class TypeService {
     if (attachmentValue === undefined)
       throw new Error("Required parameter attachmentValue was null or undefined when calling typeSetAttachment.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
@@ -254,7 +250,7 @@ export class TypeService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/type/${typeId}/attachment/${attachmentKey}/${target}`, attachmentValue, this.configuration)
+    return await Fetch.put(`/type/${typeId}/attachment/${attachmentKey}/${target}`, attachmentValue, LAMP.Auth._auth)
   }
 
   /**
@@ -284,14 +280,14 @@ export class TypeService {
     let queryParameters = new URLSearchParams()
     if (invokeOnce !== undefined && invokeOnce !== null) queryParameters.set("invoke_once", <any>invokeOnce)
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
     return await Fetch.put(
       `/type/${typeId}/attachment/dynamic/${attachmentKey}/${target}?${queryParameters.toString()}`,
       attachmentValue,
-      this.configuration
+      LAMP.Auth._auth
     )
   }
 }
