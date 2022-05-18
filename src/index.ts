@@ -27,8 +27,8 @@ export * from "./model/index"
  *
  */
 interface IAuth {
-  id?: null
-  password?: null
+  id?: string
+  password?: string
   accessToken?: string
   refreshToken?: string
   serverAddress?: string
@@ -110,12 +110,14 @@ export default class LAMP {
   ) {
     // Propogate the authorization.
     LAMP.Auth._auth = {
+      id: identity.accessKey,
+      password: identity.secretKey,
       serverAddress: identity.serverAddress,
     }
   }
 
   public static Auth = class {
-    public static _auth: IAuth = { id: null, password: null, serverAddress: "api.lamp.digital", accessToken: null }
+    public static _auth: IAuth = { id: null, password: null, serverAddress: "api.lamp.digital", accessToken: null, refreshToken: null }
     public static _me: Researcher[] | Researcher | Participant | null | undefined
     public static _type: "admin" | "researcher" | "participant" | null = null
 
@@ -133,6 +135,8 @@ export default class LAMP {
 
       // Propogate the authorization.
       LAMP.Auth._auth = {
+        id: identity.id,
+        password: identity.password,
         accessToken: identity.accessToken,
         refreshToken: identity.refreshToken,
         serverAddress: serverAddress,
@@ -140,17 +144,23 @@ export default class LAMP {
 
       try {
         // If we aren't clearing the credential, get the "self" identity.
-        if (!!identity.accessToken) {
-          let payload: any
-          try {
-            payload = decode(identity.accessToken)
-          } catch {
-            throw Error("Invalid access token")
-          }
+        if (!!identity.id && !!identity.password || !!identity.accessToken) {
+          let authorization: string
+          let id: string
+          if (!!identity.accessToken) {
+            authorization = `Bearer ${identity.accessToken}`
 
-          const authorization = !!identity.accessToken ?
-            `Bearer ${identity.accessToken}`
-            : `Basic ${identity.id}:${identity.password}`
+            let payload: any
+            try {
+              payload = decode(identity.accessToken)
+            } catch {
+              throw Error("Invalid access token")
+            }
+            id = payload.id
+          } else {
+            authorization = `Basic ${identity.id}:${identity.password}`
+            id = identity.id 
+          }
 
           // Get our 'me' context so we know what object type we are.
           let typeData
@@ -168,7 +178,7 @@ export default class LAMP {
               : null
           // Get our 'me' object now that we figured out our type.
           LAMP.Auth._me = await (LAMP.Auth._type === "admin"
-            ? { id: payload.id }
+            ? { id: id }
             : LAMP.Auth._type === "researcher"
             ? LAMP.Researcher.view("me")
             : LAMP.Participant.view("me"))
@@ -185,7 +195,7 @@ export default class LAMP {
         }
       } catch (err) {
         // We failed: clear and propogate the authorization.
-        LAMP.Auth._auth = { id: null, password: null, serverAddress: null }
+        LAMP.Auth._auth = { id: null, password: null, accessToken: null, refreshToken: null, serverAddress: null }
 
         // Delete the "self" identity and throw the error we received.
         LAMP.Auth._me = null
