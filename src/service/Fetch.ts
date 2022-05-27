@@ -23,8 +23,7 @@ async function _fetch<ResultType>(
       } as any),
       body: body !== undefined ? JSON.stringify(body) : undefined
     })
-  
-  if (response.status === 403 && tryRefreshToken) { // The access token has expired; try to redeem refresh token
+  if (response.status === 401 && tryRefreshToken) { // The access token has expired; try to redeem refresh token
     await refreshToken()
     return await _fetch(method, route, body, false)
   }
@@ -37,10 +36,9 @@ async function _fetch<ResultType>(
 const refreshToken = async () => {
   const newAuth = await Fetch.post(
     "/token",
-    { refresh_token: LAMP.Auth._auth.refreshToken }
+    { refresh_token: LAMP.Auth._auth.refreshToken, grant_type: "refresh_token" }
   ) as any
-
-  if (!!newAuth.error) {
+  if (newAuth.error) {
     return
   }
 

@@ -6,6 +6,11 @@ export interface OAuthParams {
   codeChallenge?: string
 }
 
+export interface StartFlowResponse {
+  loginURL?: URL
+  logoutURL?: URL
+}
+
 export interface AuthResponse {
   success: boolean | undefined,
   access_token: string | undefined,
@@ -34,22 +39,13 @@ export class OAuthService {
     sessionStorage?.setItem("LAMP._oauth", JSON.stringify(value))
   }
 
-  public async start_flow(): Promise<URL>{
-    let url: URL
-
-    const urlString = (await Fetch.get<{url: string}>("/oauth/start")).url
-    if (!urlString) {
-      url = null
-    } else {
-      try {
-        url = new URL(urlString)
-      } catch (error) {
-        throw Error(`Invalid start URL ${urlString}`)
-      }
+  public async start_flow(): Promise<StartFlowResponse>{
+    const urls = await Fetch.get<{ loginURL?: string, logoutURL?: string }>("/oauth/start")
+    this.is_enabled = !!urls.loginURL
+    return {
+      loginURL: urlFromString(urls.loginURL),
+      logoutURL: urlFromString(urls.logoutURL),
     }
-
-    this.is_enabled = !!url
-    return url
   }
 
   public async request_authorization(code: string): Promise<AuthResponse> {
@@ -60,5 +56,15 @@ export class OAuthService {
         code_verifier: this.params.codeVerifier
       },
     )
+  }
+}
+
+const urlFromString = (urlString?: string): URL | null => {
+  if (!urlString) return null
+
+  try {
+    return new URL(urlString)
+  } catch {
+    throw Error(`Invalid start URL ${urlString}`)
   }
 }
