@@ -76,7 +76,7 @@ const refreshToken = async (expiredToken: string) =>
         refreshToken: null,
       }
 
-      // Log out
+      LAMP.dispatchEvent("TOKEN_REFRESH_FAILED")
       return
     }
 
