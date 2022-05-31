@@ -27,7 +27,6 @@ const _fetch = async <ResultType>(
   if (!LAMP.Auth._auth)
     throw new Error("Cannot make HTTP request due to invalid configuration.")
 
-  const protocol = LAMP.Auth._auth.serverAddress.includes("api") ? "https" : "http" // TODO: Remove after we move to https only
   const { id, password, accessToken } = LAMP.Auth._auth
   const authorization = accessToken
     ? `Bearer ${accessToken}`
@@ -36,7 +35,7 @@ const _fetch = async <ResultType>(
     : undefined
 
   const response = await fetch(
-    `${protocol}://${LAMP.Auth._auth.serverAddress}${route}`,
+    `https://${LAMP.Auth._auth.serverAddress}${route}`,
     {
       method: method,
       headers: new Headers({
