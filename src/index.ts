@@ -127,7 +127,7 @@ export default class LAMP {
      */
     public static async set_identity(identity: IdentityObj = {}) {
       let serverAddress
-      if (!!identity.serverAddress) {
+      if (identity.serverAddress) {
         serverAddress = identity.serverAddress.replace("http://", "").replace("https://", "")
       } else {
         serverAddress = LAMP.Auth._auth.serverAddress

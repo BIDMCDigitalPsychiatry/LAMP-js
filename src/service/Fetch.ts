@@ -45,7 +45,7 @@ const _fetch = async <ResultType>(
       } as any),
       body: !!body ? JSON.stringify(body) : undefined
     }
-  )
+  ).catch(() => new Response())
 
   if (response.status === 401 && tryRefreshToken) { // The access token has expired; try to redeem refresh token
     await refreshToken(accessToken)
