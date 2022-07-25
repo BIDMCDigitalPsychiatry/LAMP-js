@@ -38,4 +38,5 @@ Thumbs.db
 yarn.lock
 
 # NOT FOR NPM PUBLISH: Ignore built ts files
-dist
+#dist
+# Need to push dist to use dependency directly from git
