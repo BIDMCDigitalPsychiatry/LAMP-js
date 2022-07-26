@@ -87,7 +87,7 @@ var _fetch = function (method, route, body, tryRefreshToken, waitForToken) {
                         }).catch(function () { return new Response(); })];
                 case 3:
                     response = _b.sent();
-                    if (!(response.status === 401 && tryRefreshToken)) return [3 /*break*/, 5];
+                    if (!(response.status === 401 && tryRefreshToken && accessToken)) return [3 /*break*/, 5];
                     return [4 /*yield*/, refreshToken(accessToken)];
                 case 4:
                     _b.sent();

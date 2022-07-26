@@ -47,7 +47,7 @@ const _fetch = async <ResultType>(
     }
   ).catch(() => new Response())
 
-  if (response.status === 401 && tryRefreshToken) { // The access token has expired; try to redeem refresh token
+  if (response.status === 401 && tryRefreshToken && accessToken) { // The access token has expired; try to redeem refresh token
     await refreshToken(accessToken)
     return _fetch(method, route, body, false)
   }
@@ -74,7 +74,6 @@ const refreshToken = async (expiredToken: string) =>
         accessToken: null,
         refreshToken: null,
       }
-
       LAMP.dispatchEvent("TOKEN_REFRESH_FAILED")
       return
     }
