@@ -57,16 +57,17 @@ var _fetch = function (method, route, body, tryRefreshToken, waitForToken) {
     if (tryRefreshToken === void 0) { tryRefreshToken = true; }
     if (waitForToken === void 0) { waitForToken = true; }
     return __awaiter(void 0, void 0, void 0, function () {
-        var release, _a, id, password, accessToken, authorization, response;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var release, _a, id, password, accessToken, authorization, response, isJson, data, _b;
+        var _c;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
                 case 0:
                     if (!waitForToken) return [3 /*break*/, 2];
                     return [4 /*yield*/, _tokenSemaphore.acquire()];
                 case 1:
-                    release = _b.sent();
+                    release = _d.sent();
                     release();
-                    _b.label = 2;
+                    _d.label = 2;
                 case 2:
                     if (!index_1.default.Auth._auth)
                         throw new Error("Cannot make HTTP request due to invalid configuration.");
@@ -86,13 +87,25 @@ var _fetch = function (method, route, body, tryRefreshToken, waitForToken) {
                             body: !!body ? JSON.stringify(body) : undefined
                         }).catch(function () { return new Response(); })];
                 case 3:
-                    response = _b.sent();
+                    response = _d.sent();
                     if (!(response.status === 401 && tryRefreshToken && accessToken)) return [3 /*break*/, 5];
                     return [4 /*yield*/, refreshToken(accessToken)];
                 case 4:
-                    _b.sent();
+                    _d.sent();
                     return [2 /*return*/, _fetch(method, route, body, false)];
-                case 5: return [2 /*return*/, response.json()];
+                case 5:
+                    isJson = (_c = response.headers.get("Content-Type")) === null || _c === void 0 ? void 0 : _c.includes("application/json");
+                    if (!isJson) return [3 /*break*/, 7];
+                    return [4 /*yield*/, response.json()];
+                case 6:
+                    _b = _d.sent();
+                    return [3 /*break*/, 8];
+                case 7:
+                    _b = undefined;
+                    _d.label = 8;
+                case 8:
+                    data = _b;
+                    return [2 /*return*/, data];
             }
         });
     });

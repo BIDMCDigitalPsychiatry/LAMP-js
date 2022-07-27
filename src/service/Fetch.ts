@@ -52,7 +52,9 @@ const _fetch = async <ResultType>(
     return _fetch(method, route, body, false)
   }
 
-  return response.json()
+  const isJson = response.headers.get("Content-Type")?.includes("application/json")
+  const data = isJson ? await response.json() : undefined
+  return data
 }
 
 const refreshToken = async (expiredToken: string) =>
