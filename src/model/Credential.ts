@@ -1,3 +1,4 @@
+import { PersonalAccessToken } from "./PersonalAccessToken"
 
 /**
  * Every object can have one or more credential(s) associated with it. i.e. my_researcher.credentials = ['person A', 'person B', 'api A', 'person C', 'api B']
@@ -23,4 +24,8 @@ export class Credential {
      * The user-visible description of the credential.
      */
     description?: string
+    /**
+     * The list of user-generated personal access token.
+     */
+    tokens?: PersonalAccessToken[]
 }

@@ -4,6 +4,7 @@ import { Credential } from "../model/Credential"
 import { Demo } from "./Demo"
 import LAMP from '../index'
 import jsonata from "jsonata"
+import { PersonalAccessToken } from "../model/PersonalAccessToken"
 
 export class CredentialService {
 
@@ -152,5 +153,65 @@ export class CredentialService {
       }
     }
     return await Fetch.put(`/type/${typeId}/credential/${accessKey}`, secretKey)
+  }
+  
+  /**
+   *
+   * @param accessKey
+   */
+  public async listTokens(accessKey: string): Promise<PersonalAccessToken[]> {
+    if (accessKey === null || accessKey === undefined)
+      throw new Error("Required parameter accessKey was null or undefined when calling credentialCreateToken.")
+   
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+      // DEMO
+      const tenDays = 1000 * 3600 * 24 * 10;
+      return [{token: "qwertyuiop", expiry: Date.now() + tenDays, created: Date.now() - tenDays, description: "My Token"}];
+    }
+    return (await Fetch.get<{ data: any[] }>(`/credential/${accessKey}/token`)).data.map(x =>
+      Object.assign(new PersonalAccessToken(), x)
+    )
+  }
+
+  /**
+   *
+   * @param accessKey
+   * @param expiry
+   * @param description
+   */
+  public async createToken(
+    accessKey: string,
+    expiry: number,
+    description: string
+  ): Promise<string | null> {
+    if (accessKey === null || accessKey === undefined)
+      throw new Error("Required parameter accessKey was null or undefined when calling credentialCreateToken.")
+
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+      // DEMO
+      return Promise.resolve({} as any)
+    }
+    return (await Fetch.post<{ data: string | null }>(
+      `/credential/${accessKey}/token`,
+      {expiry, description},
+    )).data
+  }
+
+  /**
+   *
+   * @param accessKey
+   * @param token
+   */
+  public async deleteToken(accessKey: string, token: string): Promise<{success: boolean}> {
+    if (accessKey === null || accessKey === undefined)
+      throw new Error("Required parameter accessKey was null or undefined when calling credentialDeleteToken.")
+    if (token === null || token === undefined)
+      throw new Error("Required parameter token was null or undefined when calling credentialDeleteToken.")
+
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+      // DEMO
+      return Promise.resolve({} as any)
+    }
+    return await Fetch.delete(`/credential/${accessKey}/token/${token}`)
   }
 }
