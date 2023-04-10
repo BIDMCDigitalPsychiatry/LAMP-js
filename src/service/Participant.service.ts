@@ -1,27 +1,26 @@
-import { Fetch, Configuration } from "./Fetch"
+import { Fetch } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { Participant } from "../model/Participant"
 import { Demo } from "./Demo"
+import LAMP from '../index'
 import jsonata from "jsonata"
 
 export class ParticipantService {
-  public configuration?: Configuration
 
   /**
    * Get the set of all participants.
    */
   public async all(transform?: string): Promise<Participant[]> {
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
 
       let output = Demo.Participant.map(x => Object.assign(new Participant(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant`)).data.map(x =>
       Object.assign(new Participant(), x)
     )
   }
@@ -34,10 +33,9 @@ export class ParticipantService {
     if (researcherId === null || researcherId === undefined)
       throw new Error("Required parameter researcherId was null or undefined when calling participantAllByResearcher.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
@@ -54,7 +52,7 @@ export class ParticipantService {
       }
     }
     return (
-      await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/participant`, this.configuration)
+      await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/participant`)
     ).data.map(x => Object.assign(new Participant(), x))
   }
 
@@ -66,10 +64,9 @@ export class ParticipantService {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling participantAllByStudy.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -83,7 +80,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/participant`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/participant`)).data.map(x =>
       Object.assign(new Participant(), x)
     )
   }
@@ -99,10 +96,9 @@ export class ParticipantService {
     if (participant === null || participant === undefined)
       throw new Error("Required parameter participant was null or undefined when calling participantCreate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -126,7 +122,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/study/${studyId}/participant`, participant, this.configuration)
+    return await Fetch.post(`/study/${studyId}/participant`, participant)
   }
 
   /**
@@ -137,10 +133,9 @@ export class ParticipantService {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling participantDelete.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -156,7 +151,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/participant/${participantId}`, this.configuration)
+    return await Fetch.delete(`/participant/${participantId}`)
   }
 
   /**
@@ -170,10 +165,9 @@ export class ParticipantService {
     if (participant === null || participant === undefined)
       throw new Error("Required parameter participant was null or undefined when calling participantUpdate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -183,7 +177,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/participant/${participantId}`, participant, this.configuration)
+    return await Fetch.put(`/participant/${participantId}`, participant)
   }
 
   /**
@@ -194,10 +188,9 @@ export class ParticipantService {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling participantView.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -210,7 +203,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}`)).data.map(x =>
       Object.assign(new Participant(), x)
     )[0]
   }

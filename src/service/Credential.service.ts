@@ -1,11 +1,12 @@
-import { Fetch, Configuration } from "./Fetch"
+import { Fetch } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { Credential } from "../model/Credential"
 import { Demo } from "./Demo"
+import LAMP from '../index'
 import jsonata from "jsonata"
+import { PersonalAccessToken } from "../model/PersonalAccessToken"
 
 export class CredentialService {
-  public configuration?: Configuration
 
   /**
    *
@@ -23,10 +24,9 @@ export class CredentialService {
     if (secretKey === null || secretKey === undefined)
       throw new Error("Required parameter secretKey was null or undefined when calling credentialCreate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
@@ -53,7 +53,6 @@ export class CredentialService {
     return await Fetch.post(
       `/type/${typeId}/credential`,
       { origin: typeId, access_key: accessKey, secret_key: secretKey, description: description },
-      this.configuration
     )
   }
 
@@ -66,10 +65,9 @@ export class CredentialService {
     if (accessKey === null || accessKey === undefined)
       throw new Error("Required parameter accessKey was null or undefined when calling credentialDelete.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
@@ -81,7 +79,7 @@ export class CredentialService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.delete(`/type/${typeId}/credential/${accessKey}`, this.configuration)
+    return await Fetch.delete(`/type/${typeId}/credential/${accessKey}`)
   }
 
   /**
@@ -90,10 +88,9 @@ export class CredentialService {
    */
   public async list(typeId: Identifier, transform?: string): Promise<Credential[]> {
    
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
@@ -112,7 +109,7 @@ export class CredentialService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/type/${typeId}/credential`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/type/${typeId}/credential`)).data.map(x =>
       Object.assign(new Credential(), x)
     )
   }
@@ -134,10 +131,9 @@ export class CredentialService {
     if (secretKey === null || secretKey === undefined)
       throw new Error("Required parameter secretKey was null or undefined when calling credentialUpdate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
@@ -156,6 +152,66 @@ export class CredentialService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.put(`/type/${typeId}/credential/${accessKey}`, secretKey, this.configuration)
+    return await Fetch.put(`/type/${typeId}/credential/${accessKey}`, secretKey)
+  }
+  
+  /**
+   *
+   * @param accessKey
+   */
+  public async listTokens(accessKey: string): Promise<PersonalAccessToken[]> {
+    if (accessKey === null || accessKey === undefined)
+      throw new Error("Required parameter accessKey was null or undefined when calling credentialCreateToken.")
+   
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+      // DEMO
+      const tenDays = 1000 * 3600 * 24 * 10;
+      return [{token: "qwertyuiop", expiry: Date.now() + tenDays, created: Date.now() - tenDays, description: "My Token"}];
+    }
+    return (await Fetch.get<{ data: any[] }>(`/credential/${accessKey}/token`)).data.map(x =>
+      Object.assign(new PersonalAccessToken(), x)
+    )
+  }
+
+  /**
+   *
+   * @param accessKey
+   * @param expiry
+   * @param description
+   */
+  public async createToken(
+    accessKey: string,
+    expiry: number,
+    description: string
+  ): Promise<string | null> {
+    if (accessKey === null || accessKey === undefined)
+      throw new Error("Required parameter accessKey was null or undefined when calling credentialCreateToken.")
+
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+      // DEMO
+      return Promise.resolve({} as any)
+    }
+    return (await Fetch.post<{ data: string | null }>(
+      `/credential/${accessKey}/token`,
+      {expiry, description},
+    )).data
+  }
+
+  /**
+   *
+   * @param accessKey
+   * @param token
+   */
+  public async deleteToken(accessKey: string, token: string): Promise<{success: boolean}> {
+    if (accessKey === null || accessKey === undefined)
+      throw new Error("Required parameter accessKey was null or undefined when calling credentialDeleteToken.")
+    if (token === null || token === undefined)
+      throw new Error("Required parameter token was null or undefined when calling credentialDeleteToken.")
+
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+      // DEMO
+      return Promise.resolve({} as any)
+    }
+    return await Fetch.delete(`/credential/${accessKey}/token/${token}`)
   }
 }

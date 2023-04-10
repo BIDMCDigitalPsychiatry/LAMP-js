@@ -1,11 +1,11 @@
-import { Fetch, Configuration } from "./Fetch"
+import { Fetch } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { SensorEvent } from "../model/SensorEvent"
 import { Demo } from "./Demo"
+import LAMP from '../index'
 import jsonata from "jsonata"
 
 export class SensorEventService {
-  public configuration?: Configuration
 
   /**
    * Get the set of all sensor events produced by the given participant.
@@ -33,10 +33,9 @@ export class SensorEventService {
     if (to !== undefined && to !== null) queryParameters.set("to", <any>to)
     if (limit !== undefined && limit !== null) queryParameters.set("limit", <any>limit)
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -53,7 +52,6 @@ export class SensorEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/participant/${participantId}/sensor_event?${queryParameters.toString()}`,
-        this.configuration
       )
     )?.data?.map(x => Object.assign(new SensorEvent(), x))
   }
@@ -82,10 +80,9 @@ export class SensorEventService {
     if (to !== undefined && to !== null) queryParameters.set("to", <any>to)
     if (limit !== undefined && limit !== null) queryParameters.set("limit", <any>limit)
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
@@ -110,7 +107,6 @@ export class SensorEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/researcher/${researcherId}/sensor_event?${queryParameters.toString()}`,
-        this.configuration
       )
     )?.data?.map(x => Object.assign(new SensorEvent(), x))
   }
@@ -139,10 +135,9 @@ export class SensorEventService {
     if (to !== undefined && to !== null) queryParameters.set("to", <any>to)
     if (limit !== undefined && limit !== null) queryParameters.set("limit", <any>limit)
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -165,7 +160,6 @@ export class SensorEventService {
     return (
       await Fetch.get<{ data: any[] }>(
         `/study/${studyId}/sensor_event?${queryParameters.toString()}`,
-        this.configuration
       )
     )?.data?.map(x => Object.assign(new SensorEvent(), x))
   }
@@ -181,10 +175,9 @@ export class SensorEventService {
     if (sensorEvent === null || sensorEvent === undefined)
       throw new Error("Required parameter sensorEvent was null or undefined when calling sensorEventCreate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -199,7 +192,7 @@ export class SensorEventService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.post(`/participant/${participantId}/sensor_event`, sensorEvent, this.configuration)
+    return await Fetch.post(`/participant/${participantId}/sensor_event`, sensorEvent)
   }
 
   /**
@@ -218,10 +211,9 @@ export class SensorEventService {
     if (from !== undefined && from !== null) queryParameters.set("from", <any>from)
     if (to !== undefined && to !== null) queryParameters.set("to", <any>to)
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (LAMP.Auth._auth.serverAddress === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === LAMP.Auth._auth.id && x["secret_key"] === LAMP.Auth._auth.password)
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -233,7 +225,6 @@ export class SensorEventService {
     }
     return await Fetch.delete(
       `/participant/${participantId}/sensor_event?${queryParameters.toString()}`,
-      this.configuration
     )
   }
 }
