@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OAuthService = void 0;
 var Fetch_1 = require("./Fetch");
 var OAuthService = /** @class */ (function () {
     function OAuthService() {

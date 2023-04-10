@@ -1,4 +1,14 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,18 +45,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.main = void 0;
 require("isomorphic-fetch");
 var index_1 = require("./service/index");
 var Demo_1 = require("./service/Demo");
 var Fetch_1 = require("./service/Fetch");
 var jsonwebtoken_1 = require("jsonwebtoken");
-__export(require("./service/index"));
-__export(require("./model/index"));
+__exportStar(require("./service/index"), exports);
+__exportStar(require("./model/index"), exports);
 //
 var _bus = (_a = global.document) === null || _a === void 0 ? void 0 : _a.createElement("_lamp_fake");
 /**
@@ -127,8 +135,8 @@ var LAMP = /** @class */ (function () {
              * If all values are null (especially `type`), the authorization is cleared.
              */
             class_1.set_identity = function (identity) {
-                if (identity === void 0) { identity = {}; }
                 var _a;
+                if (identity === void 0) { identity = {}; }
                 return __awaiter(this, void 0, void 0, function () {
                     var serverAddress, authorization, id, payload, typeData, e_1, _b, err_1;
                     return __generator(this, function (_c) {

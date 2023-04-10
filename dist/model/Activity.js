@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Activity = exports.DurationIntervalLegacy = exports.DurationInterval = void 0;
 /**
  *
  */

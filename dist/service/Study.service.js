@@ -39,6 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StudyService = void 0;
 var Fetch_1 = require("./Fetch");
 var Study_1 = require("../model/Study");
 var Demo_1 = require("./Demo");

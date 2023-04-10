@@ -50,11 +50,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CredentialService = void 0;
 var Fetch_1 = require("./Fetch");
 var Credential_1 = require("../model/Credential");
 var Demo_1 = require("./Demo");
 var index_1 = __importDefault(require("../index"));
 var jsonata_1 = __importDefault(require("jsonata"));
+var PersonalAccessToken_1 = require("../model/PersonalAccessToken");
 var CredentialService = /** @class */ (function () {
     function CredentialService() {
     }
@@ -219,6 +221,77 @@ var CredentialService = /** @class */ (function () {
                             }
                         }
                         return [4 /*yield*/, Fetch_1.Fetch.put("/type/" + typeId + "/credential/" + accessKey, secretKey)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    /**
+     *
+     * @param accessKey
+     */
+    CredentialService.prototype.listTokens = function (accessKey) {
+        return __awaiter(this, void 0, void 0, function () {
+            var tenDays;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (accessKey === null || accessKey === undefined)
+                            throw new Error("Required parameter accessKey was null or undefined when calling credentialCreateToken.");
+                        if (index_1.default.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+                            tenDays = 1000 * 3600 * 24 * 10;
+                            return [2 /*return*/, [{ token: "qwertyuiop", expiry: Date.now() + tenDays, created: Date.now() - tenDays, description: "My Token" }]];
+                        }
+                        return [4 /*yield*/, Fetch_1.Fetch.get("/credential/" + accessKey + "/token")];
+                    case 1: return [2 /*return*/, (_a.sent()).data.map(function (x) {
+                            return Object.assign(new PersonalAccessToken_1.PersonalAccessToken(), x);
+                        })];
+                }
+            });
+        });
+    };
+    /**
+     *
+     * @param accessKey
+     * @param expiry
+     * @param description
+     */
+    CredentialService.prototype.createToken = function (accessKey, expiry, description) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (accessKey === null || accessKey === undefined)
+                            throw new Error("Required parameter accessKey was null or undefined when calling credentialCreateToken.");
+                        if (index_1.default.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+                            // DEMO
+                            return [2 /*return*/, Promise.resolve({})];
+                        }
+                        return [4 /*yield*/, Fetch_1.Fetch.post("/credential/" + accessKey + "/token", { expiry: expiry, description: description })];
+                    case 1: return [2 /*return*/, (_a.sent()).data];
+                }
+            });
+        });
+    };
+    /**
+     *
+     * @param accessKey
+     * @param token
+     */
+    CredentialService.prototype.deleteToken = function (accessKey, token) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (accessKey === null || accessKey === undefined)
+                            throw new Error("Required parameter accessKey was null or undefined when calling credentialDeleteToken.");
+                        if (token === null || token === undefined)
+                            throw new Error("Required parameter token was null or undefined when calling credentialDeleteToken.");
+                        if (index_1.default.Auth._auth.serverAddress === "https://demo.lamp.digital") {
+                            // DEMO
+                            return [2 /*return*/, Promise.resolve({})];
+                        }
+                        return [4 /*yield*/, Fetch_1.Fetch.delete("/credential/" + accessKey + "/token/" + token)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });

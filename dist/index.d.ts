@@ -51,8 +51,8 @@ export default class LAMP {
     static Auth: {
         new (): {};
         _auth: IAuth;
-        _me: Participant | Researcher | Researcher[];
-        _type: "admin" | "researcher" | "participant";
+        _me: Researcher[] | Researcher | Participant | null | undefined;
+        _type: "admin" | "researcher" | "participant" | null;
         /**
          * Authenticate/authorize as a user of a given `type`.
          * If all values are null (especially `type`), the authorization is cleared.

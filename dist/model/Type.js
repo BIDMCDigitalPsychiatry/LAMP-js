@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Document = exports.Metadata = exports.AccessCitation = void 0;
 /**
  *
  */

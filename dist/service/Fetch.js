@@ -50,6 +50,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Fetch = void 0;
 var index_1 = __importDefault(require("../index"));
 var await_semaphore_1 = require("await-semaphore");
 var _tokenSemaphore = new await_semaphore_1.Semaphore(1);

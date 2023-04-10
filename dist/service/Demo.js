@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Demo = void 0;
 //
 // [NOTE]: Demo mode carries various restrictions and does not:
 //       (1) verify R/W permissions.
