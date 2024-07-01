@@ -7,7 +7,7 @@
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BIDMCDigitalPsychiatry/LAMP-js.git"
+    "url": "git+https://github.com/BIDMCDigitalPsychiatry/LAMP-js.git"
   },
   "bugs": {
     "url": "https://github.com/BIDMCDigitalPsychiatry/LAMP-js/issues"
@@ -20,6 +20,8 @@
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
     "jsonata": "^1.8.4",
+    "jsonwebtoken": "^9.0.2",
+    "lamp-core": "^2022.3.8",
     "url-search-params-polyfill": "^7.0.0"
   },
   "devDependencies": {
@@ -36,5 +38,8 @@
   "prettier": {
     "semi": false,
     "printWidth": 120
+  },
+  "directories": {
+    "doc": "docs"
   }
 }
