@@ -1,4 +1,5 @@
-import { Fetch, Configuration } from "./Fetch"
+import jwt from 'jsonwebtoken'
+import { Fetch, Configuration, verifyToken } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { Credential } from "../model/Credential"
 import { Demo } from "./Demo"
@@ -25,10 +26,24 @@ export class CredentialService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // let auth = (this.configuration.authorization || ":").split(":")
+      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
+
+      const token = this.configuration.token;
+      if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any);
+
+      let decoded;
+      try {
+        decoded = verifyToken(token, this.configuration.jwt_secret);
+      } catch (error) {
+        return Promise.resolve({ error: "403.invalid-token" } as any);
+      }
+      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      // if (!credential) return Promise.resolve({ error: "403.invalid-credentials" } as any);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
+      
 
       let exists =
         Demo.Researcher.filter(x => x["id"] === typeId).length > 0 ||
@@ -68,9 +83,22 @@ export class CredentialService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // let auth = (this.configuration.authorization || ":").split(":")
+      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
+
+      const token = this.configuration.token;
+      if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any);
+
+      let decoded;
+      try {
+        decoded = verifyToken(token, this.configuration.jwt_secret);
+      } catch (error) {
+        return Promise.resolve({ error: "403.invalid-token" } as any);
+      }
+      const credential = Demo.Credential.find(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      // if (!credential) return Promise.resolve({ error: "403.invalid-credentials" } as any);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let idx = Demo.Credential.findIndex(x => x["#parent"] === typeId && x["access_key"] === accessKey)
@@ -92,9 +120,22 @@ export class CredentialService {
    
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // let auth = (this.configuration.authorization || ":").split(":")
+      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
+
+      const token = this.configuration.token;
+      if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any);
+
+      let decoded;
+      try {
+        decoded = verifyToken(token, this.configuration.jwt_secret);
+      } catch (error) {
+        return Promise.resolve({ error: "403.invalid-token" } as any);
+      }
+      const credential = Demo.Credential.find(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      // if (!credential) return Promise.resolve({ error: "403.invalid-credentials" } as any);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let exists =
@@ -136,9 +177,22 @@ export class CredentialService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // let auth = (this.configuration.authorization || ":").split(":")
+      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
+
+      const token = this.configuration.token;
+      if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any);
+
+      let decoded;
+      try {
+        decoded = verifyToken(token, this.configuration.jwt_secret);
+      } catch (error) {
+        return Promise.resolve({ error: "403.invalid-token" } as any);
+      }
+      const credential = Demo.Credential.find(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      // if (!credential) return Promise.resolve({ error: "403.invalid-credentials" } as any);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let idx = Demo.Credential.findIndex(x => x["#parent"] === typeId && x["access_key"] === accessKey)
@@ -158,4 +212,36 @@ export class CredentialService {
     }
     return await Fetch.put(`/type/${typeId}/credential/${accessKey}`, secretKey, this.configuration)
   }
+
+  /**
+   *
+   * @param accessKey
+   * @param secretKey
+  */
+
+  public async login(accessKey: string, secretKey: string): Promise<any> {
+    if (accessKey === null || accessKey === undefined)
+      throw new Error("Required parameter accessKey was null or undefined when calling login.");
+    if (secretKey === null || secretKey === undefined)
+      throw new Error("Required parameter secretKey was null or undefined when calling login.");
+  
+    if (this.configuration.base === "https://demo.lamp.digital") {
+     
+      let credential = Demo.Credential.filter(x => x["access_key"] === accessKey && x["secret_key"] === secretKey);
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" });
+      
+
+      let exists =
+        Demo.Researcher.filter(x => x["id"] === accessKey).length > 0 ||
+        Demo.Participant.filter(x => x["id"] === accessKey).length > 0;
+  
+      if (!exists) return Promise.resolve({ error: "403.invalid-credentials" });
+      if(exists) {
+        this.configuration.token = jwt.sign({ accessKey, secretKey }, this.configuration.jwt_secret, { expiresIn: '1h' })
+        return Promise.resolve({ success: "Login successful", token: this.configuration.token });
+      }
+    } 
+    return await Fetch.post(`/credential/login`,{ accessKey, secretKey }, this.configuration)
+  }
+  
 }
