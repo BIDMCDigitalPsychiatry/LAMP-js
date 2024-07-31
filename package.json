@@ -21,7 +21,6 @@
     "isomorphic-fetch": "^3.0.0",
     "jsonata": "^1.8.4",
     "jsonwebtoken": "^9.0.2",
-    "lamp-core": "^2022.3.8",
     "url-search-params-polyfill": "^7.0.0"
   },
   "devDependencies": {
