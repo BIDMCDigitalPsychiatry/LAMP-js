@@ -9,8 +9,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
-      - run: npm ci
+          node-version: 16.x
+      - run: |
+          npm install
       - run: npm test
   publish-npm:
     needs: build
@@ -19,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
           registry-url: https://registry.npmjs.org/
       - name: Autoincrement version
         run: |
@@ -27,7 +28,7 @@ jobs:
           VERSION=$(echo $GITHUB_REF | sed 's#.*/##')
           npm version --no-git-tag-version $VERSION
         shell: bash
-      - run: npm ci
+      - run: npm install
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
