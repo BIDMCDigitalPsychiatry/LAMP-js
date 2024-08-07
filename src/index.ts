@@ -1,4 +1,3 @@
-import 'isomorphic-fetch'
 import { Researcher, Participant } from "./model/index"
 import {
   APIService,
