@@ -18,7 +18,7 @@
     "lamp": "cli.js"
   },
   "dependencies": {
-    "isomorphic-fetch": "^3.0.0",
+    "isomorphic-fetch": "^1.7.0",
     "jsonata": "^1.8.4",
     "jsonwebtoken": "^9.0.2",
     "url-search-params-polyfill": "^7.0.0"
