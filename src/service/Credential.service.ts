@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import { SignJWT } from "jose";
 import { Fetch, Configuration, verifyToken } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { Credential } from "../model/Credential"
@@ -237,7 +237,13 @@ export class CredentialService {
   
       if (!exists) return Promise.resolve({ error: "403.invalid-credentials" });
       if(exists) {
-        this.configuration.token = jwt.sign({ accessKey, secretKey }, this.configuration.jwt_secret, { expiresIn: '1h' })
+        // this.configuration.token = jwt.sign({ accessKey, secretKey }, this.configuration.jwt_secret, { expiresIn: '1h' })
+        const secret_key = new TextEncoder().encode(this.configuration.jwt_secret);
+        this.configuration.token = await new SignJWT({ accessKey, secretKey })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime('2h')
+        .sign(secret_key);
         return Promise.resolve({ success: "Login successful", token: this.configuration.token });
       }
     } 
