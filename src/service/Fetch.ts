@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import { jwtVerify } from 'jose';
 /**
  *
  */
@@ -71,7 +71,8 @@ export class Fetch {
 
 export async function verifyToken(token: string, secretKey: string) {
   try {
-    const decoded = jwt.verify(token, secretKey);
+    const secret_Key = new TextEncoder().encode(this.configuration.jwt_secret);
+    const decoded = jwtVerify(token, secret_Key);
     return decoded;
   } catch (error) {
     throw new Error('Invalid token');

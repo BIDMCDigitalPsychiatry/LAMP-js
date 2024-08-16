@@ -18,15 +18,14 @@
     "lamp": "cli.js"
   },
   "dependencies": {
-    "isomorphic-fetch": "^3.0.0",
+    "jose": "^5.6.3",
     "jsonata": "^1.8.4",
-    "jsonwebtoken": "^9.0.2",
     "url-search-params-polyfill": "^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^13.11.1",
     "source-map-support": "^0.5.16",
-    "typescript": "^4.0.0"
+    "typescript": "^3.7.0"
   },
   "scripts": {
     "start": "tsc-watch --onSuccess \"node -r source-map-support/register ./dist/index.js\"",
