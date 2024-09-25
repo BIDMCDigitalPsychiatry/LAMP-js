@@ -11,7 +11,7 @@ export type Configuration = {
   /**
    *
    */
-  // authorization?: string
+  authorization?: string
 
   /**
    *
@@ -39,14 +39,15 @@ async function _fetch<ResultType>(
         "Content-Type": "application/json",
         Accept: "application/json",
         ...(configuration!.headers || {}),
-        // Authorization: !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined,
-        Authorization: !!configuration!.token ? `Bearer ${configuration.token}`: undefined
+        Authorization: !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined,
+        // Authorization: !!configuration!.token ? `Bearer ${configuration.token}`: undefined
+        // Authorization: configuration.token ? `Bearer ${configuration.token}` : configuration.authorization ? `Basic ${configuration.authorization}` : undefined,
       } as any),
       body: body !== undefined ? JSON.stringify(body) : undefined
     })
   ).json()
 
-  //if (result['error'] !== undefined)
+  // if (result['error'] !== undefined)
   //    throw new Error(result['error'])
   return result as any
 }
@@ -69,12 +70,12 @@ export class Fetch {
   }
 }
 
-export async function verifyToken(token: string, secretKey: string) {
-  try {
-    const secret_Key = new TextEncoder().encode(this.configuration.jwt_secret);
-    const decoded = jwtVerify(token, secret_Key);
-    return decoded;
-  } catch (error) {
-    throw new Error('Invalid token');
-  }
-}
+// export async function verifyToken(token: string, secretKey: string) {
+//   try {
+//     const secret_Key = new TextEncoder().encode(this.configuration.jwt_secret);
+//     const decoded = jwtVerify(token, secret_Key);
+//     return decoded;
+//   } catch (error) {
+//     throw new Error('Invalid token');
+//   }
+// }

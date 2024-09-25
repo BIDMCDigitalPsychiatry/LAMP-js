@@ -1,4 +1,4 @@
-import { Fetch, Configuration, verifyToken } from "./Fetch"
+import { Fetch, Configuration } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { Study } from "../model/Study"
 import { Demo } from "./Demo"
@@ -19,11 +19,11 @@ export class StudyService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
 
       let output = Demo.Study.map(x => Object.assign(new Study(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -48,11 +48,11 @@ export class StudyService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
@@ -88,11 +88,11 @@ export class StudyService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
@@ -121,11 +121,11 @@ export class StudyService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -157,11 +157,11 @@ export class StudyService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -190,11 +190,11 @@ export class StudyService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
