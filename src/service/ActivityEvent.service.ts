@@ -1,4 +1,4 @@
-import { Fetch, Configuration, verifyToken } from "./Fetch"
+import { Fetch, Configuration } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { ActivityEvent } from "../model/ActivityEvent"
 import { Demo } from "./Demo"
@@ -41,11 +41,11 @@ export class ActivityEventService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -101,11 +101,11 @@ export class ActivityEventService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
@@ -167,11 +167,11 @@ export class ActivityEventService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
@@ -218,11 +218,11 @@ export class ActivityEventService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
@@ -264,11 +264,11 @@ export class ActivityEventService {
 
       const token = this.configuration.token;
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 

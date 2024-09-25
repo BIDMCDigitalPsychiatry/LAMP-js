@@ -1,5 +1,5 @@
 import { SignJWT } from "jose";
-import { Fetch, Configuration, verifyToken } from "./Fetch"
+import { Fetch, Configuration } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { Credential } from "../model/Credential"
 import { Demo } from "./Demo"
@@ -26,21 +26,21 @@ export class CredentialService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      // let auth = (this.configuration.authorization || ":").split(":")
-      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-      // if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       const token = this.configuration.token;
       if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any);
 
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
-      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      // try {
+      //   // decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
+      // const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       // if (!credential) return Promise.resolve({ error: "403.invalid-credentials" } as any);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
       
@@ -92,13 +92,13 @@ export class CredentialService {
       if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any);
 
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   // decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.find(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
-      // if (!credential) return Promise.resolve({ error: "403.invalid-credentials" } as any);
+    
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let idx = Demo.Credential.findIndex(x => x["#parent"] === typeId && x["access_key"] === accessKey)
@@ -129,11 +129,11 @@ export class CredentialService {
       if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any);
 
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   // decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.find(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       // if (!credential) return Promise.resolve({ error: "403.invalid-credentials" } as any);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
@@ -186,11 +186,11 @@ export class CredentialService {
       if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any);
 
       let decoded;
-      try {
-        decoded = verifyToken(token, this.configuration.jwt_secret);
-      } catch (error) {
-        return Promise.resolve({ error: "403.invalid-token" } as any);
-      }
+      // try {
+      //   // decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
       const credential = Demo.Credential.find(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       // if (!credential) return Promise.resolve({ error: "403.invalid-credentials" } as any);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
@@ -237,17 +237,30 @@ export class CredentialService {
   
       if (!exists) return Promise.resolve({ error: "403.invalid-credentials" });
       if(exists) {
+        try{
         // this.configuration.token = jwt.sign({ accessKey, secretKey }, this.configuration.jwt_secret, { expiresIn: '1h' })
-        const secret_key = new TextEncoder().encode(this.configuration.jwt_secret);
+        const secretKeyEncoded = new TextEncoder().encode(this.configuration.jwt_secret);
         this.configuration.token = await new SignJWT({ accessKey, secretKey })
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
         .setExpirationTime('2h')
-        .sign(secret_key);
+        .sign(secretKeyEncoded);
         return Promise.resolve({ success: "Login successful", token: this.configuration.token });
       }
+      catch (error) {
+        console.error("Error generating token:", error);
+        return Promise.resolve({ error: "500.server-error" });
+      }
+    }
     } 
-    return await Fetch.post(`/credential/login`,{ accessKey, secretKey }, this.configuration)
+    
+    return await Fetch.post('/login',{ accessKey, secretKey }, this.configuration)
   }
-  
+
+  public async loginTest(): Promise<any> {
+    try{
+      return {name:"test"}
+    }catch(err) { console.error(err)}
+    return await Fetch.post('/loginTest', this.configuration)
+  }
 }
