@@ -257,9 +257,12 @@ export class CredentialService {
 
     return await Fetch.post("/login", { accessKey, secretKey }, this.configuration)
   }
-
   public async renewToken(refreshToken: string): Promise<any> {
-    const configuration: Configuration = { accesToken: refreshToken, base: null }
-    return await Fetch.post("/renewToken", { refreshToken }, configuration)
+    const AUTH_SESSION = JSON.parse(sessionStorage?.getItem("LAMP._auth") ?? "null")
+    const baseAPIPath = AUTH_SESSION?.serverAddress
+    if(baseAPIPath){
+      const configuration: Configuration = { accesToken: refreshToken, base: `https://${baseAPIPath}` }
+      return await Fetch.post("/renewToken", { refreshToken }, configuration)
+    }
   }
 }
