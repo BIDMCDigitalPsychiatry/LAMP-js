@@ -26,8 +26,6 @@ export type Configuration = {
   jwt_secret?: string
 }
 
-
-
 const userTokenKey = "tokenInfo"
 
 //If refresh token expired, then logout from app
@@ -40,25 +38,23 @@ const handleSessionExpiry = async () => {
 }
 
 //If access Token expired then call api for renewing the tokens
-const handleRenewToken = async (refreshToken: string ) => {
-  try{
+const handleRenewToken = async (refreshToken: string) => {
+  try {
     const credService = new CredentialService()
     const res = await credService.renewToken(refreshToken)
-     const accessToken = res?.data?.access_token
-     
-      if (accessToken) {
-        localStorage.setItem(
-          userTokenKey,
-          JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
-        )
-      }
+    const accessToken = res?.data?.access_token
+
+    if (accessToken) {
+      localStorage.setItem(
+        userTokenKey,
+        JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
+      )
+    }
     return accessToken
-  }catch(error){
-console.log(error)
+  } catch (error) {
+    console.log(error)
   }
-
 }
-
 
 async function _fetch<ResultType>(
   method: string,
@@ -71,9 +67,11 @@ async function _fetch<ResultType>(
   let authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
   const userTokenFromLocalStore: any = JSON.parse(localStorage.getItem("tokenInfo"))
   if (userTokenFromLocalStore?.accessToken) {
-    authorization = `Bearer ${configuration.accesToken? configuration.accesToken:userTokenFromLocalStore?.accessToken}`
+    authorization = `Bearer ${
+      configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
+    }`
   }
-  
+
   if (authorization) {
     try {
       var result = await (
@@ -92,29 +90,29 @@ async function _fetch<ResultType>(
         })
       ).json()
       //Check token expiry
- 
+
       if (result?.error === "401.invalid-token") {
         if (!route?.includes("renewToken")) {
-           const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken)
-           configuration.accesToken = token
-           switch(method){
-            case 'post':
+          const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken)
+          configuration.accesToken = token
+          switch (method) {
+            case "post":
               await Fetch.post(route, body, configuration)
-            break;
-            case 'get':
+              break
+            case "get":
               await Fetch.get(route, configuration)
-            break;
-            case 'put':
+              break
+            case "put":
               await Fetch.put(route, body, configuration)
-            break;
-            case 'delete':
+              break
+            case "delete":
               await Fetch.delete(route, configuration)
-            break;
-            case 'patch':
+              break
+            case "patch":
               await Fetch.patch(route, body, configuration)
-            break;
-           }
-           return {data: [], error: '401.invalid-token' } as any
+              break
+          }
+          return { data: [], error: "401.invalid-token" } as any
         } else {
           handleSessionExpiry()
           return { data: [], error: "401.invalid-token" } as any
@@ -128,8 +126,6 @@ async function _fetch<ResultType>(
   } else {
     return [] as any
   }
-
-
 }
 
 export class Fetch {
