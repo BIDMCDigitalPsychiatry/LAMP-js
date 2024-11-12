@@ -1,13 +1,13 @@
 {
   "name": "lamp-core",
-  "version": "1.0.8",
+  "version": "2.0.1",
   "author": "BIDMC Division of Digital Psychiatry <team@digitalpsych.org>",
   "description": "The JavaScript and TypeScript API client for the LAMP Platform.",
   "homepage": "https://docs.lamp.digital/",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BIDMCDigitalPsychiatry/LAMP-js.git"
+    "url": "git+https://github.com/BIDMCDigitalPsychiatry/LAMP-js.git"
   },
   "bugs": {
     "url": "https://github.com/BIDMCDigitalPsychiatry/LAMP-js/issues"
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
+    "jose": "^5.8.0",
     "jsonata": "^1.8.4",
     "url-search-params-polyfill": "^7.0.0"
   },
@@ -36,5 +37,8 @@
   "prettier": {
     "semi": false,
     "printWidth": 120
+  },
+  "directories": {
+    "doc": "docs"
   }
 }

@@ -1,4 +1,4 @@
-import { Fetch, Configuration } from "./Fetch"
+import { Fetch, Configuration} from "./Fetch"
 import { Identifier } from "../model/Type"
 import { DynamicAttachment } from "../model/DynamicAttachment"
 import { Demo } from "./Demo"
@@ -18,10 +18,19 @@ export class TypeService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-      if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
+      // let auth = (this.configuration.authorization || ":").split(":")
+      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      const token = this.configuration.token;
+      let decoded;
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
+      // const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      // if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let exists = [].concat(
         Demo.Researcher.filter(x => x["id"] === typeId),
@@ -105,6 +114,15 @@ export class TypeService {
       let auth = (this.configuration.authorization || ":").split(":")
       let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      const token = this.configuration.token;
+      let decoded;
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
+      // const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let exists = [].concat(
@@ -147,6 +165,15 @@ export class TypeService {
       let auth = (this.configuration.authorization || ":").split(":")
       let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      const token = this.configuration.token;
+      let decoded;
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
+      // const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let possible = []
@@ -211,9 +238,18 @@ export class TypeService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      // let auth = (this.configuration.authorization || ":").split(":")
+      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      const token = this.configuration.token;
+      let decoded;
+      // try {
+      //   decoded = verifyToken(token, this.configuration.jwt_secret);
+      // } catch (error) {
+      //   return Promise.resolve({ error: "403.invalid-token" } as any);
+      // }
+      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let exists = [].concat(
