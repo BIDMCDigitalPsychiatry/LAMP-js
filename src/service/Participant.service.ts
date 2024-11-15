@@ -1,4 +1,4 @@
-import { Fetch, Configuration} from "./Fetch"
+import { Fetch, Configuration } from "./Fetch"
 import { Identifier } from "../model/Type"
 import { Participant } from "../model/Participant"
 import { Demo } from "./Demo"
@@ -13,17 +13,9 @@ export class ParticipantService {
   public async all(transform?: string): Promise<Participant[]> {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      // let auth = (this.configuration.authorization || ":").split(":")
-      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-
-      const token = this.configuration.token;
-      let decoded;
-      // try {
-      //   decoded = verifyToken(token, this.configuration.jwt_secret);
-      // } catch (error) {
-      //   return Promise.resolve({ error: "403.invalid-token" } as any);
-      // }
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
 
       let output = Demo.Participant.map(x => Object.assign(new Participant(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -44,18 +36,9 @@ export class ParticipantService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      // let auth = (this.configuration.authorization || ":").split(":")
-      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-
-      const token = this.configuration.token;
-      let decoded;
-      // try {
-      //   decoded = verifyToken(token, this.configuration.jwt_secret);
-      // } catch (error) {
-      //   return Promise.resolve({ error: "403.invalid-token" } as any);
-      // }
-      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
       if (Demo.Researcher.filter(x => x["id"] === researcherId).length > 0) {
@@ -85,18 +68,9 @@ export class ParticipantService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      // let auth = (this.configuration.authorization || ":").split(":")
-      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-
-      const token = this.configuration.token;
-      let decoded;
-      // try {
-      //   decoded = verifyToken(token, this.configuration.jwt_secret);
-      // } catch (error) {
-      //   return Promise.resolve({ error: "403.invalid-token" } as any);
-      // }
-      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
       if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
@@ -127,18 +101,9 @@ export class ParticipantService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      // let auth = (this.configuration.authorization || ":").split(":")
-      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-
-      const token = this.configuration.token;
-      let decoded;
-      // try {
-      //   decoded = verifyToken(token, this.configuration.jwt_secret);
-      // } catch (error) {
-      //   return Promise.resolve({ error: "403.invalid-token" } as any);
-      // }
-      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
       if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
@@ -174,18 +139,9 @@ export class ParticipantService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      // let auth = (this.configuration.authorization || ":").split(":")
-      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-
-      const token = this.configuration.token;
-      let decoded;
-      // try {
-      //   decoded = verifyToken(token, this.configuration.jwt_secret);
-      // } catch (error) {
-      //   return Promise.resolve({ error: "403.invalid-token" } as any);
-      // }
-      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
       let idx = Demo.Participant.findIndex(x => x["id"] === participantId)
@@ -216,18 +172,9 @@ export class ParticipantService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      // let auth = (this.configuration.authorization || ":").split(":")
-      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-
-      const token = this.configuration.token;
-      let decoded;
-      // try {
-      //   decoded = verifyToken(token, this.configuration.jwt_secret);
-      // } catch (error) {
-      //   return Promise.resolve({ error: "403.invalid-token" } as any);
-      // }
-      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
       if (Demo.Participant.filter(x => x["id"] === participantId).length > 0) {
@@ -249,18 +196,9 @@ export class ParticipantService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      // let auth = (this.configuration.authorization || ":").split(":")
-      // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-
-      const token = this.configuration.token;
-      let decoded;
-      // try {
-      //   decoded = verifyToken(token, this.configuration.jwt_secret);
-      // } catch (error) {
-      //   return Promise.resolve({ error: "403.invalid-token" } as any);
-      // }
-      const credential = Demo.Credential.filter(x => x["access_key"] === decoded.accessKey && x["secret_key"] === decoded.secretKey);
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
       let data = Demo.Participant.filter(x => x["id"] === participantId).map(x => Object.assign(new Participant(), x))
