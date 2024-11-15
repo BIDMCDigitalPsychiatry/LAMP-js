@@ -75,7 +75,7 @@ async function _fetch<ResultType>(
   if (authorization) {
     try {
       var result = await (
-        await fetch(`${configuration!.base}${route}`, {
+        await fetch(`${configuration.base}${route}`, {
           method: method,
           headers: new Headers({
             "Content-Type": "application/json",
