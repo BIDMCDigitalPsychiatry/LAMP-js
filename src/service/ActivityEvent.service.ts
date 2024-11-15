@@ -13,13 +13,16 @@ export class ActivityEventService {
    * @param origin
    * @param from
    * @param to
+   * @param limit
+   * @param ignoreBinary
    */
   public async allByParticipant(
     participantId: Identifier,
     origin?: string,
     from?: number,
-    to?: number,
+    to?: number,    
     limit?: number,
+    ignoreBinary?: boolean,
     transform?: string
   ): Promise<ActivityEvent[]> {
     if (participantId === null || participantId === undefined)
@@ -32,7 +35,7 @@ export class ActivityEventService {
     if (from !== undefined && from !== null) queryParameters.set("from", <any>from)
     if (to !== undefined && to !== null) queryParameters.set("to", <any>to)
     if (limit !== undefined && limit !== null) queryParameters.set("limit", <any>limit)
-
+    queryParameters.set("ignore_binary", <any>ignoreBinary ?? false)
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
