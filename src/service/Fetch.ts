@@ -73,6 +73,7 @@ async function _fetch<ResultType>(
   }
 
   if (authorization) {
+    console.log(`####configuration.base`, configuration.base)
     try {
       var result = await (
         await fetch(`${configuration.base}${route}`, {
