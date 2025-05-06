@@ -33,8 +33,8 @@ const handleSessionExpiry = async () => {
   localStorage.removeItem(userTokenKey)
   localStorage.setItem("verified", JSON.stringify({ value: false }))
   sessionStorage.setItem("LAMP._auth", JSON.stringify({ id: null, password: null, serverAddress: null }))
-  alert("Your session expired, Please login again.")
-  window.location.href = "/#/?expired=true"
+  // alert("Your session expired, Please login again.")
+  // window.location.href = "/#/?expired=true"
 }
 
 //If access Token expired then call api for renewing the tokens
