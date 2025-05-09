@@ -17,11 +17,11 @@ export class ActivityService {
       let auth = (this.configuration.authorization || ":").split(":")
       let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-      let output = Demo.Activity.map(x => Object.assign(new Activity(), x))
+      let output = Demo.Activity?.map(x => Object.assign(new Activity(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity`, this.configuration)).data?.map(x =>
       Object.assign(new Activity(), x)
     )
   }
@@ -44,9 +44,9 @@ export class ActivityService {
       if (Demo.Participant.filter(x => x["id"] === participantId).length > 0) {
         let output = Demo.Activity.filter(x =>
           Demo.Participant.filter(y => y["id"] === participantId)
-            .map(y => y["#parent"])
+            ?.map(y => y["#parent"])
             .includes(x["#parent"])
-        ).map(x => Object.assign(new Activity(), x))
+        )?.map(x => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       } else {
@@ -55,7 +55,7 @@ export class ActivityService {
     }
     return (
       await Fetch.get<{ data: any[] }>(`/participant/${participantId}/activity?ignore_binary=${ignore_binary}`, this.configuration)
-    ).data.map(x => Object.assign(new Activity(), x))
+    ).data?.map(x => Object.assign(new Activity(), x))
   }
 
   /**
@@ -80,16 +80,16 @@ export class ActivityService {
       if (Demo.Researcher.filter(x => x["id"] === researcherId).length > 0) {
         let output = Demo.Activity.filter(x =>
           Demo.Study.filter(y => y["#parent"] === researcherId)
-            .map(y => y["id"])
+            ?.map(y => y["id"])
             .includes(x["#parent"])
-        ).map(x => Object.assign(new Activity(), x))
+        )?.map(x => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/activity`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/activity`, this.configuration)).data?.map(x =>
       Object.assign(new Activity(), x)
     )
   }
@@ -110,14 +110,14 @@ export class ActivityService {
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
       if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
-        let output = Demo.Activity.filter(x => x["#parent"] === studyId).map(x => Object.assign(new Activity(), x))
+        let output = Demo.Activity.filter(x => x["#parent"] === studyId)?.map(x => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/activity?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/activity?ignore_binary=${ignore_binary}`, this.configuration)).data?.map(x =>
       Object.assign(new Activity(), x)
     )
   }
@@ -242,7 +242,7 @@ export class ActivityService {
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (activityId === "me") activityId = credential.length > 0 ? credential[0]["origin"] : activityId
 
-      let data = Demo.Activity.filter(x => x["id"] === activityId).map(x => Object.assign(new Activity(), x))
+      let data = Demo.Activity.filter(x => x["id"] === activityId)?.map(x => Object.assign(new Activity(), x))
       if (data.length > 0) {
         let output = data[0]
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -251,7 +251,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)).data?.map(x =>
       Object.assign(new Activity(), x)
     )[0]
   }
