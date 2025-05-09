@@ -17,11 +17,11 @@ export class ParticipantService {
       let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
 
-      let output = Demo.Participant.map(x => Object.assign(new Participant(), x))
+      let output = Demo.Participant?.map(x => Object.assign(new Participant(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant`, this.configuration)).data?.map(x =>
       Object.assign(new Participant(), x)
     )
   }
@@ -44,9 +44,9 @@ export class ParticipantService {
       if (Demo.Researcher.filter(x => x["id"] === researcherId).length > 0) {
         let output = Demo.Participant.filter(x =>
           Demo.Study.filter(y => y["#parent"] === researcherId)
-            .map(y => y["id"])
+            ?.map(y => y["id"])
             .includes(x["#parent"])
-        ).map(x => Object.assign(new Participant(), x))
+        )?.map(x => Object.assign(new Participant(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       } else {
@@ -55,7 +55,7 @@ export class ParticipantService {
     }
     return (
       await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/participant`, this.configuration)
-    ).data.map(x => Object.assign(new Participant(), x))
+    ).data?.map(x => Object.assign(new Participant(), x))
   }
 
   /**
@@ -74,7 +74,7 @@ export class ParticipantService {
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
       if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
-        let output = Demo.Participant.filter(x => x["#parent"] === studyId).map(x =>
+        let output = Demo.Participant.filter(x => x["#parent"] === studyId)?.map(x =>
           Object.assign(new Participant(), x)
         )
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -83,7 +83,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/participant`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/participant`, this.configuration)).data?.map(x =>
       Object.assign(new Participant(), x)
     )
   }
@@ -201,7 +201,7 @@ export class ParticipantService {
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
-      let data = Demo.Participant.filter(x => x["id"] === participantId).map(x => Object.assign(new Participant(), x))
+      let data = Demo.Participant.filter(x => x["id"] === participantId)?.map(x => Object.assign(new Participant(), x))
       if (data.length > 0) {
         let output = data[0]
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -210,7 +210,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}`, this.configuration)).data?.map(x =>
       Object.assign(new Participant(), x)
     )[0]
   }
