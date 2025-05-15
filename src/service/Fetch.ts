@@ -63,19 +63,24 @@ async function _fetch<ResultType>(
   body?: any
 ): Promise<ResultType> {
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
-    let authorization
- if(route.includes("/parent")||(route.includes("/lamp.dashboard.admin_permissions"))||(route.includes("/participant"))) {
-  authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
- }
+  let authorization
+  if (
+    route.includes("/parent") ||
+    route.includes("/lamp.dashboard.admin_permissions") ||
+    route.includes("/participant/me") ||
+    route.includes("/researcher/me")
+  ) {
+    authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
+  }
   const userTokenFromLocalStore: any = JSON.parse(localStorage.getItem("tokenInfo"))
+
   if (userTokenFromLocalStore?.accessToken) {
-     authorization = `Bearer ${
+    authorization = `Bearer ${
       configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
     }`
   }
 
   if (authorization || (!authorization && route.includes("/login"))) {
-    console.log(`####configuration.base`, configuration.base)
     try {
       var result = await (
         await fetch(`${configuration.base}${route}`, {
@@ -83,6 +88,7 @@ async function _fetch<ResultType>(
           headers: new Headers({
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*",
+            // "Cache-Control": "no-store",
             Accept: "application/json",
             ...(configuration!.headers || {}),
             Authorization: authorization,
