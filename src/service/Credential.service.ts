@@ -249,7 +249,6 @@ export class CredentialService {
             .sign(secretKeyEncoded)
           return Promise.resolve({ success: "Login successful", token: this.configuration.token })
         } catch (error) {
-          console.error("Error generating token:", error)
           return Promise.resolve({ error: "500.server-error" })
         }
       }
@@ -257,12 +256,12 @@ export class CredentialService {
 
     return await Fetch.post("/login", { accessKey, secretKey }, this.configuration)
   }
-  public async renewToken(refreshToken: string): Promise<any> {
-    const AUTH_SESSION = JSON.parse(sessionStorage?.getItem("LAMP._auth") ?? "null")
-    const baseAPIPath = AUTH_SESSION?.serverAddress
-    if(baseAPIPath){
-      const configuration: Configuration = { accesToken: refreshToken, base: `https://${baseAPIPath}` }
-      return await Fetch.post("/renewToken", { refreshToken }, configuration)
-    }
+
+  public async renewToken(refreshToken: string, base: string): Promise<any> {
+    const configuration: Configuration = { accesToken: refreshToken, base: base }
+    return await Fetch.post("/renewToken", { refreshToken }, configuration)
+  }
+  public async logout(): Promise<any> {
+    return await Fetch.post("/logout", this.configuration)
   }
 }

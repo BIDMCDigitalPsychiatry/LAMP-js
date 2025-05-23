@@ -38,10 +38,11 @@ const handleSessionExpiry = async () => {
 }
 
 //If access Token expired then call api for renewing the tokens
-const handleRenewToken = async (refreshToken: string) => {
+const handleRenewToken = async (refreshToken: string, base: string) => {
   try {
     const credService = new CredentialService()
-    const res = await credService.renewToken(refreshToken)
+    const res = await credService.renewToken(refreshToken, base)
+
     const accessToken = res?.data?.access_token
 
     if (accessToken) {
@@ -102,7 +103,7 @@ async function _fetch<ResultType>(
 
       if (result?.error === "401.invalid-token") {
         if (!route?.includes("renewToken")) {
-          const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken)
+          const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken, configuration.base)
           configuration.accesToken = token
           switch (method) {
             case "post":
