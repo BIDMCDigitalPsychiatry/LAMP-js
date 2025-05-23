@@ -38,10 +38,11 @@ const handleSessionExpiry = async () => {
 }
 
 //If access Token expired then call api for renewing the tokens
-const handleRenewToken = async (refreshToken: string) => {
+const handleRenewToken = async (refreshToken: string, base: string) => {
   try {
     const credService = new CredentialService()
-    const res = await credService.renewToken(refreshToken)
+    const res = await credService.renewToken(refreshToken, base)
+
     const accessToken = res?.data?.access_token
 
     if (accessToken) {
@@ -62,6 +63,9 @@ async function _fetch<ResultType>(
   configuration?: Configuration,
   body?: any
 ): Promise<ResultType> {
+  console.log("configuration inside fetch", configuration)
+  console.log("route inside fetch", route)
+  console.log("inside fetch")
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
   if (
@@ -81,6 +85,7 @@ async function _fetch<ResultType>(
   }
 
   if (authorization || (!authorization && route.includes("/login"))) {
+    console.log("configuration inside if", configuration)
     try {
       var result = await (
         await fetch(`${configuration.base}${route}`, {
@@ -102,7 +107,7 @@ async function _fetch<ResultType>(
 
       if (result?.error === "401.invalid-token") {
         if (!route?.includes("renewToken")) {
-          const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken)
+          const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken, configuration.base)
           configuration.accesToken = token
           switch (method) {
             case "post":
