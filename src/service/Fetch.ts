@@ -63,9 +63,6 @@ async function _fetch<ResultType>(
   configuration?: Configuration,
   body?: any
 ): Promise<ResultType> {
-  console.log("configuration inside fetch", configuration)
-  console.log("route inside fetch", route)
-  console.log("inside fetch")
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
   if (
@@ -85,7 +82,6 @@ async function _fetch<ResultType>(
   }
 
   if (authorization || (!authorization && route.includes("/login"))) {
-    console.log("configuration inside if", configuration)
     try {
       var result = await (
         await fetch(`${configuration.base}${route}`, {

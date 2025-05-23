@@ -249,7 +249,6 @@ export class CredentialService {
             .sign(secretKeyEncoded)
           return Promise.resolve({ success: "Login successful", token: this.configuration.token })
         } catch (error) {
-          console.error("Error generating token:", error)
           return Promise.resolve({ error: "500.server-error" })
         }
       }
@@ -259,8 +258,6 @@ export class CredentialService {
   }
 
   public async renewToken(refreshToken: string, base: string): Promise<any> {
-    console.log("reniewToken inside refreshToken", refreshToken)
-    console.log("this.configuration", this.configuration)
     const configuration: Configuration = { accesToken: refreshToken, base: base }
     return await Fetch.post("/renewToken", { refreshToken }, configuration)
   }
