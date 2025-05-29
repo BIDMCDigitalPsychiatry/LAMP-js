@@ -69,12 +69,12 @@ async function _fetch<ResultType>(
     route.includes("/parent") ||
     route.includes("/lamp.dashboard.admin_permissions") ||
     route.includes("/participant/me") ||
-    route.includes("/researcher/me")
+    route.includes("/researcher/me") ||
+    route.includes("/publicKey")
   ) {
     authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
   }
   const userTokenFromLocalStore: any = JSON.parse(localStorage.getItem("tokenInfo"))
-
   if (userTokenFromLocalStore?.accessToken) {
     authorization = `Bearer ${
       configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
