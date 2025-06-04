@@ -30,7 +30,7 @@ const userTokenKey = "tokenInfo"
 
 //If refresh token expired, then logout from app
 const handleSessionExpiry = async () => {
-  localStorage.removeItem(userTokenKey)
+  sessionStorage.removeItem(userTokenKey)
   localStorage.setItem("verified", JSON.stringify({ value: false }))
   sessionStorage.setItem("LAMP._auth", JSON.stringify({ id: null, password: null, serverAddress: null }))
   // alert("Your session expired, Please login again.")
@@ -46,7 +46,7 @@ const handleRenewToken = async (refreshToken: string, base: string) => {
     const accessToken = res?.data?.access_token
 
     if (accessToken) {
-      localStorage.setItem(
+      sessionStorage.setItem(
         userTokenKey,
         JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
       )
@@ -74,7 +74,7 @@ async function _fetch<ResultType>(
   ) {
     authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
   }
-  const userTokenFromLocalStore: any = JSON.parse(localStorage.getItem("tokenInfo"))
+  const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
   if (userTokenFromLocalStore?.accessToken) {
     authorization = `Bearer ${
       configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
