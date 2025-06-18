@@ -254,20 +254,20 @@ export class CredentialService {
         }
       }
     }
-
+    
     return await Fetch.post("/login", { accessKey, secretKey }, this.configuration)
   }
 
-  public async renewToken(refreshToken: string, base: string): Promise<any> {
-    const configuration: Configuration = { accesToken: refreshToken, base: base }
-    return await Fetch.post("/renewToken", { refreshToken }, configuration)
+  public async renewToken(base: string): Promise<any> {
+    const configuration: Configuration = { base: base }
+    return await Fetch.post("/renewToken", undefined, configuration)
   }
   public async logout(token: string): Promise<any> {
-    return await Fetch.post("/logout", {token}, this.configuration)
+    return await Fetch.post("/logout", { token }, this.configuration)
   }
 
   public async publicKey(): Promise<any> {
-    const res = (await Fetch.get<{ data: any[] }>(`/publicKey`, this.configuration))
+    const res = await Fetch.get<{ data: any[] }>(`/publicKey`, this.configuration)
     return res
   }
 }
