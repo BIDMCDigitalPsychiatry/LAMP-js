@@ -265,9 +265,4 @@ export class CredentialService {
   public async logout(token: string): Promise<any> {
     return await Fetch.post("/logout", { token }, this.configuration)
   }
-
-  public async publicKey(): Promise<any> {
-    const res = await Fetch.get<{ data: any[] }>(`/publicKey`, this.configuration)
-    return res
-  }
 }
