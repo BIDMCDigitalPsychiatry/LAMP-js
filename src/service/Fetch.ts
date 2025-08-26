@@ -30,7 +30,7 @@ const userTokenKey = "tokenInfo"
 
 //If refresh token expired, then logout from app
 const handleSessionExpiry = async () => {
-  sessionStorage.removeItem(userTokenKey)
+  localStorage.removeItem(userTokenKey)
   localStorage.setItem("verified", JSON.stringify({ value: false }))
   sessionStorage.setItem("LAMP._auth", JSON.stringify({ id: null, password: null, serverAddress: null }))
   // alert("Your session expired, Please login again.")
@@ -38,19 +38,23 @@ const handleSessionExpiry = async () => {
 }
 
 //If access Token expired then call api for renewing the tokens
-const handleRenewToken = async (refreshToken: string, base: string) => {
+const handleRenewToken = async (base: string) => {
   try {
     const credService = new CredentialService()
-    const res = await credService.renewToken(refreshToken, base)
+    const res = await credService.renewToken(base)
 
-    const accessToken = res?.data?.access_token
+    const accessToken = res?.access_token
 
     if (accessToken) {
-      sessionStorage.setItem(
+      localStorage.setItem(
         userTokenKey,
-        JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
+        JSON.stringify({
+          accessToken: res?.access_token,
+          refreshToken: res?.refresh_token,
+        })
       )
     }
+
     return accessToken
   } catch (error) {
     console.log(error)
@@ -65,6 +69,7 @@ async function _fetch<ResultType>(
 ): Promise<ResultType> {
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
+
   if (
     route.includes("/parent") ||
     route.includes("/lamp.dashboard.admin_permissions") ||
@@ -81,60 +86,60 @@ async function _fetch<ResultType>(
     }`
   }
 
-  if (authorization || (!authorization && route.includes("/login"))) {
-    try {
-      var result = await (
-        await fetch(`${configuration.base}${route}`, {
-          method: method,
-          headers: new Headers({
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            // "Cache-Control": "no-store",
-            Accept: "application/json",
-            ...(configuration!.headers || {}),
-            Authorization: authorization,
-            // Authorization: !!configuration!.token ? `Bearer ${configuration.token}`: undefined
-            // Authorization: configuration.token ? `Bearer ${configuration.token}` : configuration.authorization ? `Basic ${configuration.authorization}` : undefined,
-          } as any),
-          body: body !== undefined ? JSON.stringify(body) : undefined,
-        })
-      ).json()
-      //Check token expiry
+  authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
 
-      if (result?.error === "401.invalid-token") {
-        if (!route?.includes("renewToken")) {
-          const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken, configuration.base)
-          configuration.accesToken = token
-          switch (method) {
-            case "post":
-              await Fetch.post(route, body, configuration)
-              break
-            case "get":
-              await Fetch.get(route, configuration)
-              break
-            case "put":
-              await Fetch.put(route, body, configuration)
-              break
-            case "delete":
-              await Fetch.delete(route, configuration)
-              break
-            case "patch":
-              await Fetch.patch(route, body, configuration)
-              break
-          }
-          return { data: [], error: "401.invalid-token" } as any
-        } else {
-          handleSessionExpiry()
-          return { data: [], error: "401.invalid-token" } as any
+  try {
+    var result = await (
+      await fetch(`${configuration.base}${route}`, {
+        method: method,
+        headers: new Headers({
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          // "Cache-Control": "no-store",
+          Accept: "application/json",
+          ...(configuration!.headers || {}),
+          Authorization: authorization,
+          // Authorization: !!configuration!.token ? `Bearer ${configuration.token}`: undefined
+          // Authorization: configuration.token ? `Bearer ${configuration.token}` : configuration.authorization ? `Basic ${configuration.authorization}` : undefined,
+        } as any),
+        credentials: "include",
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+      })
+    ).json()
+    //Check token expiry
+
+    if (result?.error === "401.invalid-token" || result?.message === "401.invalid-token") {
+      if (!route?.includes("renewToken")) {
+        const token = await handleRenewToken(configuration.base)
+
+        configuration.authorization = token
+        switch (method) {
+          case "post":
+            await Fetch.post(route, body, configuration)
+            break
+          case "get":
+            await Fetch.get(route, configuration)
+            break
+          case "put":
+            await Fetch.put(route, body, configuration)
+            break
+          case "delete":
+            await Fetch.delete(route, configuration)
+            break
+          case "patch":
+            await Fetch.patch(route, body, configuration)
+            break
         }
+        return { data: [], error: "401.invalid-token" } as any
       } else {
-        return result as any
+        handleSessionExpiry()
+        return { data: [], error: "401.invalid-token" } as any
       }
-    } catch (error) {
-      console.log(error)
+    } else {
+      return result as any
     }
-  } else {
-    return [] as any
+  } catch (error) {
+    console.log(error)
   }
 }
 
