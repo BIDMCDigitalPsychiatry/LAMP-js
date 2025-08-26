@@ -70,6 +70,22 @@ async function _fetch<ResultType>(
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
 
+  if (
+    route.includes("/parent") ||
+    route.includes("/lamp.dashboard.admin_permissions") ||
+    route.includes("/participant/me") ||
+    route.includes("/researcher/me") ||
+    route.includes("/type/me/parent") 
+  ) {
+    authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
+  }
+  const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
+  if (userTokenFromLocalStore?.accessToken) {
+    authorization = `Bearer ${
+      configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
+    }`
+  }
+
   authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
 
   try {

@@ -8,6 +8,7 @@ import {
   CredentialService,
   ParticipantService,
   ResearcherService,
+  ResearcherSettingsService,
   SensorService,
   SensorEventService,
   SensorSpecService,
@@ -40,6 +41,7 @@ export default class LAMP {
   public static Type = new TypeService()
   public static Credential = new CredentialService()
   public static Researcher = new ResearcherService()
+  public static ResearcherSettings = new ResearcherSettingsService()
   public static Participant = new ParticipantService()
   public static Study = new StudyService()
   public static Activity = new ActivityService()
@@ -59,6 +61,7 @@ export default class LAMP {
     LAMP.Credential.configuration = configuration
     LAMP.Participant.configuration = configuration
     LAMP.Researcher.configuration = configuration
+    LAMP.ResearcherSettings.configuration = configuration
     LAMP.Sensor.configuration = configuration
     LAMP.SensorEvent.configuration = configuration
     LAMP.SensorSpec.configuration = configuration
@@ -85,6 +88,7 @@ export default class LAMP {
     Demo.ActivitySpec = db.ActivitySpec ?? []
     Demo.SensorSpec = db.SensorSpec ?? []
     Demo.Researcher = db.Researcher ?? []
+    Demo.ResearcherSettings = db.ResearcherSettings ?? []
     Demo.Study = db.Study ?? []
     Demo.Participant = db.Participant ?? []
     Demo.Activity = db.Activity ?? []
