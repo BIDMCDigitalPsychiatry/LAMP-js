@@ -9,6 +9,7 @@ export let Demo = {
     ActivitySpec: [],
     SensorSpec: [],
     Researcher: [],
+    ResearcherSettings: [],
     Study: [],
     Participant: [],
     Activity: [],
