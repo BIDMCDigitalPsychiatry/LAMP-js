@@ -70,7 +70,7 @@ async function _fetch<ResultType>(
     route.includes("/lamp.dashboard.admin_permissions") ||
     route.includes("/participant/me") ||
     route.includes("/researcher/me") ||
-    route.includes("/publicKey")
+    route.includes("/type/me/parent") 
   ) {
     authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
   }
@@ -155,13 +155,3 @@ export class Fetch {
     return await _fetch("delete", route, configuration)
   }
 }
-
-// export async function verifyToken(token: string, secretKey: string) {
-//   try {
-//     const secret_Key = new TextEncoder().encode(this.configuration.jwt_secret);
-//     const decoded = jwtVerify(token, secret_Key);
-//     return decoded;
-//   } catch (error) {
-//     throw new Error('Invalid token');
-//   }
-// }
