@@ -1,5 +1,5 @@
-import 'isomorphic-fetch'
-import { Researcher, Participant } from "./model/index"
+import "isomorphic-fetch"
+import { Researcher, Participant, Identifier } from "./model/index"
 import {
   APIService,
   ActivityService,
@@ -8,12 +8,11 @@ import {
   CredentialService,
   ParticipantService,
   ResearcherService,
-  ResearcherSettingsService,
   SensorService,
   SensorEventService,
   SensorSpecService,
   StudyService,
-  TypeService
+  TypeService,
 } from "./service/index"
 import { Configuration } from "./service/Fetch"
 import { Demo } from "./service/Demo"
@@ -28,6 +27,7 @@ interface IAuth {
   id: string | null
   password: string | null
   serverAddress: string | undefined
+  token?: string | undefined
 }
 
 //
@@ -41,7 +41,6 @@ export default class LAMP {
   public static Type = new TypeService()
   public static Credential = new CredentialService()
   public static Researcher = new ResearcherService()
-  public static ResearcherSettings = new ResearcherSettingsService()
   public static Participant = new ParticipantService()
   public static Study = new StudyService()
   public static Activity = new ActivityService()
@@ -61,7 +60,6 @@ export default class LAMP {
     LAMP.Credential.configuration = configuration
     LAMP.Participant.configuration = configuration
     LAMP.Researcher.configuration = configuration
-    LAMP.ResearcherSettings.configuration = configuration
     LAMP.Sensor.configuration = configuration
     LAMP.SensorEvent.configuration = configuration
     LAMP.SensorSpec.configuration = configuration
@@ -83,12 +81,11 @@ export default class LAMP {
   // [Demo API]
   //
 
-  public static initializeDemoDB(db: { [key: string]: any; }) {
+  public static initializeDemoDB(db: { [key: string]: any }) {
     db = JSON.parse(JSON.stringify(db)) // make a deep copy first!
     Demo.ActivitySpec = db.ActivitySpec ?? []
     Demo.SensorSpec = db.SensorSpec ?? []
     Demo.Researcher = db.Researcher ?? []
-    Demo.ResearcherSettings = db.ResearcherSettings ?? []
     Demo.Study = db.Study ?? []
     Demo.Participant = db.Participant ?? []
     Demo.Activity = db.Activity ?? []
@@ -106,24 +103,26 @@ export default class LAMP {
   // Shorthand for console/data analysis usage.
   public static async connect(
     identity: {
-      serverAddress: string | undefined
       accessKey: string | null
       secretKey: string | null
+      serverAddress: string | undefined
     } = {
-      serverAddress: undefined,
       accessKey: null,
-      secretKey: null
+      secretKey: null,
+      serverAddress: undefined,
     }
   ) {
     // Propogate the authorization.
+    // await LAMP.Credential.login(identity.accessKey!, identity.secretKey!);
     LAMP.Auth._auth = {
-        id: identity.accessKey,
-        password: identity.secretKey,
-        serverAddress: identity.serverAddress
+      id: identity.accessKey,
+      password: identity.secretKey,
+      serverAddress: identity.serverAddress,
     }
+
     LAMP.configuration = {
-        base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
-        authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined
+      base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
+      authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined,
     }
   }
 
@@ -137,31 +136,38 @@ export default class LAMP {
      * If all values are null (especially `type`), the authorization is cleared.
      */
     public static async set_identity(
-      identity: { id: string | null; password: string | null; serverAddress: string | undefined } = {
+      identity: {
+        id: string | null
+        password: string | null
+        serverAddress: string | null
+      } = {
         id: null,
         password: null,
-        serverAddress: undefined
+        serverAddress: null,
       }
     ) {
       LAMP.configuration = {
-        base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital"
+        base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
       }
 
       // Ensure there's actually a change to process.
-      let l: IAuth = LAMP.Auth._auth || { id: null, password: null, serverAddress: null }
-      if (l.id === identity.id && l.password === identity.password && l.serverAddress === identity.serverAddress) return
+      // let l: IAuth = LAMP.Auth._auth || { id: null, password: null, serverAddress: null }
+      // if (l.id === identity.id && l.password === identity.password && l.serverAddress === identity.serverAddress) return
 
       // Propogate the authorization.
       LAMP.Auth._auth = {
         id: identity.id,
         password: identity.password,
-        serverAddress: identity.serverAddress
-      }
-      LAMP.configuration = {
-        ...(LAMP.configuration || { base: undefined, headers: undefined }),
-        authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined
+        serverAddress: identity.serverAddress,
       }
 
+      LAMP.configuration = {
+        ...(LAMP.configuration || { base: undefined, headers: undefined }),
+        authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined,
+        // authorization: LAMP.Auth._auth.token ? `${LAMP.Auth._auth.token}` : undefined
+      }
+
+      //await LAMP.Credential.login( identity.id!, identity.password! );
       try {
         // If we aren't clearing the credential, get the "self" identity.
         if (!!identity.id && !!identity.password) {
@@ -188,17 +194,20 @@ export default class LAMP {
 
           LAMP.dispatchEvent("LOGIN", {
             authorizationToken: LAMP.configuration.authorization,
+            // authorizationToken: LAMP.configuration.token,
             identityObject: LAMP.Auth._me,
-            serverAddress: LAMP.configuration.base
+            serverAddress: LAMP.configuration.base,
           })
         } else {
           LAMP.dispatchEvent("LOGOUT", {
-            deleteCache: true // FIXME!
+            deleteCache: true, // FIXME!
           })
         }
       } catch (err) {
+        console.log(`#####LAMP err`, err)
         // We failed: clear and propogate the authorization.
         LAMP.Auth._auth = { id: null, password: null, serverAddress: null }
+        // if (!!LAMP.configuration) LAMP.configuration.token = undefined
         if (!!LAMP.configuration) LAMP.configuration.authorization = undefined
 
         // Delete the "self" identity and throw the error we received.
@@ -207,7 +216,7 @@ export default class LAMP {
         throw new Error("invalid id or password")
       } finally {
         // Save the authorization in sessionStorage for later.
-        (global as any).sessionStorage?.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
+        ;(global as any).sessionStorage?.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
       }
     }
 
@@ -216,7 +225,7 @@ export default class LAMP {
       await LAMP.Auth.set_identity({
         id: _saved.id,
         password: _saved.password,
-        serverAddress: _saved.serverAddress
+        serverAddress: _saved.serverAddress,
       })
     }
   }

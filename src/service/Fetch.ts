@@ -30,7 +30,7 @@ const userTokenKey = "tokenInfo"
 
 //If refresh token expired, then logout from app
 const handleSessionExpiry = async () => {
-  sessionStorage.removeItem(userTokenKey)
+  localStorage.removeItem(userTokenKey)
   localStorage.setItem("verified", JSON.stringify({ value: false }))
   sessionStorage.setItem("LAMP._auth", JSON.stringify({ id: null, password: null, serverAddress: null }))
   // alert("Your session expired, Please login again.")
@@ -65,15 +65,7 @@ async function _fetch<ResultType>(
 ): Promise<ResultType> {
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
-  if (
-    route.includes("/parent") ||
-    route.includes("/lamp.dashboard.admin_permissions") ||
-    route.includes("/participant/me") ||
-    route.includes("/researcher/me") ||
-    route.includes("/type/me/parent") 
-  ) {
-    authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
-  }
+
   const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
   if (userTokenFromLocalStore?.accessToken) {
     authorization = `Bearer ${
@@ -93,9 +85,8 @@ async function _fetch<ResultType>(
             Accept: "application/json",
             ...(configuration!.headers || {}),
             Authorization: authorization,
-            // Authorization: !!configuration!.token ? `Bearer ${configuration.token}`: undefined
-            // Authorization: configuration.token ? `Bearer ${configuration.token}` : configuration.authorization ? `Basic ${configuration.authorization}` : undefined,
           } as any),
+          // credentials: "include",
           body: body !== undefined ? JSON.stringify(body) : undefined,
         })
       ).json()
@@ -104,6 +95,7 @@ async function _fetch<ResultType>(
       if (result?.error === "401.invalid-token") {
         if (!route?.includes("renewToken")) {
           const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken, configuration.base)
+
           configuration.accesToken = token
           switch (method) {
             case "post":
@@ -155,3 +147,13 @@ export class Fetch {
     return await _fetch("delete", route, configuration)
   }
 }
+
+// export async function verifyToken(token: string, secretKey: string) {
+//   try {
+//     const secret_Key = new TextEncoder().encode(this.configuration.jwt_secret);
+//     const decoded = jwtVerify(token, secret_Key);
+//     return decoded;
+//   } catch (error) {
+//     throw new Error('Invalid token');
+//   }
+// }
