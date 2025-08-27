@@ -36,4 +36,16 @@ export class ResearcherSettingsService {
     const result = await Fetch.get(`/researcherSettings/${researcherId}`, this.configuration) as ResearcherBanner
     return result.data
   }
+
+  public async getResearcherSettingsforParticipant(participantId: Identifier): Promise<ResearcherSettings> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter researcherId was null or undefined when calling researcherSettingsGet.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+    const result = await Fetch.get(`/participant/researcherSettings/${participantId}`, this.configuration) as ResearcherBanner
+    return result.data
+  }
 }
