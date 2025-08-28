@@ -8,12 +8,12 @@ import {
   CredentialService,
   ParticipantService,
   ResearcherService,
-  ResearcherSettingsService,
   SensorService,
   SensorEventService,
   SensorSpecService,
   StudyService,
   TypeService,
+  ResearcherSettingsService,
 } from "./service/index"
 import { Configuration } from "./service/Fetch"
 import { Demo } from "./service/Demo"
@@ -42,7 +42,6 @@ export default class LAMP {
   public static Type = new TypeService()
   public static Credential = new CredentialService()
   public static Researcher = new ResearcherService()
-  public static ResearcherSettings = new ResearcherSettingsService()
   public static Participant = new ParticipantService()
   public static Study = new StudyService()
   public static Activity = new ActivityService()
@@ -51,6 +50,7 @@ export default class LAMP {
   public static Sensor = new SensorService()
   public static SensorEvent = new SensorEventService()
   public static SensorSpec = new SensorSpecService()
+  public static ResearcherSettings = new ResearcherSettingsService()
   private static get configuration(): Configuration | undefined {
     return LAMP.API.configuration
   }
@@ -62,12 +62,12 @@ export default class LAMP {
     LAMP.Credential.configuration = configuration
     LAMP.Participant.configuration = configuration
     LAMP.Researcher.configuration = configuration
-    LAMP.ResearcherSettings.configuration = configuration
     LAMP.Sensor.configuration = configuration
     LAMP.SensorEvent.configuration = configuration
     LAMP.SensorSpec.configuration = configuration
     LAMP.Study.configuration = configuration
     LAMP.Type.configuration = configuration
+    LAMP.ResearcherSettings.configuration = configuration
   }
 
   public static addEventListener(event: string, callback: (any) => void) {
@@ -89,7 +89,6 @@ export default class LAMP {
     Demo.ActivitySpec = db.ActivitySpec ?? []
     Demo.SensorSpec = db.SensorSpec ?? []
     Demo.Researcher = db.Researcher ?? []
-    Demo.ResearcherSettings = db.ResearcherSettings ?? []
     Demo.Study = db.Study ?? []
     Demo.Participant = db.Participant ?? []
     Demo.Activity = db.Activity ?? []
