@@ -13,6 +13,7 @@ import {
   SensorSpecService,
   StudyService,
   TypeService,
+  ResearcherSettingsService,
 } from "./service/index"
 import { Configuration } from "./service/Fetch"
 import { Demo } from "./service/Demo"
@@ -49,6 +50,7 @@ export default class LAMP {
   public static Sensor = new SensorService()
   public static SensorEvent = new SensorEventService()
   public static SensorSpec = new SensorSpecService()
+  public static ResearcherSettings = new ResearcherSettingsService()
   private static get configuration(): Configuration | undefined {
     return LAMP.API.configuration
   }
@@ -65,6 +67,7 @@ export default class LAMP {
     LAMP.SensorSpec.configuration = configuration
     LAMP.Study.configuration = configuration
     LAMP.Type.configuration = configuration
+    LAMP.ResearcherSettings.configuration = configuration
   }
 
   public static addEventListener(event: string, callback: (any) => void) {
