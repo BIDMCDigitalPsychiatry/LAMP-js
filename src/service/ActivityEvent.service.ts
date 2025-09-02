@@ -58,7 +58,7 @@ export class ActivityEventService {
         `/participant/${participantId}/activity_event?${queryParameters.toString()}`,
         this.configuration
       )
-    ).data.map(x => Object.assign(new ActivityEvent(), x))
+    ).data?.map(x => Object.assign(new ActivityEvent(), x))
   }
 
   /**
