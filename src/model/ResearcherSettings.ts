@@ -4,13 +4,6 @@ import { Identifier, Timestamp } from './Type'
  *
  */
 
-public id ?: Identifier
-  public bannerGreeting ?: string
-  public bannerHeading ?: string
-  public bannerSubHeading ?: string
-  public imageBase64 ?: string
-  public selectedActivity ?: string
-  public studyId ?: string
 export class ResearcherSettings {
 
     /**
