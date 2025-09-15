@@ -1,11 +1,11 @@
 import { Fetch, Configuration } from "./Fetch"
 import { Identifier } from "../model/Type"
-import {ResearcherBanner, ResearcherSettings } from "../model/ResearcherSettings"
+import { ResearcherBanner, ResearcherSettings } from "../model/ResearcherSettings"
 
 export class ResearcherSettingsService {
   public configuration?: Configuration
-  
-   /**
+
+  /**
    * Create Researcher Settings.
    * @param researcherId
    */
@@ -25,7 +25,7 @@ export class ResearcherSettingsService {
    * Get Researcher Settings.
    * @param researcherId
    */
-  public async getResearcherSettings(researcherId: Identifier): Promise<ResearcherSettings> {
+  public async getResearcherSettings(researcherId: Identifier, choice?: any): Promise<ResearcherSettings> {
     if (researcherId === null || researcherId === undefined)
       throw new Error("Required parameter researcherId was null or undefined when calling researcherSettingsGet.")
 
@@ -33,7 +33,10 @@ export class ResearcherSettingsService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.get(`/researcherSettings/${researcherId}`, this.configuration) as ResearcherBanner
+    const result = (await Fetch.get(
+      `/researcherSettings/${researcherId}?choice=${choice}`,
+      this.configuration
+    )) as ResearcherBanner
     return result.data
   }
 
@@ -45,7 +48,10 @@ export class ResearcherSettingsService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.get(`/participant/researcherSettings/${participantId}`, this.configuration) as ResearcherBanner
+    const result = (await Fetch.get(
+      `/participant/researcherSettings/${participantId}`,
+      this.configuration
+    )) as ResearcherBanner
     return result.data
   }
 }
