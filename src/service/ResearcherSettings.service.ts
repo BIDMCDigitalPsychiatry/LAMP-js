@@ -28,7 +28,7 @@ export class ResearcherSettingsService {
    * Get Researcher Settings.
    * @param researcherId
    */
-  public async getResearcherSettings(researcherId: Identifier): Promise<ResearcherSettings> {
+  public async getResearcherSettings(researcherId: Identifier): Promise<any> {
     if (researcherId === null || researcherId === undefined)
       throw new Error("Required parameter researcherId was null or undefined when calling researcherSettingsGet.")
 
@@ -43,7 +43,7 @@ export class ResearcherSettingsService {
     return result.data
   }
 
-  public async getResearcherSettingsforParticipant(participantId: Identifier): Promise<ResearcherSettings> {
+  public async getResearcherSettingsforParticipant(participantId: Identifier): Promise<any> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter researcherId was null or undefined when calling researcherSettingsGet.")
 
