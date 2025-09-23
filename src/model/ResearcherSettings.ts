@@ -46,6 +46,10 @@ export class ResearcherSettings {
    */
   favouriteActivities?: any
   /**
+   * The featured activity
+   */
+  featuredActivity?: string
+  /**
    * The timestamp
    */
   timestamp?: Timestamp
