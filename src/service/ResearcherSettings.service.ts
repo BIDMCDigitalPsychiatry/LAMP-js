@@ -9,7 +9,11 @@ export class ResearcherSettingsService {
    * Create Researcher Settings.
    * @param researcherId
    */
-  public async createResearcherSettings(researcherId: Identifier, researcherData: any, choice?: string): Promise<Identifier> {
+  public async createResearcherSettings(
+    researcherId: Identifier,
+    researcherData: any,
+    choice?: any
+  ): Promise<Identifier> {
     if (researcherId === null || researcherId === undefined)
       throw new Error("Required parameter researcherId was null or undefined when calling researcherSettingsCreate.")
 
@@ -17,10 +21,11 @@ export class ResearcherSettingsService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    let queryParameters = new URLSearchParams()
-    if (choice !== undefined && choice !== null) queryParameters.set("choice", String(choice))
-
-    const res: any = await Fetch.post(`/researcherSettings/${researcherId}?${queryParameters.toString()}`, researcherData, this.configuration)
+    const res: any = await Fetch.post(
+      `/researcherSettings/${researcherId}?choice=${choice}`,
+      researcherData,
+      this.configuration
+    )
     return res
   }
 
@@ -28,18 +33,15 @@ export class ResearcherSettingsService {
    * Get Researcher Settings.
    * @param researcherId
    */
-  public async getResearcherSettings(researcherId: Identifier): Promise<any> {
-    if (researcherId === null || researcherId === undefined)
-      throw new Error("Required parameter researcherId was null or undefined when calling researcherSettingsGet.")
+  public async getResearcherSettings(type: string, id: Identifier): Promise<any> {
+    if (id === null || id === undefined)
+      throw new Error("Required parameter id was null or undefined when calling researcherSettingsGet.")
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = (await Fetch.get(
-      `/researcherSettings/${researcherId}`,
-      this.configuration
-    )) as ResearcherBanner
+    const result = (await Fetch.get(`/researcherSettings/${type}/${id}`, this.configuration)) as ResearcherBanner
     return result.data
   }
 
