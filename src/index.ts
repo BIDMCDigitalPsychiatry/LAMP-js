@@ -69,6 +69,13 @@ export default class LAMP {
     LAMP.Type.configuration = configuration
     LAMP.ResearcherSettings.configuration = configuration
   }
+  private static protocol = "https://"
+
+  public static enableDevMode() {
+    // Make all future server requests over http
+    // Only use this for local development
+    LAMP.protocol = "http://"
+  }
 
   public static addEventListener(event: string, callback: (any) => void) {
     _bus?.addEventListener(event, callback)
@@ -124,7 +131,7 @@ export default class LAMP {
     }
 
     LAMP.configuration = {
-      base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
+      base: !!identity.serverAddress ? `${LAMP.protocol}${identity.serverAddress}` : `${LAMP.protocol}api.lamp.digital`,
       authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined,
     }
   }
@@ -150,7 +157,7 @@ export default class LAMP {
       }
     ) {
       LAMP.configuration = {
-        base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
+        base: !!identity.serverAddress ? `${LAMP.protocol}${identity.serverAddress}` : `${LAMP.protocol}api.lamp.digital`,
       }
 
       // Ensure there's actually a change to process.
