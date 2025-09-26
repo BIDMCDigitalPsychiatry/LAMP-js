@@ -154,7 +154,7 @@ export class ActivityService {
       }
     }
     return (
-      await Fetch.get<{ data: any[] }>(`/participant/${participantId}/activity?${tab}`, this.configuration)
+      await Fetch.get<{ data: any[] }>(`/activity/${participantId}/activity?${tab}`, this.configuration)
     ).data?.map((x) => Object.assign(new Activity(), x))
   }
 
