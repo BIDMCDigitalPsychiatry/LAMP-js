@@ -287,4 +287,37 @@ export class ActivityService {
       await Fetch.get<{ data: any[] }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)
     ).data?.map((x) => Object.assign(new Activity(), x))[0]
   }
+
+  /**
+   * Get the set of all sub-activities available to a module,  by module identifier.
+   * @param moduleId
+   * @param participantId
+   */
+  public async moduleByParticipant(moduleId: Identifier, participantId: Identifier): Promise<any[]> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling moduleByParticipant.")
+    if (moduleId === null || moduleId === undefined)
+      throw new Error("Required parameter moduleId was null or undefined when calling moduleByParticipant.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
+      if (moduleId === "me") moduleId = credential.length > 0 ? credential[0]["origin"] : moduleId
+
+      if (Demo.Activity.filter((x) => x["id"] === moduleId).length > 0) {
+        let output = Demo.Activity.filter((x) => x["#parent"] === moduleId)?.map((x) =>
+          Object.assign(new Activity(), x)
+        )
+
+        return Promise.resolve(output)
+      } else {
+        return Promise.resolve({ error: "404.not-found" } as any)
+      }
+    }
+    return (await Fetch.get<{ data: any[] }>(`/module/${moduleId}/${participantId}`, this.configuration)).data?.map(
+      (x) => Object.assign(new Activity(), x)
+    )
+  }
 }
