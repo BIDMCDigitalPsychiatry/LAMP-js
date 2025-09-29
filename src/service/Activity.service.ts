@@ -132,7 +132,7 @@ export class ActivityService {
    * Get the set of all activities available to  participants of a single study, by participant identifier.
    * @param participantId
    */
-  public async listActivities(participantId: Identifier, transform?: string, tab?: string): Promise<{}> {
+  public async listActivities(participantId: Identifier,  tab?: string, transform?: string): Promise<{}> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling listActivities.")
 
@@ -155,7 +155,7 @@ export class ActivityService {
     }
     return (
       await Fetch.get<{ data: any[] }>(`/activity/${participantId}/activity?tab=${tab}`, this.configuration)
-    ).data?.map((x) => Object.assign(new Activity(), x))
+    )//.data .map((x) => Object.assign(new Activity(), x))
   }
 
   /**
