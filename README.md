@@ -17,14 +17,21 @@ npm i lamp-core
 
 Ensure your `serverAddress` is set correctly. If using the default server, it will be `api.lamp.digital`. Keep your `accessKey` (sometimes an email address) and `secretKey` (sometimes a password) private and do not share them with others.
 
+To make requests using `http`, enable dev mode before attempting to connect to a server. 
+
+**Warning:** Dev mode should only be used for local development!
+
 ```javascript
 import LAMP from 'lamp-core'
+LAMP.enableDevMode()    // optional
 await LAMP.connect({ serverAddress: '...', accessKey: '...', secretKey: '...' })
 ```
 
 ## API Endpoints
 
-All URIs are relative to the `serverAddress` (by default, `api.lamp.digital`) with the `https://` protocol.
+All URIs are relative to the `serverAddress` (by default, `api.lamp.digital`).
+
+The protocol defaults to `https` but `http` can be used with dev mode enabled.
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
