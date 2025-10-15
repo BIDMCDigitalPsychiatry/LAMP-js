@@ -162,7 +162,7 @@ export class StudyService {
    * Get a single study, by identifier.
    * @param studyId
    */
-  public async lookup(studyId: Identifier, mode:number, transform?: string): Promise<Study> {
+  public async lookup(studyId: Identifier, mode:number, transform?: string): Promise<any> {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling studyView.")
 
@@ -182,10 +182,6 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/_lookup/participant/mode/${mode}`, this.configuration)).data.map(x =>
-      Object.assign({}, x)
-    )[0]
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/_lookup/participant/mode/${mode}`, this.configuration))
   }
-
-
 }
