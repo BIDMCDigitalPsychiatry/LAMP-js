@@ -158,4 +158,34 @@ export class StudyService {
       Object.assign(new Study(), x)
     )[0]
   }
+/**
+   * Get a single study, by identifier.
+   * @param studyId
+   */
+  public async lookup(studyId: Identifier, mode:number, transform?: string): Promise<Study> {
+    if (studyId === null || studyId === undefined)
+      throw new Error("Required parameter studyId was null or undefined when calling studyView.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
+
+      let data = Demo.Study.filter(x => x["id"] === studyId).map(x => Object.assign(new Study(), x))
+      if (data.length > 0) {
+        let output = data[0]
+        output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
+        return Promise.resolve(output)
+      } else {
+        return Promise.resolve({ error: "404.not-found" } as any)
+      }
+    }
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/_lookup/participant/mode/${mode}`, this.configuration)).data.map(x =>
+      Object.assign({}, x)
+    )[0]
+  }
+
+
 }
