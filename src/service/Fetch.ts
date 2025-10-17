@@ -112,7 +112,12 @@ async function _fetch<ResultType>(
     if (result?.error === "401.invalid-token" || result?.message === "401.invalid-token") {
       if (!route.includes("renewToken")) {
         try {
-          const token = await handleRenewToken(configuration.base);
+          const refreshToken = configuration.refreshToken ?? userTokenFromLocalStore?.refreshToken;
+          if (!refreshToken) {
+            handleSessionExpiry();
+            return { data: [], error: "401.invalid-token" } as unknown as ResultType;
+          }
+          const token = await handleRenewToken(refreshToken, configuration.base);
           if (token) {
             configuration.authorization = token;
             // retry the same request
@@ -145,9 +150,10 @@ async function _fetch<ResultType>(
       }
     }
     return result;
-  } catch (error: any) {
-    console.error("Fetch failed:", error.message || error);
-    return { data: [], error: error.message || "Unknown error" } as unknown as ResultType;
+  } catch (error) {
+    const message = (error as any)?.message || String(error);
+    console.error("Fetch failed:", message);
+    return { data: [], error: message || "Unknown error" } as unknown as ResultType;
   }
 }
 
