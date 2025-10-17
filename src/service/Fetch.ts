@@ -111,17 +111,17 @@ async function _fetch<ResultType>(
             configuration.authorization = token;
             // retry the same request
             switch (method) {
-              case "post": await Fetch.post(route, body, configuration)
+              case "post": return await Fetch.post(route, body, configuration)
                 break
-              case "get": await Fetch.get(route, configuration)
+              case "get": return await Fetch.get(route, configuration)
                 break
-              case "put": await Fetch.put(route, body, configuration)
+              case "put": return await Fetch.put(route, body, configuration)
                 break
-              case "delete": await Fetch.delete(route, configuration)
+              case "delete": return await Fetch.delete(route, configuration)
                 break
-              case "patch": await Fetch.patch(route, body, configuration)
+              case "patch": return await Fetch.patch(route, body, configuration)
                 break
-            } return { data: [], error: "401.invalid-token" } as any
+            } 
           }
           else {
             handleSessionExpiry()
