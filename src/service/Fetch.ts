@@ -38,23 +38,19 @@ const handleSessionExpiry = async () => {
 }
 
 //If access Token expired then call api for renewing the tokens
-const handleRenewToken = async (base: string) => {
+const handleRenewToken = async (refreshToken: string, base: string) => {
   try {
     const credService = new CredentialService()
-    const res = await credService.renewToken(base)
+    const res = await credService.renewToken(refreshToken, base)
 
-    const accessToken = res?.access_token
+    const accessToken = res?.data?.access_token
 
     if (accessToken) {
-      localStorage.setItem(
+      sessionStorage.setItem(
         userTokenKey,
-        JSON.stringify({
-          accessToken: res?.access_token,
-          refreshToken: res?.refresh_token,
-        })
+        JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
       )
     }
-
     return accessToken
   } catch (error) {
     console.log(error)
@@ -104,11 +100,7 @@ async function _fetch<ResultType>(
         credentials: "include",
         body: body !== undefined ? JSON.stringify(body) : undefined,
       })
-
-    //Check token expiry
-    // Check HTTP status first
     if (!response.ok) {
-      // You can handle HTTP status-based logic here
       console.warn(`HTTP error ${response.status}`);
     }
 
@@ -177,3 +169,13 @@ export class Fetch {
     return await _fetch("delete", route, configuration)
   }
 }
+
+// export async function verifyToken(token: string, secretKey: string) {
+//   try {
+//     const secret_Key = new TextEncoder().encode(this.configuration.jwt_secret);
+//     const decoded = jwtVerify(token, secret_Key);
+//     return decoded;
+//   } catch (error) {
+//     throw new Error('Invalid token');
+//   }
+// }
