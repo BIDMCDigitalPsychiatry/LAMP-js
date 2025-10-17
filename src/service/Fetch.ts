@@ -20,7 +20,7 @@ export type Configuration = {
   headers?: { [header: string]: string }
 
   token?: string
-  accesToken?: string
+  accessToken?: string
   refreshToken?: string
 
   jwt_secret?: string
@@ -66,22 +66,11 @@ async function _fetch<ResultType>(
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
 
-  if (
-    route.includes("/parent") ||
-    route.includes("/lamp.dashboard.admin_permissions") ||
-    route.includes("/participant/me") ||
-    route.includes("/researcher/me") ||
-    route.includes("/type/me/parent")
-  ) {
-    authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
-  }
   const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
   if (userTokenFromLocalStore?.accessToken) {
-    authorization = `Bearer ${configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
+    authorization = `Bearer ${configuration.accessToken ? configuration.accessToken : userTokenFromLocalStore?.accessToken
       }`
   }
-
-  authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
 
   try {
     var response =
@@ -112,7 +101,12 @@ async function _fetch<ResultType>(
     if (result?.error === "401.invalid-token" || result?.message === "401.invalid-token") {
       if (!route.includes("renewToken")) {
         try {
-          const token = await handleRenewToken(configuration.base);
+          const refreshToken = configuration.refreshToken ?? userTokenFromLocalStore?.refreshToken;
+          if (!refreshToken) {
+            handleSessionExpiry();
+            return { data: [], error: "401.invalid-token" } as unknown as ResultType;
+          }
+          const token = await handleRenewToken(refreshToken, configuration.base);
           if (token) {
             configuration.authorization = token;
             // retry the same request
@@ -145,9 +139,10 @@ async function _fetch<ResultType>(
       }
     }
     return result;
-  } catch (error: any) {
-    console.error("Fetch failed:", error.message || error);
-    return { data: [], error: error.message || "Unknown error" } as unknown as ResultType;
+  } catch (error) {
+    const message = (error as any)?.message || String(error);
+    console.error("Fetch failed:", message);
+    return { data: [], error: message || "Unknown error" } as unknown as ResultType;
   }
 }
 
