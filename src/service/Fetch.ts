@@ -38,23 +38,19 @@ const handleSessionExpiry = async () => {
 }
 
 //If access Token expired then call api for renewing the tokens
-const handleRenewToken = async (base: string) => {
+const handleRenewToken = async (refreshToken: string, base: string) => {
   try {
     const credService = new CredentialService()
-    const res = await credService.renewToken(base)
+    const res = await credService.renewToken(refreshToken, base)
 
-    const accessToken = res?.access_token
+    const accessToken = res?.data?.access_token
 
     if (accessToken) {
-      localStorage.setItem(
+      sessionStorage.setItem(
         userTokenKey,
-        JSON.stringify({
-          accessToken: res?.access_token,
-          refreshToken: res?.refresh_token,
-        })
+        JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
       )
     }
-
     return accessToken
   } catch (error) {
     console.log(error)
@@ -70,15 +66,6 @@ async function _fetch<ResultType>(
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
 
-  if (
-    route.includes("/parent") ||
-    route.includes("/lamp.dashboard.admin_permissions") ||
-    route.includes("/participant/me") ||
-    route.includes("/researcher/me") ||
-    route.includes("/type/me/parent") 
-  ) {
-    authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
-  }
   const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
   if (userTokenFromLocalStore?.accessToken) {
     authorization = `Bearer ${
@@ -131,16 +118,14 @@ async function _fetch<ResultType>(
             await Fetch.patch(route, body, configuration)
             break
         }
-        return { data: [], error: "401.invalid-token" } as any
       } else {
-        handleSessionExpiry()
-        return { data: [], error: "401.invalid-token" } as any
+        return result as any
       }
-    } else {
-      return result as any
+    } catch (error) {
+      console.log(error)
     }
-  } catch (error) {
-    console.log(error)
+  } else {
+    return [] as any
   }
 }
 
@@ -161,3 +146,13 @@ export class Fetch {
     return await _fetch("delete", route, configuration)
   }
 }
+
+// export async function verifyToken(token: string, secretKey: string) {
+//   try {
+//     const secret_Key = new TextEncoder().encode(this.configuration.jwt_secret);
+//     const decoded = jwtVerify(token, secret_Key);
+//     return decoded;
+//   } catch (error) {
+//     throw new Error('Invalid token');
+//   }
+// }
