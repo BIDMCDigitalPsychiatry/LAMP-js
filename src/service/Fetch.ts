@@ -75,74 +75,90 @@ async function _fetch<ResultType>(
     route.includes("/lamp.dashboard.admin_permissions") ||
     route.includes("/participant/me") ||
     route.includes("/researcher/me") ||
-    route.includes("/type/me/parent") 
+    route.includes("/type/me/parent")
   ) {
     authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
   }
   const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
   if (userTokenFromLocalStore?.accessToken) {
-    authorization = `Bearer ${
-      configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
-    }`
+    authorization = `Bearer ${configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
+      }`
   }
 
   authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
 
   try {
-    var result = await (
+    var response =
       await fetch(`${configuration.base}${route}`, {
         method: method,
-        headers: new Headers(typeof authorization !== 'undefined' && !!authorization ?{
+        headers: new Headers(typeof authorization !== 'undefined' && !!authorization ? {
           "Content-Type": "application/json",
           Accept: "application/json",
           ...(configuration!.headers || {}),
           Authorization: authorization,
-        }: {
+        } : {
           "Content-Type": "application/json",
           Accept: "application/json",
           ...(configuration!.headers || {}),
-         } as any),
+        } as any),
         credentials: "include",
         body: body !== undefined ? JSON.stringify(body) : undefined,
       })
-    ).json()
-    //Check token expiry
 
-    if (result?.error === "401.invalid-token" || result?.message === "401.invalid-token") {
-      if (!route?.includes("renewToken")) {
-        const token = await handleRenewToken(configuration.base)
-        if (typeof token!== "undefined" && !!token) {
-          configuration.authorization = token
-        }
-        switch (method) {
-          case "post":
-            await Fetch.post(route, body, configuration)
-            break
-          case "get":
-            await Fetch.get(route, configuration)
-            break
-          case "put":
-            await Fetch.put(route, body, configuration)
-            break
-          case "delete":
-            await Fetch.delete(route, configuration)
-            break
-          case "patch":
-            await Fetch.patch(route, body, configuration)
-            break
-        }
-        return { data: [], error: "401.invalid-token" } as any
-      } else {
-        handleSessionExpiry()
-        return { data: [], error: "401.invalid-token" } as any
-      }
-    } else {
-      return result as any
+    //Check token expiry
+    // Check HTTP status first
+    if (!response.ok) {
+      // You can handle HTTP status-based logic here
+      console.warn(`HTTP error ${response.status}`);
     }
-  } catch (error) {
-    console.log(error)
+
+    const result = await response.json().catch(() => {
+      throw new Error("Invalid JSON response");
+    });
+
+    // Handle invalid token
+    if (result?.error === "401.invalid-token" || result?.message === "401.invalid-token") {
+      if (!route.includes("renewToken")) {
+        try {
+          const token = await handleRenewToken(configuration.base);
+          if (token) {
+            configuration.authorization = token;
+            // retry the same request
+            switch (method) {
+              case "post": await Fetch.post(route, body, configuration)
+                break
+              case "get": await Fetch.get(route, configuration)
+                break
+              case "put": await Fetch.put(route, body, configuration)
+                break
+              case "delete": await Fetch.delete(route, configuration)
+                break
+              case "patch": await Fetch.patch(route, body, configuration)
+                break
+            } return { data: [], error: "401.invalid-token" } as any
+          }
+          else {
+            handleSessionExpiry()
+            return { data: [], error: "401.invalid-token" } as any
+          }
+
+        } catch (tokenError) {
+          console.error("Token renewal failed:", tokenError);
+          handleSessionExpiry();
+          return { data: [], error: "401.invalid-token" } as unknown as ResultType;
+        }
+      } else {
+        handleSessionExpiry();
+        return { data: [], error: "401.invalid-token" } as unknown as ResultType;
+      }
+    }
+    return result;
+  } catch (error: any) {
+    console.error("Fetch failed:", error.message || error);
+    return { data: [], error: error.message || "Unknown error" } as unknown as ResultType;
   }
 }
+
 
 export class Fetch {
   public static async get<ResultType>(route: string, configuration?: Configuration): Promise<ResultType> {
