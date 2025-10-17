@@ -259,7 +259,7 @@ export class CredentialService {
   }
 
   public async renewToken(refreshToken: string, base: string): Promise<any> {
-    const configuration: Configuration = { accesToken: refreshToken, base: base }
+    const configuration: Configuration = { accessToken: refreshToken, base: base }
     return await Fetch.post("/renewToken", { refreshToken }, configuration)
   }
   public async logout(token: string): Promise<any> {
