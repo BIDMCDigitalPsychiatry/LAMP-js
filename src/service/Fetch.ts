@@ -75,13 +75,12 @@ async function _fetch<ResultType>(
   ) {
     authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
   }
+
   const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
   if (userTokenFromLocalStore?.accessToken) {
     authorization = `Bearer ${configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
       }`
   }
-
-  authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
 
   try {
     var response =
