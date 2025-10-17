@@ -92,16 +92,16 @@ async function _fetch<ResultType>(
     var result = await (
       await fetch(`${configuration.base}${route}`, {
         method: method,
-        headers: new Headers({
+        headers: new Headers(typeof authorization !== 'undefined' && !!authorization ?{
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
-          // "Cache-Control": "no-store",
           Accept: "application/json",
           ...(configuration!.headers || {}),
           Authorization: authorization,
-          // Authorization: !!configuration!.token ? `Bearer ${configuration.token}`: undefined
-          // Authorization: configuration.token ? `Bearer ${configuration.token}` : configuration.authorization ? `Basic ${configuration.authorization}` : undefined,
-        } as any),
+        }: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...(configuration!.headers || {}),
+         } as any),
         credentials: "include",
         body: body !== undefined ? JSON.stringify(body) : undefined,
       })
@@ -111,8 +111,9 @@ async function _fetch<ResultType>(
     if (result?.error === "401.invalid-token" || result?.message === "401.invalid-token") {
       if (!route?.includes("renewToken")) {
         const token = await handleRenewToken(configuration.base)
-
-        configuration.authorization = token
+        if (typeof token!== "undefined" && !!token) {
+          configuration.authorization = token
+        }
         switch (method) {
           case "post":
             await Fetch.post(route, body, configuration)

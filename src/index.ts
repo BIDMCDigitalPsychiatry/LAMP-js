@@ -123,9 +123,11 @@ export default class LAMP {
       serverAddress: identity.serverAddress,
     }
 
-    LAMP.configuration = {
+    LAMP.configuration = !!LAMP.Auth._auth.id  ? {
       base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
-      authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined,
+      authorization: `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` 
+    } : {
+      base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
     }
   }
 
@@ -164,10 +166,11 @@ export default class LAMP {
         serverAddress: identity.serverAddress,
       }
 
-      LAMP.configuration = {
+      LAMP.configuration = !!LAMP.Auth._auth.id ? {
         ...(LAMP.configuration || { base: undefined, headers: undefined }),
-        authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined,
-        // authorization: LAMP.Auth._auth.token ? `${LAMP.Auth._auth.token}` : undefined
+        authorization:  `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}`,
+      } : {
+        ...(LAMP.configuration || { base: undefined, headers: undefined }),
       }
 
       //await LAMP.Credential.login( identity.id!, identity.password! );
@@ -211,7 +214,7 @@ export default class LAMP {
         // We failed: clear and propogate the authorization.
         LAMP.Auth._auth = { id: null, password: null, serverAddress: null }
         // if (!!LAMP.configuration) LAMP.configuration.token = undefined
-        if (!!LAMP.configuration) LAMP.configuration.authorization = undefined
+        // if (!!LAMP.configuration) LAMP.configuration.authorization = undefined
 
         // Delete the "self" identity and throw the error we received.
         LAMP.Auth._me = null
