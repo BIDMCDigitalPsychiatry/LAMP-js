@@ -73,51 +73,50 @@ async function _fetch<ResultType>(
     }`
   }
 
-  if (authorization || (!authorization && route.includes("/login"))) {
-    try {
-      var result = await (
-        await fetch(`${configuration.base}${route}`, {
-          method: method,
-          headers: new Headers({
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            // "Cache-Control": "no-store",
-            Accept: "application/json",
-            ...(configuration!.headers || {}),
-            Authorization: authorization,
-          } as any),
-          // credentials: "include",
-          body: body !== undefined ? JSON.stringify(body) : undefined,
-        })
-      ).json()
-      //Check token expiry
+  authorization = !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
 
-      if (result?.error === "401.invalid-token") {
-        if (!route?.includes("renewToken")) {
-          const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken, configuration.base)
+  try {
+    var result = await (
+      await fetch(`${configuration.base}${route}`, {
+        method: method,
+        headers: new Headers(typeof authorization !== 'undefined' && !!authorization ?{
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...(configuration!.headers || {}),
+          Authorization: authorization,
+        }: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          ...(configuration!.headers || {}),
+         } as any),
+        credentials: "include",
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+      })
+    ).json()
+    //Check token expiry
 
-          configuration.accesToken = token
-          switch (method) {
-            case "post":
-              await Fetch.post(route, body, configuration)
-              break
-            case "get":
-              await Fetch.get(route, configuration)
-              break
-            case "put":
-              await Fetch.put(route, body, configuration)
-              break
-            case "delete":
-              await Fetch.delete(route, configuration)
-              break
-            case "patch":
-              await Fetch.patch(route, body, configuration)
-              break
-          }
-          return { data: [], error: "401.invalid-token" } as any
-        } else {
-          handleSessionExpiry()
-          return { data: [], error: "401.invalid-token" } as any
+    if (result?.error === "401.invalid-token" || result?.message === "401.invalid-token") {
+      if (!route?.includes("renewToken")) {
+        const token = await handleRenewToken(configuration.base)
+        if (typeof token!== "undefined" && !!token) {
+          configuration.authorization = token
+        }
+        switch (method) {
+          case "post":
+            await Fetch.post(route, body, configuration)
+            break
+          case "get":
+            await Fetch.get(route, configuration)
+            break
+          case "put":
+            await Fetch.put(route, body, configuration)
+            break
+          case "delete":
+            await Fetch.delete(route, configuration)
+            break
+          case "patch":
+            await Fetch.patch(route, body, configuration)
+            break
         }
       } else {
         return result as any
