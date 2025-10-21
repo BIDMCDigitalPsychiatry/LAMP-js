@@ -14,14 +14,14 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
 
-      let output = Demo.Researcher?.map(x => Object.assign(new Researcher(), x))
+      let output = Demo.Researcher?.map((x) => Object.assign(new Researcher(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher`, this.configuration))?.data?.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher`, this.configuration))?.data?.map((x) =>
       Object.assign(new Researcher(), x)
     )
   }
@@ -85,13 +85,12 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
+      let data = Demo.Researcher.filter((x) => x["id"] === researcherId)?.map((x) => Object.assign(new Researcher(), x))
 
-      let data = Demo.Researcher.filter(x => x["id"] === researcherId)?.map(x => Object.assign(new Researcher(), x))
-      
       if (data.length > 0) {
         let output = data[0]
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -100,8 +99,49 @@ export class ResearcherService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}`, this.configuration))?.data?.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}`, this.configuration))?.data?.map((x) =>
       Object.assign(new Researcher(), x)
     )[0]
+  }
+
+  public async usersList(id: string, filters: any): Promise<any> {
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      let output = Demo.Researcher?.map((x) => Object.assign(new Researcher(), x))
+      return Promise.resolve(output)
+    }
+    const result = await Fetch.post(`/researcher/${id}/users`, filters, this.configuration) as any
+    return result?.data
+  }
+
+  public async activitiesList(id: string, filters: any): Promise<any> {
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      let output = Demo.Researcher?.map((x) => Object.assign(new Researcher(), x))
+      return Promise.resolve(output)
+    }
+    const result = await Fetch.post(`/researcher/activities/${id}`, filters, this.configuration) as any
+    return result?.data
+  }
+  public async sensorsList(id: string, filters: any): Promise<any> {
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      let output = Demo.Researcher?.map((x) => Object.assign(new Researcher(), x))
+      return Promise.resolve(output)
+    }
+    const result = await Fetch.post(`/researcher/sensors/${id}`, filters, this.configuration) as any
+    return result?.data
   }
 }
