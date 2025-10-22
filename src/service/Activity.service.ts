@@ -320,4 +320,80 @@ export class ActivityService {
       (x) => Object.assign(new Activity(), x)
     )
   }
+
+  /**
+   * Get the set of all scheduled activities available to a participant, by participant identifier.
+   * @param participantId
+   */
+  public async scheduledActivities(
+    participantId: Identifier,
+    transform?: string,
+    ignore_binary?: boolean
+  ): Promise<Activity[]> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
+    if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
+
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
+        let output = Demo.Activity.filter((x) =>
+          Demo.Participant.filter((y) => y["id"] === participantId)
+            ?.map((y) => y["#parent"])
+            .includes(x["#parent"])
+        )?.map((x) => Object.assign(new Activity(), x))
+        output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
+        return Promise.resolve(output)
+      } else {
+        return Promise.resolve({ error: "404.not-found" } as any)
+      }
+    }
+    
+    const result = await Fetch.get<{ data: any[] }>(
+      `/participant/${participantId}/activitySchedule?ignore_binary=${ignore_binary}`,
+        this.configuration
+      ) as any
+    return result
+  }
+
+    /**
+   * Get the set of all empty tabs by participant identifier.
+   * @param participantId
+   */
+  public async emptyTabs(
+    participantId: Identifier,
+    transform?: string,
+  ): Promise<Activity[]> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
+
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
+        let output = Demo.Activity.filter((x) =>
+          Demo.Participant.filter((y) => y["id"] === participantId)
+            ?.map((y) => y["#parent"])
+            .includes(x["#parent"])
+        )?.map((x) => Object.assign(new Activity(), x))
+        output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
+        return Promise.resolve(output)
+      } else {
+        return Promise.resolve({ error: "404.not-found" } as any)
+      }
+    }
+    
+    const result = await Fetch.get<{ data: any[] }>(
+      `/participant/${participantId}/emptyTab`,
+        this.configuration
+      ) as any
+    return result
+  }
 }
