@@ -401,6 +401,60 @@ export class ActivityService {
   }
 
   /**
+   * Delete multiple activities.
+   * @param activities
+   */
+  public async deleteActivities(activities: string[]): Promise<{ error?: string }> {
+    if (!activities || activities.length === 0) {
+      throw new Error("Required parameter 'activities' was null, undefined, or empty when calling deleteActivities.")
+    }
+
+    // Check if we are in DEMO mode
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // Parse demo credentials from authorization (format: "access_key:secret_key")
+      const auth = (this.configuration.authorization || ":").split(":", 2)
+      const [access_key, secret_key] = auth
+
+      const credential = Demo.Credential.filter((x) => x["access_key"] === access_key && x["secret_key"] === secret_key)
+
+      // Invalid credentials
+      if (credential.length === 0) {
+        return { error: "403.invalid-credentials" }
+      }
+
+      // Map "me" to the credential's origin if present
+      const resolvedActivities = activities.map((id) =>
+        id === "me" && credential[0]["origin"] ? credential[0]["origin"] : id
+      )
+
+      // Track deleted and not-found IDs (for debugging or reporting)
+      const notFound: string[] = []
+
+      for (const activityId of resolvedActivities) {
+        const idx = Demo.Activity.findIndex((x) => x["id"] === activityId)
+
+        if (idx >= 0) {
+          // Remove related records
+          Demo.ActivityEvent = Demo.ActivityEvent.filter((x) => x["activity"] !== activityId)
+          Demo.Credential = Demo.Credential.filter((x) => x["#parent"] !== activityId)
+          Demo.Tags = Demo.Tags.filter((x) => x["#parent"] !== activityId && x["target"] !== activityId)
+
+          // Remove the activity itself
+          Demo.Activity.splice(idx, 1)
+        } else {
+          notFound.push(activityId)
+        }
+      }
+
+      // Return error if any IDs were not found
+      if (notFound.length > 0) {
+        return { error: `404.not-found: ${notFound.join(", ")}` }
+      }
+    }
+    return await Fetch.delete(`/activity/delete`, activities, this.configuration)
+  }
+
+  /**
    * Get the set of all sub-activities available to a module in participant feed,  by module identifier,participant Identifier,startTime and EndTime.
    * @param participantId
    * @param modules
