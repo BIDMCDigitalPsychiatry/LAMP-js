@@ -85,4 +85,9 @@ export class Activity {
    * The tab settings for the activity.
    */
   category?: Tab[] | null
+
+  /**
+   * The type of streak for the activity.
+   */
+  streakType?: string
 }

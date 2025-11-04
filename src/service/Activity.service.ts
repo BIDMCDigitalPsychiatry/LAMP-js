@@ -132,7 +132,7 @@ export class ActivityService {
    * Get the set of all activities available to  participants of a single study, by participant identifier.
    * @param participantId
    */
-  public async listActivities(participantId: Identifier,  tab?: string, transform?: string): Promise<{}> {
+  public async listActivities(participantId: Identifier, tab?: string, transform?: string): Promise<{}> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling listActivities.")
 
@@ -153,9 +153,7 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (
-      await Fetch.get<{ data: any[] }>(`/activity/${participantId}/activity?tab=${tab}`, this.configuration)
-    )//.data .map((x) => Object.assign(new Activity(), x))
+    return await Fetch.get<{ data: any[] }>(`/activity/${participantId}/activity?tab=${tab}`, this.configuration) //.data .map((x) => Object.assign(new Activity(), x))
   }
 
   /**
@@ -293,7 +291,12 @@ export class ActivityService {
    * @param moduleId
    * @param participantId
    */
-  public async moduleByParticipant(moduleId: Identifier, participantId: Identifier): Promise<any[]> {
+  public async moduleByParticipant(
+    moduleId: Identifier,
+    participantId: Identifier,
+    startTime?: number,
+    endTime?: number
+  ): Promise<any[]> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling moduleByParticipant.")
     if (moduleId === null || moduleId === undefined)
@@ -316,9 +319,12 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/module/${moduleId}/${participantId}`, this.configuration)).data?.map(
-      (x) => Object.assign(new Activity(), x)
-    )
+    return (
+      await Fetch.get<{ data: any[] }>(
+        `/module/${moduleId}/${participantId}?${startTime}&${endTime}`,
+        this.configuration
+      )
+    ).data?.map((x) => Object.assign(new Activity(), x))
   }
 
   /**
@@ -352,22 +358,19 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    
-    const result = await Fetch.get<{ data: any[] }>(
+
+    const result = (await Fetch.get<{ data: any[] }>(
       `/participant/${participantId}/activitySchedule?ignore_binary=${ignore_binary}`,
-        this.configuration
-      ) as any
+      this.configuration
+    )) as any
     return result
   }
 
-    /**
+  /**
    * Get the set of all empty tabs by participant identifier.
    * @param participantId
    */
-  public async emptyTabs(
-    participantId: Identifier,
-    transform?: string,
-  ): Promise<Activity[]> {
+  public async emptyTabs(participantId: Identifier, transform?: string): Promise<Activity[]> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
     if (this.configuration.base === "https://demo.lamp.digital") {
@@ -389,11 +392,45 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    
-    const result = await Fetch.get<{ data: any[] }>(
+
+    const result = (await Fetch.get<{ data: any[] }>(
       `/participant/${participantId}/emptyTab`,
-        this.configuration
-      ) as any
+      this.configuration
+    )) as any
     return result
+  }
+
+  /**
+   * Get the set of all sub-activities available to a module in participant feed,  by module identifier,participant Identifier,startTime and EndTime.
+   * @param participantId
+   * @param modules
+   */
+  public async feedModules(participantId: Identifier, modules: any): Promise<any[]> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling feedModules.")
+    if (modules === null || modules === undefined)
+      throw new Error("Required parameter modules was null or undefined when calling feedModules.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
+
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
+        let output = Demo.Activity.filter((x) =>
+          Demo.Participant.filter((y) => y["id"] === participantId)
+            ?.map((y) => y["#parent"])
+            .includes(x["#parent"])
+        )?.map((x) => Object.assign(new Activity(), x))
+
+        return Promise.resolve(output)
+      } else {
+        return Promise.resolve({ error: "404.not-found" } as any)
+      }
+    }
+    return (await Fetch.post<{ data: any[] }>(`/feed/module/${participantId}`, this.configuration)).data?.map((x) =>
+      Object.assign(new Activity(), x)
+    )
   }
 }
