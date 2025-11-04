@@ -402,44 +402,35 @@ export class ActivityService {
 
   /**
    * Get the set of all sub-activities available to a module in participant feed,  by module identifier,participant Identifier,startTime and EndTime.
-   * @param moduleId
    * @param participantId
-   * @param startTime
-   * @param endTime
+   * @param modules
    */
-  public async feedModules(
-    moduleId: Identifier,
-    participantId: Identifier,
-    startTime?: any,
-    endTime?: any
-  ): Promise<any[]> {
+  public async feedModules(participantId: Identifier, modules: any): Promise<any[]> {
     if (participantId === null || participantId === undefined)
-      throw new Error("Required parameter participantId was null or undefined when calling moduleByParticipant.")
-    if (moduleId === null || moduleId === undefined)
-      throw new Error("Required parameter moduleId was null or undefined when calling moduleByParticipant.")
+      throw new Error("Required parameter participantId was null or undefined when calling feedModules.")
+    if (modules === null || modules === undefined)
+      throw new Error("Required parameter modules was null or undefined when calling feedModules.")
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
       let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
-      if (moduleId === "me") moduleId = credential.length > 0 ? credential[0]["origin"] : moduleId
 
-      if (Demo.Activity.filter((x) => x["id"] === moduleId).length > 0) {
-        let output = Demo.Activity.filter((x) => x["#parent"] === moduleId)?.map((x) =>
-          Object.assign(new Activity(), x)
-        )
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
+        let output = Demo.Activity.filter((x) =>
+          Demo.Participant.filter((y) => y["id"] === participantId)
+            ?.map((y) => y["#parent"])
+            .includes(x["#parent"])
+        )?.map((x) => Object.assign(new Activity(), x))
 
         return Promise.resolve(output)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (
-      await Fetch.get<{ data: any[] }>(
-        `/feed/module/${moduleId}/${participantId}?${startTime}&${endTime}`,
-        this.configuration
-      )
-    ).data?.map((x) => Object.assign(new Activity(), x))
+    return (await Fetch.post<{ data: any[] }>(`/feed/module/${participantId}`, this.configuration)).data?.map((x) =>
+      Object.assign(new Activity(), x)
+    )
   }
 }
