@@ -487,4 +487,41 @@ export class ActivityService {
       Object.assign(new Activity(), x)
     )
   }
+
+  /**
+   * Get the list of favorite activity IDs for a participant.
+   * Returns custom selected activity IDs if Researcher_settings choice is "custom",
+   * otherwise returns the last 10 activity IDs most recently added to lamp.dashboard.favorite_activities tag.
+   * @param participantId
+   * @param transform
+   */
+  public async favoriteActivityIds(participantId: Identifier, transform?: string): Promise<string[]> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling favoriteActivityIds.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
+
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
+        // Return empty array for demo mode
+        let output: string[] = []
+        output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
+        return Promise.resolve(output)
+      } else {
+        return Promise.resolve({ error: "404.not-found" } as any)
+      }
+    }
+
+    const result = await Fetch.get<{ data: string[] }>(
+      `/participant/${participantId}/favorite_activities`,
+      this.configuration
+    )
+    let output = result.data || []
+    output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
+    return output
+  }
 }
