@@ -451,7 +451,7 @@ export class ActivityService {
         return { error: `404.not-found: ${notFound.join(", ")}` }
       }
     }
-    return await Fetch.delete(`/activity/delete`, activities, this.configuration)
+    return await Fetch.delete(`/activity/delete`, { activities }, this.configuration)
   }
 
   /**
@@ -523,5 +523,31 @@ export class ActivityService {
     let output = result.data || []
     output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
     return output
+  }
+
+  /**
+   * Get feed details (schedule window entries with completion) for a participant and optional date (ms since epoch).
+   * @param participantId
+   * @param dateMs optional UTC ms for the day to fetch; defaults to today if omitted
+   */
+  public async feedDetails(participantId: Identifier, dateMs?: number): Promise<any[]> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling feedDetails.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO: no server-side computation; return empty set
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
+      return []
+    }
+
+    const url = typeof dateMs === "number"
+      ? `/participant/${participantId}/feedDetails?date=${dateMs}`
+      : `/participant/${participantId}/feedDetails`
+
+    const result = await Fetch.get<{ data: any[] }>(url, this.configuration)
+    return result.data || []
   }
 }
