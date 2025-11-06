@@ -168,8 +168,8 @@ export class Fetch {
   }
   public static async delete<ResultType>(
     route: string,
-    body?: any,
-    configuration?: Configuration
+    configuration?: Configuration,
+    body?: any
   ): Promise<ResultType> {
     return await _fetch("delete", route, configuration, body)
   }
