@@ -451,7 +451,7 @@ export class ActivityService {
         return { error: `404.not-found: ${notFound.join(", ")}` }
       }
     }
-    return await Fetch.delete(`/activities`, activities, this.configuration)
+    return await Fetch.delete(`/activities`, this.configuration, activities)
   }
 
   /**
