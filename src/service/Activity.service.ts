@@ -543,9 +543,10 @@ export class ActivityService {
       return []
     }
 
-    const url = typeof dateMs === "number"
-      ? `/participant/${participantId}/feedDetails?date=${dateMs}`
-      : `/participant/${participantId}/feedDetails`
+    const url =
+      typeof dateMs === "number"
+        ? `/participant/${participantId}/feedDetails?date=${dateMs}`
+        : `/participant/${participantId}/feedDetails`
 
     const result = await Fetch.get<{ data: any[] }>(url, this.configuration)
     return result.data || []
