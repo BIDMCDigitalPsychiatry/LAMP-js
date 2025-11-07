@@ -404,7 +404,7 @@ export class ActivityService {
    * Delete multiple activities.
    * @param activities
    */
-  public async deleteActivities(activities: string[]): Promise<{ error?: string }> {
+  public async deleteActivities(activities:any): Promise<{ error?: string }> {
     if (!activities || activities.length === 0) {
       throw new Error("Required parameter 'activities' was null, undefined, or empty when calling deleteActivities.")
     }
@@ -453,6 +453,7 @@ export class ActivityService {
     }
     return await Fetch.delete(`/activities`, this.configuration, activities)
   }
+
 
   /**
    * Get the set of all sub-activities available to a module in participant feed,  by module identifier,participant Identifier,startTime and EndTime.
@@ -530,7 +531,7 @@ export class ActivityService {
    * @param participantId
    * @param dateMs optional UTC ms for the day to fetch; defaults to today if omitted
    */
-  public async feedDetails(participantId: Identifier, dateMs?: number): Promise<any[]> {
+  public async feedDetails(participantId: Identifier, dateMs?: string): Promise<any[]> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling feedDetails.")
 
