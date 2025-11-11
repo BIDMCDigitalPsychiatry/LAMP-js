@@ -531,7 +531,7 @@ export class ActivityService {
    * @param participantId
    * @param dateMs optional UTC ms for the day to fetch; defaults to today if omitted
    */
-  public async feedDetails(participantId: Identifier, dateMs?: string): Promise<any[]> {
+  public async feedDetails(participantId: Identifier, dateMs?: string): Promise<any> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling feedDetails.")
 
@@ -544,8 +544,9 @@ export class ActivityService {
       return []
     }
 
-    const url = `/participant/${participantId}/feedDetails?date=${dateMs}&timestamp=${Date.now()}`
-    const result = await Fetch.get<{ data: any[] }>(url, this.configuration)
-    return result.data || []
+    const tzOffsetMinutes = new Date().getTimezoneOffset()
+    const url = `/participant/${participantId}/feedDetails?date=${dateMs}&tzOffsetMinutes=${tzOffsetMinutes}`
+    const result = await Fetch.get<{ data: any }>(url, this.configuration)
+    return result.data || {}
   }
 }
