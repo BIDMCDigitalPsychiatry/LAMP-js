@@ -319,9 +319,18 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
+    const params = new URLSearchParams()
+    if (startTime !== undefined && startTime !== null) {
+      params.append('startTime', startTime.toString())
+    }
+    if (endTime !== undefined && endTime !== null) {
+      params.append('endTime', endTime.toString())
+    }
+    const queryString = params.toString()
+    const url = `/module/${moduleId}/${participantId}${queryString ? `?${queryString}` : ''}`
     return (
       await Fetch.get<{ data: any[] }>(
-        `/module/${moduleId}/${participantId}?${startTime}&${endTime}`,
+        url,
         this.configuration
       )
     ).data?.map((x) => Object.assign(new Activity(), x))
