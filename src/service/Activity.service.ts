@@ -73,31 +73,30 @@ export class ActivityService {
       params.append('offset', offset.toString())
     }
     const queryString = params.toString()
-    const result: any = await Fetch.get<{ data: Activity[], total: number }>(
+    const result: any = await Fetch.get<{ data: { data: Activity[], total: number } }>(
       `/participant/${participantId}/activity?${queryString}`,
       this.configuration
     )
     
-    // Handle the response structure - check if result.data is an array or if it's wrapped
+    // Handle the response structure - API returns { data: { data: Activity[], total: number } }
     let activitiesArray: any[] = []
     let totalCount = 0
     
-    if (result) {
-      // Check if result.data is an array (direct structure: { data: Activity[], total: number })
-      if (Array.isArray(result.data)) {
-        activitiesArray = result.data
-        totalCount = result.total || 0
-      } 
-      // Check if result is wrapped in another data property (wrapped structure: { data: { data: Activity[], total: number } })
-      else if (result.data && Array.isArray(result.data.data)) {
-        activitiesArray = result.data.data
-        totalCount = result.data.total || 0
+    if (result && result.data) {
+      // API wraps response in { data: { data: Activity[], total: number } }
+      const responseData = result.data
+      if (Array.isArray(responseData.data)) {
+        activitiesArray = responseData.data
+        totalCount = responseData.total || 0
+      } else if (Array.isArray(responseData)) {
+        // Fallback: if responseData is directly an array
+        activitiesArray = responseData
+        totalCount = responseData.length
       }
-      // Fallback: check if result itself is an array (legacy structure)
-      else if (Array.isArray(result)) {
-        activitiesArray = result
-        totalCount = result.length
-      }
+    } else if (Array.isArray(result)) {
+      // Legacy fallback: if result is directly an array
+      activitiesArray = result
+      totalCount = result.length
     }
     
     return {
