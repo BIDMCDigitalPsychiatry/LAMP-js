@@ -33,8 +33,10 @@ export class ActivityService {
   public async allByParticipant(
     participantId: Identifier,
     transform?: string,
-    ignore_binary?: boolean
-  ): Promise<Activity[]> {
+    ignore_binary?: boolean,
+    limit?: number,
+    offset?: number
+  ): Promise<{ data: Activity[], total: number }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
     if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
@@ -52,17 +54,33 @@ export class ActivityService {
             .includes(x["#parent"])
         )?.map((x) => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
-        return Promise.resolve(output)
+        // For demo, return all data with total count
+        const total = output.length
+        const paginatedOutput = limit !== undefined && offset !== undefined
+          ? output.slice(offset, offset + limit)
+          : output
+        return Promise.resolve({ data: paginatedOutput, total })
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (
-      await Fetch.get<{ data: any[] }>(
-        `/participant/${participantId}/activity?ignore_binary=${ignore_binary}`,
-        this.configuration
-      )
-    ).data?.map((x) => Object.assign(new Activity(), x))
+    const params = new URLSearchParams()
+    params.append('ignore_binary', String(ignore_binary))
+    if (limit !== undefined && limit !== null) {
+      params.append('limit', limit.toString())
+    }
+    if (offset !== undefined && offset !== null) {
+      params.append('offset', offset.toString())
+    }
+    const queryString = params.toString()
+    const result = await Fetch.get<{ data: Activity[], total: number }>(
+      `/participant/${participantId}/activity?${queryString}`,
+      this.configuration
+    )
+    return {
+      data: result.data?.map((x) => Object.assign(new Activity(), x)) || [],
+      total: result.total || 0
+    }
   }
 
   /**
