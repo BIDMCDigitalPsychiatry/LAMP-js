@@ -321,9 +321,12 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (
-      await Fetch.get<{ data: any[] }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)
-    ).data?.map((x) => Object.assign(new Activity(), x))[0]
+    const result: any = await Fetch.get<{ data: Activity }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)
+    // API returns { data: Activity } (single object, not array)
+    if (result && result.data) {
+      return Object.assign(new Activity(), result.data)
+    }
+    return null as any
   }
 
   /**
