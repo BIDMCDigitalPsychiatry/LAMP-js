@@ -47,7 +47,6 @@ const handleRenewToken = async (refreshToken: string, base: string) => {
     const accessToken = res?.data?.access_token
 
     if (accessToken) {
-      await LAMP.Auth.refresh_identity()
       sessionStorage.setItem(
         userTokenKey,
         JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
