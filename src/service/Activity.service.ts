@@ -172,7 +172,7 @@ export class ActivityService {
    * Get the set of all activities available to  participants of a single study, by participant identifier.
    * @param participantId
    */
-  public async listActivities(participantId: Identifier, tab?: string, transform?: string): Promise<{}> {
+  public async listActivities(participantId: Identifier, tab?: string, transform?: string, limit?: number, offset?: number): Promise<{ data: any, total: number }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling listActivities.")
 
@@ -188,12 +188,33 @@ export class ActivityService {
           Object.assign(new Activity(), x)
         )
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
-        return Promise.resolve(output)
+        return Promise.resolve({ data: output, total: output.length } as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.get<{ data: any[] }>(`/activity/${participantId}/activity?tab=${tab}`, this.configuration) //.data .map((x) => Object.assign(new Activity(), x))
+    
+    // Build query string with pagination parameters
+    const params = new URLSearchParams()
+    if (tab) params.append("tab", tab)
+    if (typeof limit === 'number' && limit > 0) params.append("limit", limit.toString())
+    if (typeof offset === 'number' && offset > 0) params.append("offset", offset.toString())
+    const queryString = params.toString()
+    
+    const result: any = await Fetch.get<{ data: any, total: number }>(
+      `/activity/${participantId}/activity${queryString ? `?${queryString}` : ''}`,
+      this.configuration
+    )
+    
+    // Handle different response structures
+    if (result && result.data !== undefined && typeof result.total === 'number') {
+      return { data: result.data, total: result.total }
+    }
+    // Legacy fallback: if result is directly the data object
+    if (result && !result.total) {
+      return { data: result, total: 0 }
+    }
+    return { data: {}, total: 0 }
   }
 
   /**
