@@ -262,7 +262,7 @@ export class CredentialService {
     const configuration: Configuration = { accesToken: refreshToken, base: base }
     return await Fetch.post("/renewToken", { refreshToken }, configuration)
   }
-  public async logout(token: string): Promise<any> {
-    return await Fetch.post("/logout", { token }, this.configuration)
+  public async logout(): Promise<any> {
+    return await Fetch.post("/logout", {}, this.configuration)
   }
 }

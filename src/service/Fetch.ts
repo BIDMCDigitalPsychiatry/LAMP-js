@@ -1,5 +1,3 @@
-import { jwtVerify } from "jose"
-import { CredentialService } from "./Credential.service"
 /**
  *
  */
@@ -9,6 +7,7 @@ export type Configuration = {
    */
   base: string
 
+  authType?: "basic" | "session"
   /**
    *
    */
@@ -26,108 +25,73 @@ export type Configuration = {
   jwt_secret?: string
 }
 
-const userTokenKey = "tokenInfo"
 
-//If refresh token expired, then logout from app
-const handleSessionExpiry = async () => {
-  localStorage.removeItem(userTokenKey)
-  localStorage.setItem("verified", JSON.stringify({ value: false }))
-  sessionStorage.setItem("LAMP._auth", JSON.stringify({ id: null, password: null, serverAddress: null }))
-  // alert("Your session expired, Please login again.")
-  // window.location.href = "/#/?expired=true"
+async function _sessionAuthFetch<ResultType>(
+  method: string,
+  route: string,
+  configuration?: Configuration,
+  body?: any
+): Promise<ResultType> {
+  if (!configuration) {
+    throw new Error("Cannot make HTTP request due to invalid configuration")
+  }
+  
+  const result = await ( await fetch(
+    `${configuration.base}${route}`,
+    {
+      method: method,
+      headers: new Headers({
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Accept": "application/json",
+        ... (configuration!.headers || {}),
+      }),
+      credentials: "include",
+      body: body !== undefined ? JSON.stringify(body) : undefined
+    }
+  )).json()
+
+    return result as any
 }
 
-//If access Token expired then call api for renewing the tokens
-const handleRenewToken = async (refreshToken: string, base: string) => {
-  try {
-    const credService = new CredentialService()
-    const res = await credService.renewToken(refreshToken, base)
+async function _basicAuthFetch<ResultType>(
+  method: string,
+  route: string,
+  configuration?: Configuration,
+  body?: any
+): Promise<ResultType> {
+   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
 
-    const accessToken = res?.data?.access_token
-
-    if (accessToken) {
-      sessionStorage.setItem(
-        userTokenKey,
-        JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
-      )
-    }
-    return accessToken
-  } catch (error) {
-    console.log(error)
-  }
+  var result = await (
+    await fetch(`${configuration!.base}${route}`, {
+      method: method,
+      headers: new Headers({
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        ...(configuration!.headers || {}),
+        Authorization: !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
+      } as any),
+      credentials: "include",
+      body: body !== undefined ? JSON.stringify(body) : undefined
+    },)
+  ).json()
+  
+  return result as any
 }
 
 async function _fetch<ResultType>(
   method: string,
   route: string,
   configuration?: Configuration,
-  body?: any
+  body?: any,
 ): Promise<ResultType> {
-  if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
-  let authorization
-
-  const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
-  if (userTokenFromLocalStore?.accessToken) {
-    authorization = `Bearer ${
-      configuration.accesToken ? configuration.accesToken : userTokenFromLocalStore?.accessToken
-    }`
-  }
-
-  if (authorization || (!authorization && route.includes("/login"))) {
-    try {
-      var result = await (
-        await fetch(`${configuration.base}${route}`, {
-          method: method,
-          headers: new Headers({
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            // "Cache-Control": "no-store",
-            Accept: "application/json",
-            ...(configuration!.headers || {}),
-            Authorization: authorization,
-          } as any),
-          // credentials: "include",
-          body: body !== undefined ? JSON.stringify(body) : undefined,
-        })
-      ).json()
-      //Check token expiry
-
-      if (result?.error === "401.invalid-token") {
-        if (!route?.includes("renewToken")) {
-          const token = await handleRenewToken(userTokenFromLocalStore?.refreshToken, configuration.base)
-
-          configuration.accesToken = token
-          switch (method) {
-            case "post":
-              await Fetch.post(route, body, configuration)
-              break
-            case "get":
-              await Fetch.get(route, configuration)
-              break
-            case "put":
-              await Fetch.put(route, body, configuration)
-              break
-            case "delete":
-              await Fetch.delete(route, configuration)
-              break
-            case "patch":
-              await Fetch.patch(route, body, configuration)
-              break
-          }
-          return { data: [], error: "401.invalid-token" } as any
-        } else {
-          handleSessionExpiry()
-          return { data: [], error: "401.invalid-token" } as any
-        }
-      } else {
-        return result as any
-      }
-    } catch (error) {
-      console.log(error)
-    }
+  if (configuration.authType === "session") {
+    return await _sessionAuthFetch(method, route, configuration, body)
   } else {
-    return [] as any
+    return await _basicAuthFetch(method, route, configuration, body)
   }
+
 }
 
 export class Fetch {
@@ -147,13 +111,3 @@ export class Fetch {
     return await _fetch("delete", route, configuration)
   }
 }
-
-// export async function verifyToken(token: string, secretKey: string) {
-//   try {
-//     const secret_Key = new TextEncoder().encode(this.configuration.jwt_secret);
-//     const decoded = jwtVerify(token, secret_Key);
-//     return decoded;
-//   } catch (error) {
-//     throw new Error('Invalid token');
-//   }
-// }
