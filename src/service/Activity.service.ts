@@ -73,23 +73,25 @@ export class ActivityService {
       params.append('offset', offset.toString())
     }
     const queryString = params.toString()
-    const result: any = await Fetch.get<{ data: { data: Activity[], total: number } }>(
+    const result: any = await Fetch.get<{ data: Activity[] | { data: Activity[], total: number } }>(
       `/participant/${participantId}/activity?${queryString}`,
       this.configuration
     )
     
-    // Handle the response structure - API returns { data: { data: Activity[], total: number } }
+    // Handle the response structure:
+    // - With pagination: { data: { data: Activity[], total: number } }
+    // - Without pagination: { data: Activity[] } (backward compatible)
     let activitiesArray: any[] = []
     let totalCount = 0
     
     if (result && result.data) {
-      // API wraps response in { data: { data: Activity[], total: number } }
       const responseData = result.data
-      if (Array.isArray(responseData.data)) {
+      // Check if responseData is the paginated format { data: Activity[], total: number }
+      if (responseData && typeof responseData === 'object' && !Array.isArray(responseData) && Array.isArray(responseData.data)) {
         activitiesArray = responseData.data
         totalCount = responseData.total || 0
       } else if (Array.isArray(responseData)) {
-        // Fallback: if responseData is directly an array
+        // Backward compatible: responseData is directly an array (no pagination)
         activitiesArray = responseData
         totalCount = responseData.length
       }
