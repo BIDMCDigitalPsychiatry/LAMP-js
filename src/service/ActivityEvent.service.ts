@@ -20,7 +20,7 @@ export class ActivityEventService {
     participantId: Identifier,
     origin?: string,
     from?: number,
-    to?: number,    
+    to?: number,
     limit?: number,
     ignoreBinary?: boolean,
     transform?: string
@@ -39,14 +39,14 @@ export class ActivityEventService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
-      if (Demo.Participant.filter(x => x["id"] === participantId).length > 0) {
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
         let output = Demo.ActivityEvent.filter(
-          x => x["#parent"] === participantId && (!!origin ? x["activity"] === origin : true)
-        ).map(x => Object.assign(new ActivityEvent(), x))
+          (x) => x["#parent"] === participantId && (!!origin ? x["activity"] === origin : true)
+        ).map((x) => Object.assign(new ActivityEvent(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       } else {
@@ -58,7 +58,7 @@ export class ActivityEventService {
         `/participant/${participantId}/activity_event?${queryParameters.toString()}`,
         this.configuration
       )
-    ).data?.map(x => Object.assign(new ActivityEvent(), x))
+    ).data?.map((x) => Object.assign(new ActivityEvent(), x))
   }
 
   /**
@@ -90,17 +90,17 @@ export class ActivityEventService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
-      if (Demo.Researcher.filter(x => x["id"] === researcherId).length > 0) {
-        let participants = Demo.Study.filter(x => x["#parent"] === researcherId)
-          .map(x => Demo.Participant.filter(y => y["#parent"] === x["id"]))
+      if (Demo.Researcher.filter((x) => x["id"] === researcherId).length > 0) {
+        let participants = Demo.Study.filter((x) => x["#parent"] === researcherId)
+          .map((x) => Demo.Participant.filter((y) => y["#parent"] === x["id"]))
           .flat(1)
         let fn = (id: string) =>
-          Demo.ActivityEvent.filter(x => x["#parent"] === id && (!!origin ? x["activity"] === origin : true)).map(x =>
-            Object.assign(new ActivityEvent(), x)
+          Demo.ActivityEvent.filter((x) => x["#parent"] === id && (!!origin ? x["activity"] === origin : true)).map(
+            (x) => Object.assign(new ActivityEvent(), x)
           )
         let output = participants.reduce(
           (all, participant) => ({ ...all, [participant["id"]]: fn(participant["id"]) }),
@@ -117,7 +117,7 @@ export class ActivityEventService {
         `/researcher/${researcherId}/activity_event?${queryParameters.toString()}`,
         this.configuration
       )
-    ).data.map(x => Object.assign(new ActivityEvent(), x))
+    ).data.map((x) => Object.assign(new ActivityEvent(), x))
   }
 
   /**
@@ -147,15 +147,15 @@ export class ActivityEventService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
-      if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
-        let participants = Demo.Participant.filter(x => x["#parent"] === studyId)
+      if (Demo.Study.filter((x) => x["id"] === studyId).length > 0) {
+        let participants = Demo.Participant.filter((x) => x["#parent"] === studyId)
         let fn = (id: string) =>
-          Demo.ActivityEvent.filter(x => x["#parent"] === id && (!!origin ? x["activity"] === origin : true)).map(x =>
-            Object.assign(new ActivityEvent(), x)
+          Demo.ActivityEvent.filter((x) => x["#parent"] === id && (!!origin ? x["activity"] === origin : true)).map(
+            (x) => Object.assign(new ActivityEvent(), x)
           )
         let output = participants.reduce(
           (all, participant) => ({ ...all, [participant["id"]]: fn(participant["id"]) }),
@@ -172,7 +172,7 @@ export class ActivityEventService {
         `/study/${studyId}/activity_event?${queryParameters.toString()}`,
         this.configuration
       )
-    ).data.map(x => Object.assign(new ActivityEvent(), x))
+    ).data.map((x) => Object.assign(new ActivityEvent(), x))
   }
 
   /**
@@ -189,15 +189,15 @@ export class ActivityEventService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
-      if (Demo.Participant.filter(x => x["id"] === participantId).length > 0) {
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
         Demo.ActivityEvent.push({
           "#type": "ActivityEvent",
           "#parent": participantId,
-          ...(activityEvent as any)
+          ...(activityEvent as any),
         })
         return Promise.resolve({} as any)
       } else {
@@ -226,11 +226,11 @@ export class ActivityEventService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
-      if (Demo.Participant.filter(x => x["id"] === participantId).length > 0) {
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
         return Promise.resolve({ error: "500.demo-restriction" } as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)

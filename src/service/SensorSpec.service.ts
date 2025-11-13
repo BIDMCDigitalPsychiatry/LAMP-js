@@ -13,11 +13,11 @@ export class SensorSpecService {
   public async all(transform?: string): Promise<SensorSpec[]> {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let output = Demo.SensorSpec.map(x => Object.assign(new SensorSpec(), x))
+      let output = Demo.SensorSpec.map((x) => Object.assign(new SensorSpec(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor_spec`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor_spec`, this.configuration)).data.map((x) =>
       Object.assign(new SensorSpec(), x)
     )
   }
@@ -80,7 +80,9 @@ export class SensorSpecService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let data = Demo.SensorSpec.filter(x => x["name"] === sensorSpecName).map(x => Object.assign(new SensorSpec(), x))
+      let data = Demo.SensorSpec.filter((x) => x["name"] === sensorSpecName).map((x) =>
+        Object.assign(new SensorSpec(), x)
+      )
       if (data.length > 0) {
         let output = data[0]
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -89,7 +91,7 @@ export class SensorSpecService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/sensor_spec/${sensorSpecName}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/sensor_spec/${sensorSpecName}`, this.configuration)).data.map((x) =>
       Object.assign(new SensorSpec(), x)
     )[0]
   }
