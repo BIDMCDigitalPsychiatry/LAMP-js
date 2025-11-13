@@ -33,8 +33,10 @@ export class ActivityService {
   public async allByParticipant(
     participantId: Identifier,
     transform?: string,
-    ignore_binary?: boolean
-  ): Promise<Activity[]> {
+    ignore_binary?: boolean,
+    limit?: number,
+    offset?: number
+  ): Promise<{ data: Activity[], total: number }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
     if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
@@ -52,17 +54,55 @@ export class ActivityService {
             .includes(x["#parent"])
         )?.map((x) => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
-        return Promise.resolve(output)
+        // For demo, return all data with total count
+        const total = output.length
+        const paginatedOutput = limit !== undefined && offset !== undefined
+          ? output.slice(offset, offset + limit)
+          : output
+        return Promise.resolve({ data: paginatedOutput, total })
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (
-      await Fetch.get<{ data: any[] }>(
-        `/participant/${participantId}/activity?ignore_binary=${ignore_binary}`,
-        this.configuration
-      )
-    ).data?.map((x) => Object.assign(new Activity(), x))
+    const params = new URLSearchParams()
+    params.append('ignore_binary', String(ignore_binary))
+    if (limit !== undefined && limit !== null) {
+      params.append('limit', limit.toString())
+    }
+    if (offset !== undefined && offset !== null) {
+      params.append('offset', offset.toString())
+    }
+    const queryString = params.toString()
+    const result: any = await Fetch.get<{ data: { data: Activity[], total: number } }>(
+      `/participant/${participantId}/activity?${queryString}`,
+      this.configuration
+    )
+    
+    // Handle the response structure - API returns { data: { data: Activity[], total: number } }
+    let activitiesArray: any[] = []
+    let totalCount = 0
+    
+    if (result && result.data) {
+      // API wraps response in { data: { data: Activity[], total: number } }
+      const responseData = result.data
+      if (Array.isArray(responseData.data)) {
+        activitiesArray = responseData.data
+        totalCount = responseData.total || 0
+      } else if (Array.isArray(responseData)) {
+        // Fallback: if responseData is directly an array
+        activitiesArray = responseData
+        totalCount = responseData.length
+      }
+    } else if (Array.isArray(result)) {
+      // Legacy fallback: if result is directly an array
+      activitiesArray = result
+      totalCount = result.length
+    }
+    
+    return {
+      data: activitiesArray.map((x: any) => Object.assign(new Activity(), x)),
+      total: totalCount
+    }
   }
 
   /**
@@ -132,7 +172,7 @@ export class ActivityService {
    * Get the set of all activities available to  participants of a single study, by participant identifier.
    * @param participantId
    */
-  public async listActivities(participantId: Identifier, tab?: string, transform?: string): Promise<{}> {
+  public async listActivities(participantId: Identifier, tab?: string, transform?: string, limit?: number, offset?: number): Promise<{ data: any, total: number }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling listActivities.")
 
@@ -148,12 +188,33 @@ export class ActivityService {
           Object.assign(new Activity(), x)
         )
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
-        return Promise.resolve(output)
+        return Promise.resolve({ data: output, total: output.length } as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.get<{ data: any[] }>(`/activity/${participantId}/activity?tab=${tab}`, this.configuration) //.data .map((x) => Object.assign(new Activity(), x))
+    
+    // Build query string with pagination parameters
+    const params = new URLSearchParams()
+    if (tab) params.append("tab", tab)
+    if (typeof limit === 'number' && limit > 0) params.append("limit", limit.toString())
+    if (typeof offset === 'number' && offset > 0) params.append("offset", offset.toString())
+    const queryString = params.toString()
+    
+    const result: any = await Fetch.get<{ data: any, total: number }>(
+      `/activity/${participantId}/activity${queryString ? `?${queryString}` : ''}`,
+      this.configuration
+    )
+    
+    // Handle different response structures
+    if (result && result.data !== undefined && typeof result.total === 'number') {
+      return { data: result.data, total: result.total }
+    }
+    // Legacy fallback: if result is directly the data object
+    if (result && !result.total) {
+      return { data: result, total: 0 }
+    }
+    return { data: {}, total: 0 }
   }
 
   /**
@@ -281,9 +342,12 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (
-      await Fetch.get<{ data: any[] }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)
-    ).data?.map((x) => Object.assign(new Activity(), x))[0]
+    const result: any = await Fetch.get<{ data: Activity }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)
+    // API returns { data: Activity } (single object, not array)
+    if (result && result.data) {
+      return Object.assign(new Activity(), result.data)
+    }
+    return null as any
   }
 
   /**
@@ -319,9 +383,18 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
+    const params = new URLSearchParams()
+    if (startTime !== undefined && startTime !== null) {
+      params.append('startTime', startTime.toString())
+    }
+    if (endTime !== undefined && endTime !== null) {
+      params.append('endTime', endTime.toString())
+    }
+    const queryString = params.toString()
+    const url = `/module/${moduleId}/${participantId}${queryString ? `?${queryString}` : ''}`
     return (
       await Fetch.get<{ data: any[] }>(
-        `/module/${moduleId}/${participantId}?${startTime}&${endTime}`,
+        url,
         this.configuration
       )
     ).data?.map((x) => Object.assign(new Activity(), x))
@@ -404,7 +477,7 @@ export class ActivityService {
    * Delete multiple activities.
    * @param activities
    */
-  public async deleteActivities(activities: any): Promise<{ error?: string }> {
+  public async deleteActivities(activities:any): Promise<{ error?: string }> {
     if (!activities || activities.length === 0) {
       throw new Error("Required parameter 'activities' was null, undefined, or empty when calling deleteActivities.")
     }
@@ -453,6 +526,7 @@ export class ActivityService {
     }
     return await Fetch.delete(`/activities`, this.configuration, activities)
   }
+
 
   /**
    * Get the set of all sub-activities available to a module in participant feed,  by module identifier,participant Identifier,startTime and EndTime.
@@ -530,7 +604,7 @@ export class ActivityService {
    * @param participantId
    * @param dateMs optional UTC ms for the day to fetch; defaults to today if omitted
    */
-  public async feedDetails(participantId: Identifier, dateMs?: number): Promise<any[]> {
+  public async feedDetails(participantId: Identifier, dateMs?: string): Promise<any> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling feedDetails.")
 
@@ -545,8 +619,7 @@ export class ActivityService {
 
     const tzOffsetMinutes = new Date().getTimezoneOffset()
     const url = `/participant/${participantId}/feedDetails?date=${dateMs}&tzOffsetMinutes=${tzOffsetMinutes}`
-
-    const result = await Fetch.get<{ data: any[] }>(url, this.configuration)
-    return result.data || []
+    const result = await Fetch.get<{ data: any }>(url, this.configuration)
+    return result.data || {}
   }
 }

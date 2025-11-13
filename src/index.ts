@@ -190,7 +190,7 @@ export default class LAMP {
             typeData = await LAMP.Type.parent("me")
           } catch (e) {}
           LAMP.Auth._type =
-            typeData.error === "400.context-substitution-failed"
+            typeData.data === "admin"
               ? "admin"
               : Object.entries(typeData.data).length === 0
               ? "researcher"
@@ -210,6 +210,8 @@ export default class LAMP {
             // authorizationToken: LAMP.configuration.token,
             identityObject: LAMP.Auth._me,
             serverAddress: LAMP.configuration.base,
+            accessToken: LAMP.configuration.accessToken,
+            refreshToken: LAMP.configuration.refreshToken,
           })
         } else {
           LAMP.dispatchEvent("LOGOUT", {
