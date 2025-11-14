@@ -73,24 +73,26 @@ export class ActivityService {
       params.append('offset', offset.toString())
     }
     const queryString = params.toString()
-    const result: any = await Fetch.get<{ data: Activity[] | { data: Activity[], total: number } }>(
+    const result: any = await Fetch.get<{ data: Activity[], total?: number }>(
       `/participant/${participantId}/activity?${queryString}`,
       this.configuration
     )
     
-    // Handle the response structure:
-    // - With pagination: { data: Activity[], total: number }
-    // - Without pagination: { data: Activity[] } (backward compatible)
+    // Handle the response structure based on _select function behavior:
+    // - With pagination (limit > 0 OR offset >= 0): { data: Activity[], total: number }
+    // - Without pagination: { data: Activity[] } (total property is missing)
+    // The server-side ActivityService always wraps the response in { data: ... }
     let activitiesArray: any[] = []
     let totalCount = 0
     
-    if (result && result.data) {
-      // result.data is always an array
-      activitiesArray = Array.isArray(result.data) ? result.data : []
-      // total exists only when pagination was provided
-      totalCount = typeof result.data?.total === 'number' ? result.data?.total : activitiesArray.length
+    if (result && result.data && Array.isArray(result.data)) {
+      // result.data is always an array (server wraps it)
+      activitiesArray = result.data
+      // total exists only when pagination was provided (limit > 0 OR offset >= 0)
+      // When no pagination, _select returns array, server wraps as { data: array } (no total)
+      totalCount = typeof result.total === 'number' ? result.total : activitiesArray.length
     } else if (Array.isArray(result)) {
-      // Legacy fallback: if result is directly an array
+      // Legacy fallback: if result is directly an array (shouldn't happen with current server)
       activitiesArray = result
       totalCount = result.length
     }
