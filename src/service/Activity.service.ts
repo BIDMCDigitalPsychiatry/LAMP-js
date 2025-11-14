@@ -404,7 +404,7 @@ export class ActivityService {
    * Delete multiple activities.
    * @param activities
    */
-  public async deleteActivities(activities: any): Promise<{ error?: string }> {
+  public async deleteActivities({ activities }: { activities: string[] }): Promise<{ error?: string }> {
     if (!activities || activities.length === 0) {
       throw new Error("Required parameter 'activities' was null, undefined, or empty when calling deleteActivities.")
     }
@@ -451,7 +451,7 @@ export class ActivityService {
         return { error: `404.not-found: ${notFound.join(", ")}` }
       }
     }
-    return await Fetch.delete(`/activities`, this.configuration, activities)
+    return await Fetch.delete(`/activities`, this.configuration, { activities })
   }
 
   /**
@@ -543,8 +543,10 @@ export class ActivityService {
       return []
     }
 
-    const tzOffsetMinutes = new Date().getTimezoneOffset()
-    const url = `/participant/${participantId}/feedDetails?date=${dateMs}&tzOffsetMinutes=${tzOffsetMinutes}`
+    const url =
+      typeof dateMs === "number"
+        ? `/participant/${participantId}/feedDetails?date=${dateMs}`
+        : `/participant/${participantId}/feedDetails`
 
     const result = await Fetch.get<{ data: any[] }>(url, this.configuration)
     return result.data || []

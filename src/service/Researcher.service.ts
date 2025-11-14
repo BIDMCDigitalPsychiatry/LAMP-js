@@ -99,6 +99,7 @@ export class ResearcherService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
+
     return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}`, this.configuration))?.data?.map((x) =>
       Object.assign(new Researcher(), x)
     )[0]
