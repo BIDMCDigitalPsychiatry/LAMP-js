@@ -79,22 +79,16 @@ export class ActivityService {
     )
     
     // Handle the response structure:
-    // - With pagination: { data: { data: Activity[], total: number } }
+    // - With pagination: { data: Activity[], total: number }
     // - Without pagination: { data: Activity[] } (backward compatible)
     let activitiesArray: any[] = []
     let totalCount = 0
     
     if (result && result.data) {
-      const responseData = result.data
-      // Check if responseData is the paginated format { data: Activity[], total: number }
-      if (responseData && typeof responseData === 'object' && !Array.isArray(responseData) && Array.isArray(responseData.data)) {
-        activitiesArray = responseData.data
-        totalCount = responseData.total || 0
-      } else if (Array.isArray(responseData)) {
-        // Backward compatible: responseData is directly an array (no pagination)
-        activitiesArray = responseData
-        totalCount = responseData.length
-      }
+      // result.data is always an array
+      activitiesArray = Array.isArray(result.data) ? result.data : []
+      // total exists only when pagination was provided
+      totalCount = typeof result.data?.total === 'number' ? result.data?.total : activitiesArray.length
     } else if (Array.isArray(result)) {
       // Legacy fallback: if result is directly an array
       activitiesArray = result
