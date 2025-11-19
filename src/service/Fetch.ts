@@ -72,7 +72,6 @@ async function _basicAuthFetch<ResultType>(
         ...(configuration!.headers || {}),
         Authorization: !!configuration!.authorization ? `Basic ${configuration!.authorization}` : undefined
       } as any),
-      credentials: "include",
       body: body !== undefined ? JSON.stringify(body) : undefined
     },)
   ).json()
