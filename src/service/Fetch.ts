@@ -1,6 +1,5 @@
 import { jwtVerify } from "jose"
 import { CredentialService } from "./Credential.service"
-import LAMP from ".."
 /**
  *
  */
@@ -64,6 +63,7 @@ async function _fetch<ResultType>(
   configuration?: Configuration,
   body?: any
 ): Promise<ResultType> {
+  
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
 
@@ -81,12 +81,14 @@ async function _fetch<ResultType>(
         typeof authorization !== "undefined" && !!authorization
           ? {
               "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
               Accept: "application/json",
               ...(configuration!.headers || {}),
               Authorization: authorization,
             }
           : ({
               "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
               Accept: "application/json",
               ...(configuration!.headers || {}),
             } as any)
