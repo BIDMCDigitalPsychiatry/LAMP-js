@@ -241,4 +241,28 @@ export class ActivityEventService {
       this.configuration
     )
   }
+
+  /**
+   * Get activities with events for a participant
+   * Returns array of { id: string, name: string }
+   * @param participantId
+   */
+  public async getActivitiesWithEvents(participantId: Identifier): Promise<Array<{ id: string; name: string }>> {
+    if (participantId === null || participantId === undefined)
+      throw new Error(
+        "Required parameter participantId was null or undefined when calling getActivitiesWithEvents."
+      )
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO - return empty array for demo mode
+      return Promise.resolve([])
+    }
+
+    const result = await Fetch.get<{ data: Array<{ id: string; name: string }> }>(
+      `/participant/${participantId}/activity_event/activities`,
+      this.configuration
+    )
+
+    return result.data || []
+  }
 }
