@@ -244,10 +244,11 @@ export class ActivityEventService {
 
   /**
    * Get activities with events for a participant
-   * Returns array of { id: string, name: string }
+   * Returns array of { id: string, name: string, spec?: string }
+   * Excludes activities with specs: lamp.group, lamp.tips, lamp.module, lamp.zoom_meeting, lamp.fragmented_letters
    * @param participantId
    */
-  public async getActivitiesWithEvents(participantId: Identifier): Promise<Array<{ id: string; name: string }>> {
+  public async getActivitiesWithEvents(participantId: Identifier): Promise<Array<{ id: string; name: string; spec?: string }>> {
     if (participantId === null || participantId === undefined)
       throw new Error(
         "Required parameter participantId was null or undefined when calling getActivitiesWithEvents."
@@ -258,7 +259,7 @@ export class ActivityEventService {
       return Promise.resolve([])
     }
 
-    const result = await Fetch.get<{ data: Array<{ id: string; name: string }> }>(
+    const result = await Fetch.get<{ data: Array<{ id: string; name: string; spec?: string }> }>(
       `/participant/${participantId}/activity_event/activities`,
       this.configuration
     )
