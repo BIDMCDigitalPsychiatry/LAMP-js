@@ -276,15 +276,16 @@ export default class LAMP {
       // Check if the
       let authType
       try {
-        const authCheckResult = await Fetch.get("/supported-auth-type", {base: this._get_base_address(identity.serverAddress)})
-        if ((authCheckResult as any)?.message === "404.api-endpoint-unimplemented") {
-          authType = "basic"
-        } else {
+        const serverInfoResult = await Fetch.get("/server-info", {base: this._get_base_address(identity.serverAddress)})
+        if ((serverInfoResult as any)?.authScheme === "session") {
           authType = "session"
+        } else {
+          authType = "basic"
         }
       } catch (err) {
         authType = "basic"
       }
+
       this._authScheme = authType;
 
       // If neither id nor password are set, log out
