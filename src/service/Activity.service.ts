@@ -132,7 +132,13 @@ export class ActivityService {
    * Get the set of all activities available to  participants of a single study, by participant identifier.
    * @param participantId
    */
-  public async listActivities(participantId: Identifier, tab?: string, transform?: string): Promise<{}> {
+  public async listActivities(
+    participantId: Identifier,
+    tab?: string,
+    transform?: string,
+    limit?: number,
+    offset?: number
+  ): Promise<{}> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling listActivities.")
 
@@ -153,7 +159,10 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return await Fetch.get<{ data: any[] }>(`/activity/${participantId}/activity?tab=${tab}`, this.configuration) //.data .map((x) => Object.assign(new Activity(), x))
+    return await Fetch.get<{ data: any[] }>(
+      `/activity/${participantId}/activity?tab=${tab}&limit=${limit}&offset=${offset}`,
+      this.configuration
+    ) //.data .map((x) => Object.assign(new Activity(), x))
   }
 
   /**
@@ -403,8 +412,8 @@ export class ActivityService {
   /**
    * Delete multiple activities.
    * @param activities
-   */  
-  public async deleteActivities(activities:any): Promise<{ error?: string }> {
+   */
+  public async deleteActivities({ activities }: { activities: string[] }): Promise<{ error?: string }> {
     if (!activities || activities.length === 0) {
       throw new Error("Required parameter 'activities' was null, undefined, or empty when calling deleteActivities.")
     }
@@ -543,9 +552,12 @@ export class ActivityService {
       return []
     }
 
-    const tzOffsetMinutes = new Date().getTimezoneOffset()
-    const url = `/participant/${participantId}/feedDetails?date=${dateMs}&tzOffsetMinutes=${tzOffsetMinutes}`
-    const result = await Fetch.get<{ data: any }>(url, this.configuration)
-    return result.data || {}
+    const url =
+      typeof dateMs === "number"
+        ? `/participant/${participantId}/feedDetails?date=${dateMs}`
+        : `/participant/${participantId}/feedDetails`
+
+    const result = await Fetch.get<{ data: any[] }>(url, this.configuration)
+    return result.data || []
   }
 }
