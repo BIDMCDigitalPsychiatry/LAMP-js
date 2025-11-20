@@ -53,10 +53,7 @@ export class ResearcherSettingsService {
       // DEMO
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = (await Fetch.get(
-      `/participant/researcherSettings/${participantId}`,
-      this.configuration
-    )) as ResearcherBanner
+    const result: any = await Fetch.get(`/participant/researcherSettings/${participantId}`, this.configuration)
     return result.data
   }
 }

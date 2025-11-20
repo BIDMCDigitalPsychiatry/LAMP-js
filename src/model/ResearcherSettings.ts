@@ -50,6 +50,18 @@ export class ResearcherSettings {
    */
   featuredActivity?: string
   /**
+   * The streak type
+   */
+  streakType?: string
+  /**
+   * The Streak title
+   */
+  streakTitle?: string
+  /**
+   * The Streak description
+   */
+  streakDesc?: string
+  /**
    * The timestamp
    */
   timestamp?: Timestamp
