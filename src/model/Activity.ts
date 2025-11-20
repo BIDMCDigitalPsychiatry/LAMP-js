@@ -87,6 +87,11 @@ export class Activity {
   category?: Tab[] | null
 
   /**
+   * The photo/image URL for the activity (stored in Azure Blob Storage).
+   */
+  photo?: any
+
+  /**
    * The type of streak for the activity.
    */
   streakType?: string
