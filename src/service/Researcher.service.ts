@@ -99,6 +99,7 @@ export class ResearcherService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
+
     return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}`, this.configuration))?.data?.map((x) =>
       Object.assign(new Researcher(), x)
     )[0]
@@ -114,7 +115,7 @@ export class ResearcherService {
       let output = Demo.Researcher?.map((x) => Object.assign(new Researcher(), x))
       return Promise.resolve(output)
     }
-    const result = await Fetch.post(`/researcher/${id}/users`, filters, this.configuration) as any
+    const result = (await Fetch.post(`/researcher/${id}/users`, filters, this.configuration)) as any
     return result?.data
   }
 
@@ -128,7 +129,7 @@ export class ResearcherService {
       let output = Demo.Researcher?.map((x) => Object.assign(new Researcher(), x))
       return Promise.resolve(output)
     }
-    const result = await Fetch.post(`/researcher/activities/${id}`, filters, this.configuration) as any
+    const result = (await Fetch.post(`/researcher/activities/${id}`, filters, this.configuration)) as any
     return result?.data
   }
   public async sensorsList(id: string, filters: any): Promise<any> {
@@ -141,7 +142,7 @@ export class ResearcherService {
       let output = Demo.Researcher?.map((x) => Object.assign(new Researcher(), x))
       return Promise.resolve(output)
     }
-    const result = await Fetch.post(`/researcher/sensors/${id}`, filters, this.configuration) as any
+    const result = (await Fetch.post(`/researcher/sensors/${id}`, filters, this.configuration)) as any
     return result?.data
   }
 }

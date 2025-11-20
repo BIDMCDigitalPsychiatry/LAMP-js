@@ -14,14 +14,14 @@ export class ParticipantService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
 
-      let output = Demo.Participant?.map(x => Object.assign(new Participant(), x))
+      let output = Demo.Participant?.map((x) => Object.assign(new Participant(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant`, this.configuration)).data?.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant`, this.configuration)).data?.map((x) =>
       Object.assign(new Participant(), x)
     )
   }
@@ -37,25 +37,25 @@ export class ParticipantService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
-      if (Demo.Researcher.filter(x => x["id"] === researcherId).length > 0) {
-        let output = Demo.Participant.filter(x =>
-          Demo.Study.filter(y => y["#parent"] === researcherId)
-            ?.map(y => y["id"])
+      if (Demo.Researcher.filter((x) => x["id"] === researcherId).length > 0) {
+        let output = Demo.Participant.filter((x) =>
+          Demo.Study.filter((y) => y["#parent"] === researcherId)
+            ?.map((y) => y["id"])
             .includes(x["#parent"])
-        )?.map(x => Object.assign(new Participant(), x))
+        )?.map((x) => Object.assign(new Participant(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (
-      await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/participant`, this.configuration)
-    ).data?.map(x => Object.assign(new Participant(), x))
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/participant`, this.configuration)).data?.map(
+      (x) => Object.assign(new Participant(), x)
+    )
   }
 
   /**
@@ -69,12 +69,12 @@ export class ParticipantService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
-      if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
-        let output = Demo.Participant.filter(x => x["#parent"] === studyId)?.map(x =>
+      if (Demo.Study.filter((x) => x["id"] === studyId).length > 0) {
+        let output = Demo.Participant.filter((x) => x["#parent"] === studyId)?.map((x) =>
           Object.assign(new Participant(), x)
         )
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -83,7 +83,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/participant`, this.configuration)).data?.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}/participant`, this.configuration)).data?.map((x) =>
       Object.assign(new Participant(), x)
     )
   }
@@ -102,23 +102,19 @@ export class ParticipantService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
-      if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
+      if (Demo.Study.filter((x) => x["id"] === studyId).length > 0) {
         let data = {
           "#type": "Participant",
           "#parent": studyId,
-          id:
-            "U" +
-            Math.random()
-              .toString()
-              .substring(2, 11),
+          id: "U" + Math.random().toString().substring(2, 11),
           language: "en",
           theme: "#359FFE",
           emergency_contact: null,
-          helpline: null
+          helpline: null,
         }
         Demo.Participant.push(data)
         return Promise.resolve({ data: data["id"] } as any)
@@ -140,17 +136,17 @@ export class ParticipantService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
-      let idx = Demo.Participant.findIndex(x => x["id"] === participantId)
+      let idx = Demo.Participant.findIndex((x) => x["id"] === participantId)
       if (idx >= 0) {
         Demo.Participant.splice(idx, 1)
-        Demo.ActivityEvent = Demo.ActivityEvent.filter(x => x["#parent"] !== participantId)
-        Demo.SensorEvent = Demo.SensorEvent.filter(x => x["#parent"] !== participantId)
-        Demo.Credential = Demo.Credential.filter(x => x["#parent"] !== participantId)
-        Demo.Tags = Demo.Tags.filter(x => x["#parent"] !== participantId && x["target"] !== participantId)
+        Demo.ActivityEvent = Demo.ActivityEvent.filter((x) => x["#parent"] !== participantId)
+        Demo.SensorEvent = Demo.SensorEvent.filter((x) => x["#parent"] !== participantId)
+        Demo.Credential = Demo.Credential.filter((x) => x["#parent"] !== participantId)
+        Demo.Tags = Demo.Tags.filter((x) => x["#parent"] !== participantId && x["target"] !== participantId)
         return Promise.resolve({} as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
@@ -173,11 +169,11 @@ export class ParticipantService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
-      if (Demo.Participant.filter(x => x["id"] === participantId).length > 0) {
+      if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
         return Promise.resolve({ error: "500.demo-restriction" } as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
@@ -197,11 +193,13 @@ export class ParticipantService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
 
-      let data = Demo.Participant.filter(x => x["id"] === participantId)?.map(x => Object.assign(new Participant(), x))
+      let data = Demo.Participant.filter((x) => x["id"] === participantId)?.map((x) =>
+        Object.assign(new Participant(), x)
+      )
       if (data.length > 0) {
         let output = data[0]
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -210,7 +208,7 @@ export class ParticipantService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}`, this.configuration)).data?.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/participant/${participantId}`, this.configuration)).data?.map((x) =>
       Object.assign(new Participant(), x)
     )[0]
   }

@@ -13,11 +13,11 @@ export class ActivitySpecService {
   public async all(transform?: string): Promise<ActivitySpec[]> {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let output = Demo.ActivitySpec.map(x => Object.assign(new ActivitySpec(), x))
+      let output = Demo.ActivitySpec.map((x) => Object.assign(new ActivitySpec(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity_spec`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity_spec`, this.configuration)).data.map((x) =>
       Object.assign(new ActivitySpec(), x)
     )
   }
@@ -80,7 +80,7 @@ export class ActivitySpecService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
-      let data = Demo.ActivitySpec.filter(x => x["name"] === activitySpecName).map(x =>
+      let data = Demo.ActivitySpec.filter((x) => x["name"] === activitySpecName).map((x) =>
         Object.assign(new ActivitySpec(), x)
       )
       if (data.length > 0) {
@@ -91,7 +91,7 @@ export class ActivitySpecService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/activity_spec/${activitySpecName}`, this.configuration)).data.map(x =>
+    return (await Fetch.get<{ data: any[] }>(`/activity_spec/${activitySpecName}`, this.configuration)).data.map((x) =>
       Object.assign(new ActivitySpec(), x)
     )[0]
   }
