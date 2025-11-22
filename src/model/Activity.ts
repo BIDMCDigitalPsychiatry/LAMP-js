@@ -70,10 +70,6 @@ export class Activity {
    * The name of the activity.
    */
   name?: string
-  /**
-   * The URL of the activity photo.
-   */
-  photo?: string
 
   /**
    *
