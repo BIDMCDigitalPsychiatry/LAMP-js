@@ -142,8 +142,18 @@ export class ActivityService {
   /**
    * Get the set of all activities available to  participants of a single study, by study identifier.
    * @param studyId
+   * @param transform
+   * @param ignore_binary
+   * @param limit Optional limit for pagination
+   * @param offset Optional offset for pagination
    */
-  public async allByStudy(studyId: Identifier, transform?: string, ignore_binary?: boolean): Promise<Activity[]> {
+  public async allByStudy(
+    studyId: Identifier, 
+    transform?: string, 
+    ignore_binary?: boolean,
+    limit?: number,
+    offset?: number
+  ): Promise<Activity[] | { data: Activity[], total: number }> {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling activityAllByStudy.")
     if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
@@ -157,14 +167,58 @@ export class ActivityService {
       if (Demo.Study.filter((x) => x["id"] === studyId).length > 0) {
         let output = Demo.Activity.filter((x) => x["#parent"] === studyId)?.map((x) => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
+        // If pagination is requested, return paginated result with total
+        if (typeof limit === 'number' && limit > 0 || typeof offset === 'number' && offset > 0) {
+          const total = output.length
+          const paginatedOutput = limit !== undefined && offset !== undefined
+            ? output.slice(offset, offset + limit)
+            : output
+          return Promise.resolve({ data: paginatedOutput, total })
+        }
         return Promise.resolve(output)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (
-      await Fetch.get<{ data: any[] }>(`/study/${studyId}/activity?ignore_binary=${ignore_binary}`, this.configuration)
-    ).data?.map((x) => Object.assign(new Activity(), x))
+    
+    // Build query string with pagination parameters
+    const params = new URLSearchParams()
+    params.append('ignore_binary', String(ignore_binary))
+    if (limit !== undefined && limit !== null) {
+      params.append('limit', limit.toString())
+    }
+    if (offset !== undefined && offset !== null) {
+      params.append('offset', offset.toString())
+    }
+    const queryString = params.toString()
+    
+    const result: any = await Fetch.get<{ data: Activity[], total?: number }>(
+      `/study/${studyId}/activity?${queryString}`,
+      this.configuration
+    )
+    
+    // Handle the response structure based on _select function behavior:
+    // - With pagination (limit > 0 OR offset >= 0): { data: Activity[], total: number }
+    // - Without pagination: { data: Activity[] } (total property is missing)
+    let activitiesArray: any[] = []
+    let totalCount = 0
+    
+    if (result && result.data && Array.isArray(result.data)) {
+      activitiesArray = result.data
+      totalCount = typeof result.total === 'number' ? result.total : activitiesArray.length
+    } else if (Array.isArray(result)) {
+      // Legacy fallback: if result is directly an array
+      activitiesArray = result
+      totalCount = result.length
+    }
+    
+    const mappedActivities = activitiesArray.map((x: any) => Object.assign(new Activity(), x))
+    
+    // If pagination was requested, return { data, total }, otherwise return array for backward compatibility
+    if (typeof limit === 'number' && limit > 0 || typeof offset === 'number' && offset > 0) {
+      return { data: mappedActivities, total: totalCount }
+    }
+    return mappedActivities
   }
   /**
    * Get the set of all activities available to  participants of a single study, by participant identifier.

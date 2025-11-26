@@ -38,7 +38,7 @@ const handleSessionExpiry = async () => {
 }
 
 //If access Token expired then call api for renewing the tokens
-const handleRenewToken = async (refreshToken: string, base: string) => {
+const handleRenewToken = async (refreshToken: string, base: string, configuration?: Configuration) => {
   try {
     const credService = new CredentialService()
     const res = await credService.renewToken(refreshToken, base)
@@ -46,10 +46,28 @@ const handleRenewToken = async (refreshToken: string, base: string) => {
     const accessToken = res?.data?.access_token
 
     if (accessToken) {
+      const newRefreshToken = res?.data?.refresh_token || refreshToken
       sessionStorage.setItem(
         userTokenKey,
-        JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: res?.data?.refresh_token })
+        JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: newRefreshToken })
       )
+      
+      // Dispatch renewToken event similar to LOGIN event
+      // Access LAMP from global scope to avoid circular dependency
+      const LAMP = (global as any).LAMP || (typeof window !== "undefined" ? (window as any).LAMP : null)
+      if (LAMP && typeof LAMP.dispatchEvent === "function") {
+        // Get identity object from LAMP.Auth if available
+        const identityObject = LAMP.Auth?._me || null
+        const serverAddress = configuration?.base || base || LAMP.configuration?.base
+        
+        LAMP.dispatchEvent("renewToken", {
+          authorizationToken: configuration?.authorization || LAMP.configuration?.authorization,
+          identityObject: identityObject,
+          serverAddress: serverAddress,
+          accessToken: accessToken,
+          refreshToken: newRefreshToken,
+        })
+      }
     }
     return accessToken
   } catch (error) {
@@ -113,7 +131,7 @@ async function _fetch<ResultType>(
             handleSessionExpiry()
             return { data: [], error: "401.invalid-token" } as unknown as ResultType
           }
-          const token = await handleRenewToken(refreshToken, configuration.base)
+          const token = await handleRenewToken(refreshToken, configuration.base, configuration)
           if (token) {
             configuration.authorization = token
             // retry the same request
