@@ -1,4 +1,4 @@
-import { Identifier, Timestamp } from "./Type"
+import { Identifier, Timestamp } from "../model/Type"
 
 /**
  *
