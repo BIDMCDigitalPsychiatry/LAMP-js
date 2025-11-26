@@ -13,21 +13,22 @@ export class TypeService {
    * @param attachmentKey
    */
   public async getAttachment(typeId: Identifier, attachmentKey: string): Promise<any[]> {
+    console.log("attachmentKey", attachmentKey)
     if (attachmentKey === null || attachmentKey === undefined)
       throw new Error("Required parameter attachmentKey was null or undefined when calling typeGetAttachment.")
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let exists = [].concat(
-        Demo.Researcher.filter(x => x["id"] === typeId),
-        Demo.Study.filter(x => x["id"] === typeId),
-        Demo.Participant.filter(x => x["id"] === typeId),
-        Demo.Activity.filter(x => x["id"] === typeId) // ???
+        Demo.Researcher.filter((x) => x["id"] === typeId),
+        Demo.Study.filter((x) => x["id"] === typeId),
+        Demo.Participant.filter((x) => x["id"] === typeId),
+        Demo.Activity.filter((x) => x["id"] === typeId) // ???
       )
       if (exists.length > 0) {
         // FIXME: Sibling Tags? (Participant, Activity, Sensor)
@@ -37,14 +38,14 @@ export class TypeService {
             : obj["#type"] === "Study"
             ? [obj["#parent"]]
             : obj["#type"] === "Participant"
-            ? [obj["#parent"], Demo.Study.filter(x => x["id"] === obj["#parent"]).map(x => x["#parent"])[0]]
+            ? [obj["#parent"], Demo.Study.filter((x) => x["id"] === obj["#parent"]).map((x) => x["#parent"])[0]]
             : obj["#type"] === "Activity"
-            ? [obj["#parent"], Demo.Study.filter(x => x["id"] === obj["#parent"]).map(x => x["#parent"])[0]]
+            ? [obj["#parent"], Demo.Study.filter((x) => x["id"] === obj["#parent"]).map((x) => x["#parent"])[0]]
             : []
         const tagSelf = (tag: any) => [typeId].includes(tag["#parent"]) && [typeId, "me"].includes(tag["target"]) // implicit & explicit
         const tagParent = (tag: any) =>
           ancestors(exists[0]).includes(tag["#parent"]) && [typeId, exists[0]["#type"]].includes(tag["target"]) // implicit & explicit
-        let data = Demo.Tags.filter(x => (tagSelf(x) || tagParent(x)) && x["key"] === attachmentKey)
+        let data = Demo.Tags.filter((x) => (tagSelf(x) || tagParent(x)) && x["key"] === attachmentKey)
         return Promise.resolve(
           data.length > 0 ? ({ data: data[0]["value"] } as any) : ({ error: "404.not-found" } as any)
         )
@@ -99,19 +100,18 @@ export class TypeService {
    * @param typeId
    */
   public async listAttachments(typeId: Identifier): Promise<any[]> {
-   
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let exists = [].concat(
-        Demo.Researcher.filter(x => x["id"] === typeId),
-        Demo.Study.filter(x => x["id"] === typeId),
-        Demo.Participant.filter(x => x["id"] === typeId),
-        Demo.Activity.filter(x => x["id"] === typeId) // ???
+        Demo.Researcher.filter((x) => x["id"] === typeId),
+        Demo.Study.filter((x) => x["id"] === typeId),
+        Demo.Participant.filter((x) => x["id"] === typeId),
+        Demo.Activity.filter((x) => x["id"] === typeId) // ???
       )
       if (exists.length > 0) {
         // FIXME: Sibling Tags? (Participant, Activity, Sensor)
@@ -121,14 +121,14 @@ export class TypeService {
             : obj["#type"] === "Study"
             ? [obj["#parent"]]
             : obj["#type"] === "Participant"
-            ? [obj["#parent"], Demo.Study.filter(x => x["id"] === obj["#parent"]).map(x => x["#parent"])[0]]
+            ? [obj["#parent"], Demo.Study.filter((x) => x["id"] === obj["#parent"]).map((x) => x["#parent"])[0]]
             : obj["#type"] === "Activity"
-            ? [obj["#parent"], Demo.Study.filter(x => x["id"] === obj["#parent"]).map(x => x["#parent"])[0]]
+            ? [obj["#parent"], Demo.Study.filter((x) => x["id"] === obj["#parent"]).map((x) => x["#parent"])[0]]
             : []
         const tagSelf = (tag: any) => [typeId].includes(tag["#parent"]) && [typeId, "me"].includes(tag["target"]) // implicit & explicit
         const tagParent = (tag: any) =>
           ancestors(exists[0]).includes(tag["#parent"]) && [typeId, exists[0]["#type"]].includes(tag["target"]) // implicit & explicit
-        return Promise.resolve({ data: Demo.Tags.filter(x => tagSelf(x) || tagParent(x)).map(x => x.key) } as any)
+        return Promise.resolve({ data: Demo.Tags.filter((x) => tagSelf(x) || tagParent(x)).map((x) => x.key) } as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
@@ -141,45 +141,44 @@ export class TypeService {
    * @param typeId
    */
   public async parent(typeId: Identifier, transform?: string): Promise<any> {
-   
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let possible = []
-      possible = Demo.Researcher.filter(x => x["id"] === typeId)
+      possible = Demo.Researcher.filter((x) => x["id"] === typeId)
       if (possible.length > 0) {
         let output = { data: {} } as any
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       }
-      possible = Demo.Study.filter(x => x["id"] === typeId)
+      possible = Demo.Study.filter((x) => x["id"] === typeId)
       if (possible.length > 0) {
         let output = { data: { Researcher: possible[0]["#parent"] } } as any
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       }
-      possible = Demo.Participant.filter(x => x["id"] === typeId)
+      possible = Demo.Participant.filter((x) => x["id"] === typeId)
       if (possible.length > 0) {
         let output = {
           data: {
-            Researcher: Demo.Study.filter(x => x["id"] === possible[0]["#parent"])[0],
-            Study: possible[0]["#parent"]
-          }
+            Researcher: Demo.Study.filter((x) => x["id"] === possible[0]["#parent"])[0],
+            Study: possible[0]["#parent"],
+          },
         } as any
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       }
-      possible = Demo.Activity.filter(x => x["id"] === typeId)
+      possible = Demo.Activity.filter((x) => x["id"] === typeId)
       if (possible.length > 0) {
         let output = {
           data: {
-            Researcher: Demo.Study.filter(x => x["id"] === possible[0]["#parent"])[0],
-            Study: possible[0]["#parent"]
-          }
+            Researcher: Demo.Study.filter((x) => x["id"] === possible[0]["#parent"])[0],
+            Study: possible[0]["#parent"],
+          },
         } as any
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
@@ -212,26 +211,26 @@ export class TypeService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
       let exists = [].concat(
-        Demo.Researcher.filter(x => x["id"] === typeId),
-        Demo.Study.filter(x => x["id"] === typeId),
-        Demo.Participant.filter(x => x["id"] === typeId),
-        Demo.Activity.filter(x => x["id"] === typeId) // ???
+        Demo.Researcher.filter((x) => x["id"] === typeId),
+        Demo.Study.filter((x) => x["id"] === typeId),
+        Demo.Participant.filter((x) => x["id"] === typeId),
+        Demo.Activity.filter((x) => x["id"] === typeId) // ???
       )
       if (exists.length > 0) {
         // FIXME: Sibling Tags? (Participant, Activity, Sensor)
         if (attachmentValue === null) {
           // DELETE
           Demo.Tags = Demo.Tags.filter(
-            x => !(x["#parent"] === typeId && x["target"] === target && x["key"] === attachmentKey)
+            (x) => !(x["#parent"] === typeId && x["target"] === target && x["key"] === attachmentKey)
           )
         } else {
           let idx = Demo.Tags.findIndex(
-            x => x["#parent"] === typeId && x["target"] === target && x["key"] === attachmentKey
+            (x) => x["#parent"] === typeId && x["target"] === target && x["key"] === attachmentKey
           )
           if (idx >= 0) {
             // UPDATE
@@ -245,7 +244,7 @@ export class TypeService {
               "#parent": typeId,
               target: target,
               key: attachmentKey,
-              value: attachmentValue
+              value: attachmentValue,
             })
           }
         }
