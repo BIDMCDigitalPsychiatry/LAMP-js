@@ -13,7 +13,6 @@ export class TypeService {
    * @param attachmentKey
    */
   public async getAttachment(typeId: Identifier, attachmentKey: string): Promise<any[]> {
-    console.log("attachmentKey", attachmentKey)
     if (attachmentKey === null || attachmentKey === undefined)
       throw new Error("Required parameter attachmentKey was null or undefined when calling typeGetAttachment.")
 
