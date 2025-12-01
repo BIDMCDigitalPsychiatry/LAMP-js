@@ -111,7 +111,7 @@ async function _fetch<ResultType>(
               ...(configuration!.headers || {}),
             } as any)
       ),
-      credentials: "include",
+      credentials: "include",                                                           
       body: body !== undefined ? JSON.stringify(body) : undefined,
     })
     if (!response.ok) {

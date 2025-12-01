@@ -144,4 +144,131 @@ export class ResearcherService {
     const result = await Fetch.post(`/researcher/sensors/${id}`, filters, this.configuration) as any
     return result?.data
   }
+
+  /**
+   * Create an activity export job.
+   * @param researcherId
+   * @param body - { studyIds: string[], specs?: string[], format?: "json" | "ndjson" }
+   */
+  public async createActivityExport(researcherId: Identifier, body: {
+    studyIds: string[]
+    specs?: string[]
+    format?: "json" | "ndjson"
+  }): Promise<{ jobId: string; status: string }> {
+    if (researcherId === null || researcherId === undefined)
+      throw new Error("Required parameter researcherId was null or undefined when calling createActivityExport.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+    const result = await Fetch.post<{ data: { jobId: string; status: string } }>(
+      `/researcher/${researcherId}/activity-export`,
+      body,
+      this.configuration
+    )
+    return result.data
+  }
+
+  /**
+   * Get activity export job status.
+   * @param jobId
+   */
+  public async getActivityExportJob(jobId: string): Promise<any> {
+    if (jobId === null || jobId === undefined)
+      throw new Error("Required parameter jobId was null or undefined when calling getActivityExportJob.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+    const result = await Fetch.get<{ data: any }>(`/exports/${jobId}`, this.configuration)
+    return result.data
+  }
+
+  /**
+   * Get activity export download URL.
+   * @param jobId
+   * @param ttl - Time to live in seconds (default: 600)
+   */
+  public async getActivityExportDownloadUrl(jobId: string, ttl: number = 600): Promise<{
+    url: string
+    expiresIn: number
+    contentType: string
+    contentLength: number
+  }> {
+    if (jobId === null || jobId === undefined)
+      throw new Error("Required parameter jobId was null or undefined when calling getActivityExportDownloadUrl.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+    const result = await Fetch.get<{ data: any }>(`/exports/${jobId}/download?ttl=${ttl}`, this.configuration)
+    return result.data
+  }
+
+  /**
+   * Create an activity import job.
+   * @param researcherId
+   * @param body - { studyId: string, format?: "json" | "ndjson" }
+   */
+  public async createActivityImport(researcherId: Identifier, body: {
+    studyId: string
+    format?: "json" | "ndjson"
+  }): Promise<{ jobId: string; status: string }> {
+    if (researcherId === null || researcherId === undefined)
+      throw new Error("Required parameter researcherId was null or undefined when calling createActivityImport.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+    const result = await Fetch.post<{ data: { jobId: string; status: string } }>(
+      `/researcher/${researcherId}/activity-import`,
+      body,
+      this.configuration
+    )
+    return result.data
+  }
+
+  /**
+   * Get activity import job status.
+   * @param jobId
+   */
+  public async getActivityImportJob(jobId: string): Promise<any> {
+    if (jobId === null || jobId === undefined)
+      throw new Error("Required parameter jobId was null or undefined when calling getActivityImportJob.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+    const result = await Fetch.get<{ data: any }>(`/imports/${jobId}`, this.configuration)
+    return result.data
+  }
+
+  /**
+   * Get activity import upload URL.
+   * @param jobId
+   * @param ttl - Time to live in seconds (default: 600)
+   */
+  public async getActivityImportUploadUrl(jobId: string, ttl: number = 600): Promise<{
+    url: string
+    expiresIn: number
+    blobName: string
+  }> {
+    if (jobId === null || jobId === undefined)
+      throw new Error("Required parameter jobId was null or undefined when calling getActivityImportUploadUrl.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+    const result = await Fetch.post<{ data: any }>(`/imports/${jobId}/upload-url`, { ttl }, this.configuration)
+    return result.data
+  }
+
+  /**
+   * Complete activity import upload and trigger processing.
+   * @param jobId
+   * @param blobName
+   */
+  public async completeActivityImportUpload(jobId: string, blobName: string): Promise<any> {
+    if (jobId === null || jobId === undefined)
+      throw new Error("Required parameter jobId was null or undefined when calling completeActivityImportUpload.")
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+    const result = await Fetch.post<{ data: any }>(`/imports/${jobId}/complete-upload`, { blobName }, this.configuration)
+    return result.data
+  }
 }
