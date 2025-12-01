@@ -160,11 +160,17 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.post<{ data: { jobId: string; status: string } }>(
+    const result = await Fetch.post<{ data: { jobId: string; status: string }; error?: string }>(
       `/researcher/${researcherId}/activity-export`,
       body,
       this.configuration
     )
+    if (result.error) {
+      throw new Error(result.error)
+    }
+    if (!result.data) {
+      throw new Error("Invalid response from export API")
+    }
     return result.data
   }
 
@@ -178,7 +184,13 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.get<{ data: any }>(`/exports/${jobId}`, this.configuration)
+    const result = await Fetch.get<{ data: any; error?: string }>(`/exports/${jobId}`, this.configuration)
+    if (result.error) {
+      throw new Error(result.error)
+    }
+    if (!result.data) {
+      throw new Error("Invalid response from export job API")
+    }
     return result.data
   }
 
@@ -198,7 +210,13 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.get<{ data: any }>(`/exports/${jobId}/download?ttl=${ttl}`, this.configuration)
+    const result = await Fetch.get<{ data: any; error?: string }>(`/exports/${jobId}/download?ttl=${ttl}`, this.configuration)
+    if (result.error) {
+      throw new Error(result.error)
+    }
+    if (!result.data) {
+      throw new Error("Invalid response from export download API")
+    }
     return result.data
   }
 
@@ -216,11 +234,17 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.post<{ data: { jobId: string; status: string } }>(
+    const result = await Fetch.post<{ data: { jobId: string; status: string }; error?: string }>(
       `/researcher/${researcherId}/activity-import`,
       body,
       this.configuration
     )
+    if (result.error) {
+      throw new Error(result.error)
+    }
+    if (!result.data) {
+      throw new Error("Invalid response from import API")
+    }
     return result.data
   }
 
@@ -234,7 +258,13 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.get<{ data: any }>(`/imports/${jobId}`, this.configuration)
+    const result = await Fetch.get<{ data: any; error?: string }>(`/imports/${jobId}`, this.configuration)
+    if (result.error) {
+      throw new Error(result.error)
+    }
+    if (!result.data) {
+      throw new Error("Invalid response from import job API")
+    }
     return result.data
   }
 
@@ -253,7 +283,13 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.post<{ data: any }>(`/imports/${jobId}/upload-url`, { ttl }, this.configuration)
+    const result = await Fetch.post<{ data: any; error?: string }>(`/imports/${jobId}/upload-url`, { ttl }, this.configuration)
+    if (result.error) {
+      throw new Error(result.error)
+    }
+    if (!result.data) {
+      throw new Error("Invalid response from import upload URL API")
+    }
     return result.data
   }
 
@@ -268,7 +304,13 @@ export class ResearcherService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       return Promise.resolve({ error: "500.demo-restriction" } as any)
     }
-    const result = await Fetch.post<{ data: any }>(`/imports/${jobId}/complete-upload`, { blobName }, this.configuration)
+    const result = await Fetch.post<{ data: any; error?: string }>(`/imports/${jobId}/complete-upload`, { blobName }, this.configuration)
+    if (result.error) {
+      throw new Error(result.error)
+    }
+    if (!result.data) {
+      throw new Error("Invalid response from complete import upload API")
+    }
     return result.data
   }
 }
