@@ -53,20 +53,26 @@ const handleRenewToken = async (refreshToken: string, base: string, configuratio
       )
       
       // Dispatch renewToken event similar to LOGIN event
-      // Access LAMP from global scope to avoid circular dependency
-      const LAMP = (global as any).LAMP || (typeof window !== "undefined" ? (window as any).LAMP : null)
-      if (LAMP && typeof LAMP.dispatchEvent === "function") {
+      // Use lazy import to avoid circular dependency issues
+      try {
+        // Dynamically import LAMP to avoid circular dependency
+        const LAMP = await import("../index").then((module) => module.default)
+        
         // Get identity object from LAMP.Auth if available
         const identityObject = LAMP.Auth?._me || null
-        const serverAddress = configuration?.base || base || LAMP.configuration?.base
+        const serverAddress = configuration?.base || base || LAMP.API?.configuration?.base
         
+        // Dispatch the renewToken event
         LAMP.dispatchEvent("renewToken", {
-          authorizationToken: configuration?.authorization || LAMP.configuration?.authorization,
+          authorizationToken: configuration?.authorization || LAMP.API?.configuration?.authorization,
           identityObject: identityObject,
           serverAddress: serverAddress,
           accessToken: accessToken,
           refreshToken: newRefreshToken,
         })
+      } catch (error) {
+        // Silently fail if dispatchEvent is not available (e.g., in Node.js environment)
+        console.warn("Failed to dispatch renewToken event:", error)
       }
     }
     return accessToken
