@@ -674,4 +674,172 @@ export class ActivityService {
     const result = await Fetch.get<{ data: any }>(url, this.configuration)
     return result.data || {}
   }
+
+  /**
+   * Export activities with their attachments.
+   * Fetches activities and their associated attachment data (activity_details or survey_description).
+   * @param activityIds Array of activity IDs to export
+   * @returns Array of { activity, attachment } objects
+   */
+  public async exportActivities(activityIds: string[]): Promise<ActivityExportResult[]> {
+    if (!activityIds || activityIds.length === 0) {
+      return []
+    }
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO: Return activities without attachments
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      const activities = Demo.Activity.filter((x) => activityIds.includes(x["id"]))
+      return activities.map((activity) => ({
+        activity: Object.assign(new Activity(), activity),
+        attachment: null,
+      }))
+    }
+
+    const result = await Fetch.post<{ data: ActivityExportResult[] }>(
+      `/activity/export`,
+      activityIds,
+      this.configuration
+    )
+    return result.data || []
+  }
+
+  /**
+   * Import activities with their attachments into a target study.
+   * Creates new activities and sets their attachments.
+   * @param studyId Target study ID to import activities into
+   * @param activitiesWithAttachments Array of { activity, attachment } objects (from export)
+   * @param options Import options
+   * @returns Import result with success/failure details
+   */
+  public async importActivities(
+    studyId: Identifier,
+    activitiesWithAttachments: ActivityExportResult[],
+    options?: ActivityImportOptions
+  ): Promise<ActivityImportResult> {
+    if (studyId === null || studyId === undefined) {
+      throw new Error("Required parameter studyId was null or undefined when calling importActivities.")
+    }
+    if (!activitiesWithAttachments || activitiesWithAttachments.length === 0) {
+      return {
+        success: true,
+        validationErrors: [],
+        results: [],
+        summary: { total: 0, successful: 0, failed: 0 },
+      }
+    }
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO: Create activities without attachments
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
+
+      const results: ActivityImportResultItem[] = []
+      for (const item of activitiesWithAttachments) {
+        const newId = "activity" + Math.random().toString().substring(2, 6)
+        const name = options?.namePrefix
+          ? `${options.namePrefix}${item.activity.name}`
+          : options?.nameSuffix
+          ? `${item.activity.name}${options.nameSuffix}`
+          : item.activity.name
+
+        Demo.Activity.push({
+          "#type": "Activity",
+          "#parent": studyId,
+          id: newId,
+          spec: item.activity.spec,
+          name: name,
+          settings: item.activity.settings,
+          schedule: options?.clearSchedule ? [] : item.activity.schedule,
+        })
+
+        results.push({
+          originalId: item.activity.id,
+          newId: newId,
+          success: true,
+        })
+      }
+
+      return {
+        success: true,
+        validationErrors: [],
+        results,
+        summary: {
+          total: results.length,
+          successful: results.length,
+          failed: 0,
+        },
+      }
+    }
+
+    const result = await Fetch.post<{ data: ActivityImportResult }>(
+      `/study/${studyId}/activity/import`,
+      { activities: activitiesWithAttachments, options },
+      this.configuration
+    )
+    return result.data || { success: false, validationErrors: [], results: [], summary: { total: 0, successful: 0, failed: 0 } }
+  }
+}
+
+/**
+ * Result of activity export
+ */
+export interface ActivityExportResult {
+  /** The exported activity */
+  activity: Activity
+  /** The activity's attachment data (activity_details or survey_description) */
+  attachment: any | null
+}
+
+/**
+ * Options for activity import
+ */
+export interface ActivityImportOptions {
+  /** Whether to preserve the original activity name (default: true) */
+  preserveName?: boolean
+  /** Suffix to add to activity names */
+  nameSuffix?: string
+  /** Prefix to add to activity names */
+  namePrefix?: string
+  /** Whether to clear schedules during import (default: false) */
+  clearSchedule?: boolean
+  /** Whether to preserve activity photo (default: false) */
+  preservePhoto?: boolean
+}
+
+/**
+ * Result of a single activity import
+ */
+export interface ActivityImportResultItem {
+  /** Original activity ID from export */
+  originalId: string
+  /** New activity ID after import (null if failed) */
+  newId: string | null
+  /** Whether import was successful */
+  success: boolean
+  /** Error message if failed */
+  error?: string
+}
+
+/**
+ * Result of bulk import operation
+ */
+export interface ActivityImportResult {
+  /** Overall success (true if all imports succeeded) */
+  success: boolean
+  /** Validation errors if data was invalid */
+  validationErrors: string[]
+  /** Individual import results */
+  results: ActivityImportResultItem[]
+  /** Summary statistics */
+  summary: {
+    total: number
+    successful: number
+    failed: number
+  }
 }
