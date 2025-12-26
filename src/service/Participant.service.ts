@@ -217,6 +217,26 @@ export class ParticipantService {
   }
 
   /**
+   * Get daily activity event counts for a participant (last 7 days including today).
+   * For graphical representation: X-axis = dates, Y-axis = total activities.
+   * Excludes events that occur within group activity time ranges.
+   * @param participantId
+   */
+  public async activityCounts(participantId: Identifier): Promise<{
+    dailyCounts: Array<{ date: string; count: number }>
+    todayCount: number
+  }> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling participantActivityCounts.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO - return mock data
+      return Promise.resolve({ dailyCounts: [], todayCount: 0 })
+    }
+    return (await Fetch.get<{ data: any }>(`/participant/${participantId}/activity-counts`, this.configuration)).data
+  }
+
+  /**
    * Get a single participant, by identifier.
    * @param participantId
    */
