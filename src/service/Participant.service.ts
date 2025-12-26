@@ -187,6 +187,36 @@ export class ParticipantService {
   }
 
   /**
+   * Get leaderboard rank for a participant.
+   * @param participantId
+   * @param range - Time range for the leaderboard: 'week' or 'month'
+   */
+  public async rank(
+    participantId: Identifier,
+    range: "week" | "month" = "week"
+  ): Promise<{
+    topTen: Array<{
+      rank: number
+      completedCount: number
+      participantId: string
+      name: string
+    }>
+    totalActivities: number
+  }> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling participantRank.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO - return mock data
+      return Promise.resolve({
+        topTen: [],
+        totalActivities: 0
+      })
+    }
+    return (await Fetch.get<{ data: any }>(`/participant/${participantId}/rank?range=${range}`, this.configuration)).data
+  }
+
+  /**
    * Get a single participant, by identifier.
    * @param participantId
    */
