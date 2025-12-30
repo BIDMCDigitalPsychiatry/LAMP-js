@@ -32,7 +32,9 @@ export class ImageUploadService {
 
     // Get authorization header - use the same format as Fetch class
     let authorization: string | undefined
-    const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo") || "null")
+    const userTokenFromLocalStore: any = JSON.parse(
+      typeof sessionStorage !== "undefined" ? sessionStorage.getItem("tokenInfo") || "null" : "null"
+    )
     if (userTokenFromLocalStore?.accessToken) {
       authorization = `Bearer ${
         this.configuration.accessToken ? this.configuration.accessToken : userTokenFromLocalStore?.accessToken

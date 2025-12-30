@@ -1,5 +1,45 @@
 import { jwtVerify } from "jose"
 import { CredentialService } from "./Credential.service"
+
+// Safe wrappers for browser APIs (Node.js compatibility)
+const safeSessionStorage = {
+  getItem: (key: string): string | null => {
+    if (typeof sessionStorage !== "undefined") {
+      return sessionStorage.getItem(key)
+    }
+    return null
+  },
+  setItem: (key: string, value: string): void => {
+    if (typeof sessionStorage !== "undefined") {
+      sessionStorage.setItem(key, value)
+    }
+  },
+  removeItem: (key: string): void => {
+    if (typeof sessionStorage !== "undefined") {
+      sessionStorage.removeItem(key)
+    }
+  },
+}
+
+const safeLocalStorage = {
+  getItem: (key: string): string | null => {
+    if (typeof localStorage !== "undefined") {
+      return localStorage.getItem(key)
+    }
+    return null
+  },
+  setItem: (key: string, value: string): void => {
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(key, value)
+    }
+  },
+  removeItem: (key: string): void => {
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem(key)
+    }
+  },
+}
+
 /**
  *
  */
@@ -30,9 +70,9 @@ const userTokenKey = "tokenInfo"
 
 //If refresh token expired, then logout from app
 const handleSessionExpiry = async () => {
-  localStorage.removeItem(userTokenKey)
-  localStorage.setItem("verified", JSON.stringify({ value: false }))
-  sessionStorage.setItem("LAMP._auth", JSON.stringify({ id: null, password: null, serverAddress: null }))
+  safeLocalStorage.removeItem(userTokenKey)
+  safeLocalStorage.setItem("verified", JSON.stringify({ value: false }))
+  safeSessionStorage.setItem("LAMP._auth", JSON.stringify({ id: null, password: null, serverAddress: null }))
   // alert("Your session expired, Please login again.")
   // window.location.href = "/#/?expired=true"
 }
@@ -47,7 +87,7 @@ const handleRenewToken = async (refreshToken: string, base: string, configuratio
 
     if (accessToken) {
       const newRefreshToken = res?.data?.refresh_token || refreshToken
-      sessionStorage.setItem(
+      safeSessionStorage.setItem(
         userTokenKey,
         JSON.stringify({ accessToken: res?.data?.access_token, refreshToken: newRefreshToken })
       )
@@ -91,11 +131,20 @@ async function _fetch<ResultType>(
   if (!configuration) throw new Error("Cannot make HTTP request due to invalid configuration.")
   let authorization
 
-  const userTokenFromLocalStore: any = JSON.parse(sessionStorage.getItem("tokenInfo"))
-  if (userTokenFromLocalStore?.accessToken) {
-    authorization = `Bearer ${
-      configuration.accessToken ? configuration.accessToken : userTokenFromLocalStore?.accessToken
-    }`
+  // Get token from sessionStorage (for browser usage)
+  const userTokenFromLocalStore: any = JSON.parse(safeSessionStorage.getItem("tokenInfo") || "null")
+
+  // Check configuration.accessToken first (for server-side/Node.js usage)
+  // Then fallback to sessionStorage (for browser usage)
+  if (configuration.accessToken) {
+    authorization = `Bearer ${configuration.accessToken}`
+  } else if (userTokenFromLocalStore?.accessToken) {
+    authorization = `Bearer ${userTokenFromLocalStore.accessToken}`
+  } else if (configuration.authorization) {
+    // Fallback to Basic auth if provided
+    authorization = configuration.authorization.includes(":") 
+      ? `Basic ${typeof Buffer !== "undefined" ? Buffer.from(configuration.authorization).toString("base64") : btoa(configuration.authorization)}`
+      : configuration.authorization
   }
 
   try {

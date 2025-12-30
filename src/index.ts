@@ -113,7 +113,7 @@ export default class LAMP {
   // [Credential/Identity Management]
   //
 
-  // Shorthand for console/data analysis usage.
+  // Shorthand for console/data analysis usage with Basic auth (accessKey:secretKey).
   public static async connect(
     identity: {
       accessKey: string | null
@@ -138,6 +138,41 @@ export default class LAMP {
       authorization: `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` 
     } : {
       base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
+    }
+  }
+
+  /**
+   * Connect using Bearer token authentication (JWT).
+   * Use this for server-to-server communication where you have an access token.
+   * @param options - Connection options with accessToken and serverAddress
+   */
+  public static async connectWithToken(
+    options: {
+      accessToken: string
+      serverAddress: string
+    }
+  ) {
+    if (!options.accessToken) {
+      throw new Error("accessToken is required for Bearer token authentication")
+    }
+    if (!options.serverAddress) {
+      throw new Error("serverAddress is required")
+    }
+
+    // Store auth info
+    LAMP.Auth._auth = {
+      id: null,
+      password: null,
+      serverAddress: options.serverAddress,
+      token: options.accessToken,
+    }
+
+    // Configure with Bearer token
+    LAMP.configuration = {
+      base: options.serverAddress.startsWith("http") 
+        ? options.serverAddress 
+        : `https://${options.serverAddress}`,
+      accessToken: options.accessToken,
     }
   }
 
