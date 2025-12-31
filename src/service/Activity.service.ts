@@ -676,6 +676,35 @@ export class ActivityService {
   }
 
   /**
+   * Get multiple activities in a single request (bulk fetch).
+   * More efficient than calling view() in a loop.
+   * @param activityIds Array of activity IDs to fetch
+   * @returns Array of Activity objects
+   */
+  public async viewBatch(activityIds: string[]): Promise<Activity[]> {
+    if (!activityIds || activityIds.length === 0) {
+      return []
+    }
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO: Filter activities by IDs
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+
+      const activities = Demo.Activity.filter((x) => activityIds.includes(x["id"]))
+      return activities.map((activity) => Object.assign(new Activity(), activity))
+    }
+
+    const result = await Fetch.post<{ data: Activity[] }>(
+      `/activity/batch`,
+      activityIds,
+      this.configuration
+    )
+    return (result.data || []).map((x: any) => Object.assign(new Activity(), x))
+  }
+
+  /**
    * Export activities with their attachments.
    * Fetches activities and their associated attachment data (activity_details or survey_description).
    * @param activityIds Array of activity IDs to export
