@@ -274,7 +274,6 @@ export default class LAMP {
     }
 
     public static async set_server(serverAddress:string) {
-      console.log("_setServer with: ", serverAddress)
       let serverInfoResult
       try {
         serverInfoResult = await Fetch.get("/server-info", {base: this._get_base_address(serverAddress)})
