@@ -5,6 +5,8 @@ import { Credential } from "../model/Credential"
 import { Demo } from "./Demo"
 import jsonata from "jsonata"
 
+export type OAuthProvider = "google" | "apple" | "microsoft"
+
 export class CredentialService {
   public configuration?: Configuration
 
@@ -257,6 +259,23 @@ export class CredentialService {
     }
     
     return await Fetch.post("/login", { accessKey, secretKey }, this.configuration)
+  }
+
+  /**
+   * Starts the authentication process with the specified provider
+   * Returns a redirect url
+   * @param providerKey - name of the oauth provider (google, microsoft, apple)
+   */
+  public async startOAuth(providerKey: string) {
+    return await Fetch.post(`/login/${providerKey}`, {}, this.configuration)
+  }
+
+  /**
+   * Exchanges the oneTimeToken for the session cookie
+   * @param oneTimeToken - oneTimeToken provided by the server after a successful authentication using oauth
+   */
+  public async finishOAuth(oneTimeToken: string) {
+    return await Fetch.get(`/login/one-time-token/${oneTimeToken}`, this.configuration)
   }
 
   public async renewToken(refreshToken: string, base: string): Promise<any> {
