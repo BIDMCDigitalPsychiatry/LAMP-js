@@ -282,6 +282,11 @@ export class CredentialService {
     const configuration: Configuration = { accesToken: refreshToken, base: base }
     return await Fetch.post("/renewToken", { refreshToken }, configuration)
   }
+
+  public async linkAccount(providerKey: string) {
+    return await Fetch.post(`/link-social/${providerKey}`, {}, this.configuration)
+  }
+
   public async logout(): Promise<any> {
     return await Fetch.post("/logout", {}, this.configuration)
   }
