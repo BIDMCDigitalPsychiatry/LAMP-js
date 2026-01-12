@@ -217,23 +217,37 @@ export class ParticipantService {
   }
 
   /**
-   * Get daily activity event counts for a participant (last 7 days including today).
+   * Get daily activity event counts for a participant.
    * For graphical representation: X-axis = dates, Y-axis = total activities.
    * Excludes events that occur within group activity time ranges.
-   * @param participantId
+   * @param participantId - The participant ID
+   * @param startTime - Optional start time (epoch ms). Defaults to 7 days ago
+   * @param endTime - Optional end time (epoch ms). Defaults to end of current day
    */
-  public async activityCounts(participantId: Identifier): Promise<{
+  public async activityCounts(
+    participantId: Identifier,
+    startTime?: number,
+    endTime?: number
+  ): Promise<{
     dailyCounts: Array<{ date: string; count: number }>
-    todayCount: number
+    totalCount: number
   }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling participantActivityCounts.")
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO - return mock data
-      return Promise.resolve({ dailyCounts: [], todayCount: 0 })
+      return Promise.resolve({ dailyCounts: [], totalCount: 0 })
     }
-    return (await Fetch.get<{ data: any }>(`/participant/${participantId}/activity-counts`, this.configuration)).data
+
+    // Build query string with optional date range
+    const params = new URLSearchParams()
+    if (startTime !== undefined) params.append("start", startTime.toString())
+    if (endTime !== undefined) params.append("end", endTime.toString())
+    const queryString = params.toString()
+    const url = `/participant/${participantId}/activity-counts${queryString ? `?${queryString}` : ""}`
+
+    return (await Fetch.get<{ data: any }>(url, this.configuration)).data
   }
 
   /**

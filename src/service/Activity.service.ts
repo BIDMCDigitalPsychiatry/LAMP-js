@@ -36,7 +36,7 @@ export class ActivityService {
     ignore_binary?: boolean,
     limit?: number,
     offset?: number
-  ): Promise<{ data: Activity[], total: number }> {
+  ): Promise<{ data: Activity[]; total: number }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
     if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
@@ -56,50 +56,49 @@ export class ActivityService {
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         // For demo, return all data with total count
         const total = output.length
-        const paginatedOutput = limit !== undefined && offset !== undefined
-          ? output.slice(offset, offset + limit)
-          : output
+        const paginatedOutput =
+          limit !== undefined && offset !== undefined ? output.slice(offset, offset + limit) : output
         return Promise.resolve({ data: paginatedOutput, total })
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
     const params = new URLSearchParams()
-    params.append('ignore_binary', String(ignore_binary))
+    params.append("ignore_binary", String(ignore_binary))
     if (limit !== undefined && limit !== null) {
-      params.append('limit', limit.toString())
+      params.append("limit", limit.toString())
     }
     if (offset !== undefined && offset !== null) {
-      params.append('offset', offset.toString())
+      params.append("offset", offset.toString())
     }
     const queryString = params.toString()
-    const result: any = await Fetch.get<{ data: Activity[], total?: number }>(
+    const result: any = await Fetch.get<{ data: Activity[]; total?: number }>(
       `/participant/${participantId}/activity?${queryString}`,
       this.configuration
     )
-    
+
     // Handle the response structure based on _select function behavior:
     // - With pagination (limit > 0 OR offset >= 0): { data: Activity[], total: number }
     // - Without pagination: { data: Activity[] } (total property is missing)
     // The server-side ActivityService always wraps the response in { data: ... }
     let activitiesArray: any[] = []
     let totalCount = 0
-    
+
     if (result && result.data && Array.isArray(result.data)) {
       // result.data is always an array (server wraps it)
       activitiesArray = result.data
       // total exists only when pagination was provided (limit > 0 OR offset >= 0)
       // When no pagination, _select returns array, server wraps as { data: array } (no total)
-      totalCount = typeof result.total === 'number' ? result.total : activitiesArray.length
+      totalCount = typeof result.total === "number" ? result.total : activitiesArray.length
     } else if (Array.isArray(result)) {
       // Legacy fallback: if result is directly an array (shouldn't happen with current server)
       activitiesArray = result
       totalCount = result.length
     }
-    
+
     return {
       data: activitiesArray.map((x: any) => Object.assign(new Activity(), x)),
-      total: totalCount
+      total: totalCount,
     }
   }
 
@@ -148,12 +147,12 @@ export class ActivityService {
    * @param offset Optional offset for pagination
    */
   public async allByStudy(
-    studyId: Identifier, 
-    transform?: string, 
+    studyId: Identifier,
+    transform?: string,
     ignore_binary?: boolean,
     limit?: number,
     offset?: number
-  ): Promise<Activity[] | { data: Activity[], total: number }> {
+  ): Promise<Activity[] | { data: Activity[]; total: number }> {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling activityAllByStudy.")
     if (ignore_binary === null || ignore_binary === undefined) ignore_binary = false
@@ -168,11 +167,10 @@ export class ActivityService {
         let output = Demo.Activity.filter((x) => x["#parent"] === studyId)?.map((x) => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         // If pagination is requested, return paginated result with total
-        if (typeof limit === 'number' && limit > 0 || typeof offset === 'number' && offset > 0) {
+        if ((typeof limit === "number" && limit > 0) || (typeof offset === "number" && offset > 0)) {
           const total = output.length
-          const paginatedOutput = limit !== undefined && offset !== undefined
-            ? output.slice(offset, offset + limit)
-            : output
+          const paginatedOutput =
+            limit !== undefined && offset !== undefined ? output.slice(offset, offset + limit) : output
           return Promise.resolve({ data: paginatedOutput, total })
         }
         return Promise.resolve(output)
@@ -180,42 +178,42 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    
+
     // Build query string with pagination parameters
     const params = new URLSearchParams()
-    params.append('ignore_binary', String(ignore_binary))
+    params.append("ignore_binary", String(ignore_binary))
     if (limit !== undefined && limit !== null) {
-      params.append('limit', limit.toString())
+      params.append("limit", limit.toString())
     }
     if (offset !== undefined && offset !== null) {
-      params.append('offset', offset.toString())
+      params.append("offset", offset.toString())
     }
     const queryString = params.toString()
-    
-    const result: any = await Fetch.get<{ data: Activity[], total?: number }>(
+
+    const result: any = await Fetch.get<{ data: Activity[]; total?: number }>(
       `/study/${studyId}/activity?${queryString}`,
       this.configuration
     )
-    
+
     // Handle the response structure based on _select function behavior:
     // - With pagination (limit > 0 OR offset >= 0): { data: Activity[], total: number }
     // - Without pagination: { data: Activity[] } (total property is missing)
     let activitiesArray: any[] = []
     let totalCount = 0
-    
+
     if (result && result.data && Array.isArray(result.data)) {
       activitiesArray = result.data
-      totalCount = typeof result.total === 'number' ? result.total : activitiesArray.length
+      totalCount = typeof result.total === "number" ? result.total : activitiesArray.length
     } else if (Array.isArray(result)) {
       // Legacy fallback: if result is directly an array
       activitiesArray = result
       totalCount = result.length
     }
-    
+
     const mappedActivities = activitiesArray.map((x: any) => Object.assign(new Activity(), x))
-    
+
     // If pagination was requested, return { data, total }, otherwise return array for backward compatibility
-    if (typeof limit === 'number' && limit > 0 || typeof offset === 'number' && offset > 0) {
+    if ((typeof limit === "number" && limit > 0) || (typeof offset === "number" && offset > 0)) {
       return { data: mappedActivities, total: totalCount }
     }
     return mappedActivities
@@ -224,7 +222,13 @@ export class ActivityService {
    * Get the set of all activities available to  participants of a single study, by participant identifier.
    * @param participantId
    */
-  public async listActivities(participantId: Identifier, tab?: string, transform?: string, limit?: number, offset?: number): Promise<{ data: any, total: number }> {
+  public async listActivities(
+    participantId: Identifier,
+    tab?: string,
+    transform?: string,
+    limit?: number,
+    offset?: number
+  ): Promise<{ data: any; total: number }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling listActivities.")
 
@@ -245,21 +249,21 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    
+
     // Build query string with pagination parameters
     const params = new URLSearchParams()
     if (tab) params.append("tab", tab)
-    if (typeof limit === 'number' && limit > 0) params.append("limit", limit.toString())
-    if (typeof offset === 'number' && offset > 0) params.append("offset", offset.toString())
+    if (typeof limit === "number" && limit > 0) params.append("limit", limit.toString())
+    if (typeof offset === "number" && offset > 0) params.append("offset", offset.toString())
     const queryString = params.toString()
-    
-    const result: any = await Fetch.get<{ data: any, total: number }>(
-      `/activity/${participantId}/activity${queryString ? `?${queryString}` : ''}`,
+
+    const result: any = await Fetch.get<{ data: any; total: number }>(
+      `/activity/${participantId}/activity${queryString ? `?${queryString}` : ""}`,
       this.configuration
     )
-    
+
     // Handle different response structures
-    if (result && result.data !== undefined && typeof result.total === 'number') {
+    if (result && result.data !== undefined && typeof result.total === "number") {
       return { data: result.data, total: result.total }
     }
     // Legacy fallback: if result is directly the data object
@@ -394,7 +398,10 @@ export class ActivityService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    const result: any = await Fetch.get<{ data: Activity }>(`/activity/${activityId}?ignore_binary=${ignore_binary}`, this.configuration)
+    const result: any = await Fetch.get<{ data: Activity }>(
+      `/activity/${activityId}?ignore_binary=${ignore_binary}`,
+      this.configuration
+    )
     // API returns { data: Activity } (single object, not array)
     if (result && result.data) {
       return Object.assign(new Activity(), result.data)
@@ -437,19 +444,16 @@ export class ActivityService {
     }
     const params = new URLSearchParams()
     if (startTime !== undefined && startTime !== null) {
-      params.append('startTime', startTime.toString())
+      params.append("startTime", startTime.toString())
     }
     if (endTime !== undefined && endTime !== null) {
-      params.append('endTime', endTime.toString())
+      params.append("endTime", endTime.toString())
     }
     const queryString = params.toString()
-    const url = `/module/${moduleId}/${participantId}${queryString ? `?${queryString}` : ''}`
-    return (
-      await Fetch.get<{ data: any[] }>(
-        url,
-        this.configuration
-      )
-    ).data?.map((x) => Object.assign(new Activity(), x))
+    const url = `/module/${moduleId}/${participantId}${queryString ? `?${queryString}` : ""}`
+    return (await Fetch.get<{ data: any[] }>(url, this.configuration)).data?.map((x) =>
+      Object.assign(new Activity(), x)
+    )
   }
 
   /**
@@ -529,7 +533,7 @@ export class ActivityService {
    * Delete multiple activities.
    * @param activities
    */
-  public async deleteActivities(activities:any): Promise<{ error?: string }> {
+  public async deleteActivities(activities: any): Promise<{ error?: string }> {
     if (!activities || activities.length === 0) {
       throw new Error("Required parameter 'activities' was null, undefined, or empty when calling deleteActivities.")
     }
@@ -578,7 +582,6 @@ export class ActivityService {
     }
     return await Fetch.delete(`/activities`, this.configuration, activities)
   }
-
 
   /**
    * Get the set of all sub-activities available to a module in participant feed,  by module identifier,participant Identifier,startTime and EndTime.
@@ -696,11 +699,7 @@ export class ActivityService {
       return activities.map((activity) => Object.assign(new Activity(), activity))
     }
 
-    const result = await Fetch.post<{ data: Activity[] }>(
-      `/activity/batch`,
-      activityIds,
-      this.configuration
-    )
+    const result = await Fetch.post<{ data: Activity[] }>(`/activity/batch`, activityIds, this.configuration)
     return (result.data || []).map((x: any) => Object.assign(new Activity(), x))
   }
 
@@ -811,7 +810,79 @@ export class ActivityService {
       { activities: activitiesWithAttachments, options },
       this.configuration
     )
-    return result.data || { success: false, validationErrors: [], results: [], summary: { total: 0, successful: 0, failed: 0 } }
+    return (
+      result.data || {
+        success: false,
+        validationErrors: [],
+        results: [],
+        summary: { total: 0, successful: 0, failed: 0 },
+      }
+    )
+  }
+
+  /**
+   * Delete an Activity bin.
+   * @param parentId Study ID for global delete, Activity ID for local delete
+   * @param binId
+   */
+  public async deleteActivityBin(
+    parentId: Identifier,
+    binId: Identifier,
+    isGlobalDelete: boolean = false,
+    isEdit: boolean = false
+  ): Promise<Identifier> {
+    if (parentId === null || parentId === undefined)
+      throw new Error("Required parameter parentId was null or undefined.")
+    if (binId === null || binId === undefined) throw new Error("Required parameter binId was null or undefined.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (parentId === "me") parentId = credential.length > 0 ? credential[0]["origin"] : parentId
+
+      if (isGlobalDelete) {
+        // Global delete: delete bin by binId across all activities in the study
+        // parentId is a study ID in this case
+        let binIdx = Demo.ActivityBin.findIndex((x) => x["id"] === binId)
+        if (binIdx >= 0) {
+          Demo.ActivityBin.splice(binIdx, 1)
+          return Promise.resolve({} as any)
+        } else {
+          return Promise.resolve({ error: "404.not-found" } as any)
+        }
+      } else {
+        // Delete bin for specific activity
+        // parentId is an activity ID in this case
+        // Verify activity exists
+        let activityIdx = Demo.Activity.findIndex((x) => x["id"] === parentId)
+        if (activityIdx < 0) {
+          return Promise.resolve({ error: "404.not-found" } as any)
+        }
+
+        // Delete the bin
+        let binIdx = Demo.ActivityBin.findIndex((x) => x["id"] === binId && x["activity"] === parentId)
+        if (binIdx >= 0) {
+          Demo.ActivityBin.splice(binIdx, 1)
+          return Promise.resolve({} as any)
+        } else {
+          return Promise.resolve({ error: "404.not-found" } as any)
+        }
+      }
+    }
+    const params = new URLSearchParams()
+    if (isGlobalDelete) {
+      params.append("isGlobalDelete", String(isGlobalDelete))
+    }
+    if (isEdit) {
+      params.append("isEdit", String(isEdit))
+    }
+    const queryString = params.toString()
+    const route = queryString
+      ? `/activity/bin/${parentId}/${binId}?${queryString}`
+      : `/activity/bin/${parentId}/${binId}`
+    return await Fetch.delete(route, this.configuration)
   }
 }
 
