@@ -230,6 +230,7 @@ export class ParticipantService {
     endTime?: number
   ): Promise<{
     dailyCounts: Array<{ date: string; count: number }>
+    todayCount: number
     totalCount: number
   }> {
     if (participantId === null || participantId === undefined)
@@ -237,7 +238,7 @@ export class ParticipantService {
 
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO - return mock data
-      return Promise.resolve({ dailyCounts: [], totalCount: 0 })
+      return Promise.resolve({ dailyCounts: [], todayCount: 0, totalCount: 0 })
     }
 
     // Build query string with optional date range

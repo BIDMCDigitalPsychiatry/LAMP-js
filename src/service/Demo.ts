@@ -13,6 +13,7 @@ export let Demo = {
     Study: [],
     Participant: [],
     Activity: [],
+    ActivityBin: [],
     Sensor: [],
     ActivityEvent: [],
     SensorEvent: [],
