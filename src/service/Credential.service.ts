@@ -290,4 +290,21 @@ export class CredentialService {
   public async logout(): Promise<any> {
     return await Fetch.post("/logout", {}, this.configuration)
   }
+
+  public async configureTwoFactor({email, phone}:{email: string|undefined, phone: string|undefined}) {
+    return await Fetch.post("/setup-2fa", {email: email, phone: phone}, this.configuration)
+  }
+  
+  public async sendTwoFactorCode() {
+    return await Fetch.post("/send-2fa", {}, this.configuration)
+  }
+
+  public async verifyTwoFactorCode(code:string) {
+    return await Fetch.post("/verify-2fa", {code}, this.configuration)
+  }
+
+  public async clearTwoFactorConfiguration() {
+    throw new Error("Not implemented")
+  }
+
 }
