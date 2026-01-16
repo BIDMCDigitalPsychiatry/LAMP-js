@@ -15,6 +15,7 @@ import {
   TypeService,
   ResearcherSettingsService,
   ImageUploadService,
+  SurveyResponseService,
 } from "./service/index"
 import { Configuration } from "./service/Fetch"
 import { Demo } from "./service/Demo"
@@ -53,6 +54,7 @@ export default class LAMP {
   public static SensorSpec = new SensorSpecService()
   public static ResearcherSettings = new ResearcherSettingsService()
   public static ImageUpload = new ImageUploadService()
+  public static SurveyResponse = new SurveyResponseService()
   private static get configuration(): Configuration | undefined {
     return LAMP.API.configuration
   }
@@ -71,6 +73,7 @@ export default class LAMP {
     LAMP.Type.configuration = configuration
     LAMP.ResearcherSettings.configuration = configuration
     LAMP.ImageUpload.configuration = configuration
+    LAMP.SurveyResponse.configuration = configuration
   }
   private static protocol = "https://"
 
