@@ -306,5 +306,4 @@ export class CredentialService {
   public async clearTwoFactorConfiguration() {
     throw new Error("Not implemented")
   }
-
 }

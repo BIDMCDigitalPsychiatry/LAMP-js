@@ -18,6 +18,7 @@ import {
 } from "./service/index"
 import { Configuration, Fetch } from "./service/Fetch"
 import { Demo } from "./service/Demo"
+import { AccountSetupState, SessionInfo } from "./model/Session"
 
 export * from "./service/index"
 export * from "./model/index"
@@ -143,7 +144,6 @@ export default class LAMP {
     public static _type: "admin" | "researcher" | "participant" | null = null
     public static _authScheme: "session" | "basic" | null = null
     public static _configuredProviders: OAuthProvider[] = []
-    public static _requireAccountSetup: boolean = undefined
 
     static _get_base_address(serverAddress: string | null): string {
       return !!serverAddress ? `${LAMP.protocol}${serverAddress}` : `${LAMP.protocol}api.lamp.digital`
@@ -165,8 +165,6 @@ export default class LAMP {
         authType: "basic",
         authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined,
       }
-
-        // TODO: Cross reference last real release to get this right
     }
 
     static async _login_session(
@@ -187,8 +185,6 @@ export default class LAMP {
 
       // Call await login
       const loginResult = await LAMP.Credential.login(id, password)
-
-      // Set credential
     }
 
     static async _logout_basic() {
@@ -212,7 +208,6 @@ export default class LAMP {
       LAMP.configuration = {
         base: null
       }
-      this._requireAccountSetup = false
     }
 
     static async _load_self_information() {
@@ -222,7 +217,6 @@ export default class LAMP {
           if (sessionInfoResult?.message !== "403.no-such-credentials") {
             LAMP.Auth._type = sessionInfoResult.userType
             LAMP.Auth._me = sessionInfoResult.me
-            this._requireAccountSetup = !sessionInfoResult?.isSetupComplete
           } else {
             throw new Error("Not logged in")
           }
@@ -392,6 +386,24 @@ export default class LAMP {
       // Attempt to set self information
       // Will throw an error if _load_self_information is unsuccessful
       await LAMP.Auth._load_self_information()
+    }
+
+    /**
+     * Returns session information for the currently logged in user
+     * For session based servers this actually queries the server
+     * For basic auth servers this returns a minimal constructed session object
+     */
+    public static async fetch_session_info():Promise<SessionInfo | null> {
+      if (this._authScheme === "session") {
+          const sessionInfoResult = await Fetch.get("/session-info", LAMP.configuration)
+          return sessionInfoResult as SessionInfo
+      } else if (this._authScheme === "basic" && !!this._auth.id && !!this._auth.password && !!this._type) {
+        return {
+          accountSetupState: "NOT_REQUIRED"
+        }
+      } else {
+        return null
+      }
     }
   }
 }
