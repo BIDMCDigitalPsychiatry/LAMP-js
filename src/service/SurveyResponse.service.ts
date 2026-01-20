@@ -20,6 +20,7 @@ export interface SurveyItem {
   id: string
   title: string
   binName?: string
+  description?: string // Survey activity description
   responses: SurveyResponse[]
 }
 
