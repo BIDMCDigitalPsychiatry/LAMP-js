@@ -2,10 +2,17 @@ import { Fetch, Configuration } from "./Fetch"
 import { Identifier } from "../model/Type"
 
 // Types for survey response structure
+export interface QuestionAnswer {
+  item: string
+  value: any
+  type?: string
+  questionText?: string
+}
+
 export interface SurveyResponse {
   date: number
   timestamp: number
-  firstAnswer: any
+  displayableAnswers: QuestionAnswer[] // Only answers from questions with displayInSurveyResponses: true
   isPinned?: boolean
 }
 
