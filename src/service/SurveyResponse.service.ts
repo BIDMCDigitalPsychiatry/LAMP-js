@@ -45,11 +45,26 @@ export interface FilterParams {
   toDate?: number // For weekly custom range
   month?: number // For monthly filter (1-12)
   year?: number // For monthly filter
+  limit?: number // Limit number of responses per survey (e.g., 5 for latest 5)
 }
 
 export interface PinSurveyResponseParams {
   activity_id: string
   timestamp: number
+}
+
+// Types for single survey activity response
+export interface SurveyQuestionAnswer {
+  questionText: string
+  answerText: string
+  optionDescription?: string // Description of selected option (if available)
+}
+
+export interface SurveyActivityResponse {
+  activityId: string
+  activityName: string
+  timestamp: number
+  answers: SurveyQuestionAnswer[]
 }
 
 export interface PinSurveyResponseResult {
@@ -100,6 +115,10 @@ export class SurveyResponseService {
    * @example
    * // Get pinned responses only
    * const result = await LAMP.SurveyResponse.getSurveyResponses('participant_id', { filterType: 'pinned' });
+   * 
+   * @example
+   * // Get latest 5 responses per survey
+   * const result = await LAMP.SurveyResponse.getSurveyResponses('participant_id', { filterType: 'all', limit: 5 });
    */
   public async getSurveyResponses(
     participantId: Identifier,
@@ -137,6 +156,9 @@ export class SurveyResponseService {
     }
     if (filterParams.year !== undefined) {
       queryParams.set("year", String(filterParams.year))
+    }
+    if (filterParams.limit !== undefined) {
+      queryParams.set("limit", String(filterParams.limit))
     }
 
     const result = await Fetch.get<{ data: GroupedSurveyResponse }>(
@@ -221,6 +243,84 @@ export class SurveyResponseService {
     return this.getSurveyResponses(participantId, {
       filterType: "pinned",
     })
+  }
+
+  /**
+   * Get latest N survey responses per survey for a participant
+   * @param participantId - The participant ID
+   * @param limit - Number of responses per survey (default: 5)
+   * @returns Promise<GroupedSurveyResponse>
+   * 
+   * @example
+   * // Get latest 5 responses per survey
+   * const result = await LAMP.SurveyResponse.getLatestSurveyResponses('participant_id', 5);
+   */
+  public async getLatestSurveyResponses(
+    participantId: Identifier,
+    limit: number = 5
+  ): Promise<GroupedSurveyResponse> {
+    return this.getSurveyResponses(participantId, {
+      filterType: "all",
+      limit,
+    })
+  }
+
+  /**
+   * Get survey response for a specific survey activity at a specific timestamp
+   * Returns the survey questions with participant's answers
+   * @param participantId - The participant ID
+   * @param activityId - The survey activity ID
+   * @param timestamp - The timestamp of the survey response
+   * @returns Promise<SurveyActivityResponse>
+   * 
+   * @example
+   * // Get a specific survey response
+   * const result = await LAMP.SurveyResponse.getSurveyActivityResponse('participant_id', 'activity_id', 1705968000000);
+   */
+  public async getSurveyActivityResponse(
+    participantId: Identifier,
+    activityId: string,
+    timestamp: number
+  ): Promise<SurveyActivityResponse> {
+    if (participantId === null || participantId === undefined) {
+      throw new Error(
+        "Required parameter participantId was null or undefined when calling getSurveyActivityResponse."
+      )
+    }
+    if (!activityId) {
+      throw new Error(
+        "Required parameter activityId was null or undefined when calling getSurveyActivityResponse."
+      )
+    }
+    if (timestamp === null || timestamp === undefined) {
+      throw new Error(
+        "Required parameter timestamp was null or undefined when calling getSurveyActivityResponse."
+      )
+    }
+
+    if (this.configuration?.base === "https://demo.lamp.digital") {
+      // DEMO - return empty structure for demo mode
+      return Promise.resolve({
+        activityId: activityId,
+        activityName: "",
+        timestamp: timestamp,
+        answers: [],
+      })
+    }
+
+    const url = `/participant/${participantId}/survey_responses/${activityId}/${timestamp}`
+
+    const result = await Fetch.get<{ data: SurveyActivityResponse }>(
+      url,
+      this.configuration
+    )
+
+    return result.data || {
+      activityId: activityId,
+      activityName: "",
+      timestamp: timestamp,
+      answers: [],
+    }
   }
 
   /**
