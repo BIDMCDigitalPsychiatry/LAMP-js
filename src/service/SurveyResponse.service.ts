@@ -46,6 +46,7 @@ export interface FilterParams {
   month?: number // For monthly filter (1-12)
   year?: number // For monthly filter
   limit?: number // Limit number of responses per survey (e.g., 5 for latest 5)
+  activityId?: string // Filter by specific survey activity ID
 }
 
 export interface PinSurveyResponseParams {
@@ -159,6 +160,9 @@ export class SurveyResponseService {
     }
     if (filterParams.limit !== undefined) {
       queryParams.set("limit", String(filterParams.limit))
+    }
+    if (filterParams.activityId !== undefined) {
+      queryParams.set("activityId", filterParams.activityId)
     }
 
     const result = await Fetch.get<{ data: GroupedSurveyResponse }>(
