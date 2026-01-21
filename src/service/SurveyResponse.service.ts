@@ -10,7 +10,6 @@ export interface QuestionAnswer {
 }
 
 export interface SurveyResponse {
-  date: number
   timestamp: number
   displayableAnswers: QuestionAnswer[] // Only answers from questions with displayInSurveyResponses: true
   isPinned?: boolean
@@ -33,6 +32,15 @@ export interface SurveyGroup {
 export interface GroupedSurveyResponse {
   groups: SurveyGroup[]
   ungroupedSurveys: SurveyItem[]
+}
+
+// Single activity response when activityId filter is provided
+export interface SingleActivitySurveyResponse {
+  id: string
+  title: string
+  binName?: string
+  description?: string
+  responses: SurveyResponse[]
 }
 
 // Filter types for survey responses
@@ -78,9 +86,10 @@ export class SurveyResponseService {
 
   /**
    * Get survey responses for a participant grouped by survey groups from researcher settings
+   * If activityId is provided, returns only that activity's data in a simplified format (SingleActivitySurveyResponse)
    * @param participantId - The participant ID
    * @param filterParams - Filter parameters for the query
-   * @returns Promise<GroupedSurveyResponse>
+   * @returns Promise<GroupedSurveyResponse | SingleActivitySurveyResponse>
    * 
    * @example
    * // Get weekly responses (last 7 days)
@@ -120,11 +129,15 @@ export class SurveyResponseService {
    * @example
    * // Get latest 5 responses per survey
    * const result = await LAMP.SurveyResponse.getSurveyResponses('participant_id', { filterType: 'all', limit: 5 });
+   * 
+   * @example
+   * // Get responses for a specific activity only (returns SingleActivitySurveyResponse)
+   * const result = await LAMP.SurveyResponse.getSurveyResponses('participant_id', { filterType: 'all', activityId: 'activity_id' });
    */
   public async getSurveyResponses(
     participantId: Identifier,
     filterParams: FilterParams = { filterType: "weekly" }
-  ): Promise<GroupedSurveyResponse> {
+  ): Promise<GroupedSurveyResponse | SingleActivitySurveyResponse> {
     if (participantId === null || participantId === undefined) {
       throw new Error(
         "Required parameter participantId was null or undefined when calling getSurveyResponses."
@@ -133,6 +146,13 @@ export class SurveyResponseService {
 
     if (this.configuration?.base === "https://demo.lamp.digital") {
       // DEMO - return empty structure for demo mode
+      if (filterParams.activityId) {
+        return Promise.resolve({
+          id: filterParams.activityId,
+          title: "",
+          responses: [],
+        })
+      }
       return Promise.resolve({
         groups: [],
         ungroupedSurveys: [],
@@ -165,12 +185,56 @@ export class SurveyResponseService {
       queryParams.set("activityId", filterParams.activityId)
     }
 
-    const result = await Fetch.get<{ data: GroupedSurveyResponse }>(
+    const result = await Fetch.get<{ data: GroupedSurveyResponse | SingleActivitySurveyResponse }>(
       `/participant/${participantId}/survey_responses?${queryParams.toString()}`,
       this.configuration
     )
 
+    // Return appropriate default based on whether activityId was provided
+    if (filterParams.activityId) {
+      return result.data || { id: filterParams.activityId, title: "", responses: [] }
+    }
     return result.data || { groups: [], ungroupedSurveys: [] }
+  }
+
+  /**
+   * Get survey responses for a specific activity only
+   * Returns simplified format without groups structure
+   * @param participantId - The participant ID
+   * @param activityId - The activity ID to filter by
+   * @param filterParams - Optional additional filter parameters (excluding activityId)
+   * @returns Promise<SingleActivitySurveyResponse>
+   * 
+   * @example
+   * // Get all responses for a specific survey
+   * const result = await LAMP.SurveyResponse.getActivitySurveyResponses('participant_id', 'activity_id');
+   * 
+   * @example
+   * // Get latest 5 responses for a specific survey
+   * const result = await LAMP.SurveyResponse.getActivitySurveyResponses('participant_id', 'activity_id', { filterType: 'all', limit: 5 });
+   */
+  public async getActivitySurveyResponses(
+    participantId: Identifier,
+    activityId: string,
+    filterParams: Omit<FilterParams, 'activityId'> = { filterType: "all" }
+  ): Promise<SingleActivitySurveyResponse> {
+    if (participantId === null || participantId === undefined) {
+      throw new Error(
+        "Required parameter participantId was null or undefined when calling getActivitySurveyResponses."
+      )
+    }
+    if (!activityId) {
+      throw new Error(
+        "Required parameter activityId was null or undefined when calling getActivitySurveyResponses."
+      )
+    }
+
+    const result = await this.getSurveyResponses(participantId, {
+      ...filterParams,
+      activityId,
+    })
+
+    return result as SingleActivitySurveyResponse
   }
 
   /**
@@ -189,7 +253,7 @@ export class SurveyResponseService {
       filterType: "weekly",
       fromDate,
       toDate,
-    })
+    }) as Promise<GroupedSurveyResponse>
   }
 
   /**
@@ -205,7 +269,7 @@ export class SurveyResponseService {
     return this.getSurveyResponses(participantId, {
       filterType: "daily",
       date,
-    })
+    }) as Promise<GroupedSurveyResponse>
   }
 
   /**
@@ -224,7 +288,7 @@ export class SurveyResponseService {
       filterType: "monthly",
       month,
       year,
-    })
+    }) as Promise<GroupedSurveyResponse>
   }
 
   /**
@@ -235,7 +299,7 @@ export class SurveyResponseService {
   public async getAllSurveyResponses(participantId: Identifier): Promise<GroupedSurveyResponse> {
     return this.getSurveyResponses(participantId, {
       filterType: "all",
-    })
+    }) as Promise<GroupedSurveyResponse>
   }
 
   /**
@@ -246,7 +310,7 @@ export class SurveyResponseService {
   public async getPinnedSurveyResponses(participantId: Identifier): Promise<GroupedSurveyResponse> {
     return this.getSurveyResponses(participantId, {
       filterType: "pinned",
-    })
+    }) as Promise<GroupedSurveyResponse>
   }
 
   /**
@@ -266,7 +330,7 @@ export class SurveyResponseService {
     return this.getSurveyResponses(participantId, {
       filterType: "all",
       limit,
-    })
+    }) as Promise<GroupedSurveyResponse>
   }
 
   /**
