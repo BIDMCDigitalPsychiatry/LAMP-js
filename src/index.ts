@@ -399,8 +399,9 @@ export default class LAMP {
           return sessionInfoResult as SessionInfo
       } else if (this._authScheme === "basic" && !!this._auth.id && !!this._auth.password && !!this._type) {
         return {
+          accessKey: this._auth.id,
           accountSetupState: "NOT_REQUIRED"
-        }
+        } as SessionInfo
       } else {
         return null
       }
