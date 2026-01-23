@@ -46,6 +46,9 @@ export interface SingleActivitySurveyResponse {
 // Filter types for survey responses
 export type FilterType = "weekly" | "daily" | "monthly" | "all" | "pinned"
 
+// Filter for survey activities (pinned vs all)
+export type SurveyFilter = "pinned" | "all"
+
 export interface FilterParams {
   filterType: FilterType
   date?: number // For daily filter - specific date timestamp
@@ -55,6 +58,7 @@ export interface FilterParams {
   year?: number // For monthly filter
   limit?: number // Limit number of responses per survey (e.g., 5 for latest 5)
   activityId?: string // Filter by specific survey activity ID
+  surveyFilter?: SurveyFilter // Filter surveys by pinned status (default: "all")
 }
 
 export interface PinSurveyResponseParams {
@@ -79,6 +83,10 @@ export interface SurveyActivityResponse {
 export interface PinSurveyResponseResult {
   success: boolean
   message: string
+}
+
+export interface PinnedSurveyActivitiesResult {
+  activityIds: string[]
 }
 
 export class SurveyResponseService {
@@ -133,6 +141,14 @@ export class SurveyResponseService {
    * @example
    * // Get responses for a specific activity only (returns SingleActivitySurveyResponse)
    * const result = await LAMP.SurveyResponse.getSurveyResponses('participant_id', { filterType: 'all', activityId: 'activity_id' });
+   * 
+   * @example
+   * // Get only pinned surveys
+   * const result = await LAMP.SurveyResponse.getSurveyResponses('participant_id', { filterType: 'all', surveyFilter: 'pinned' });
+   * 
+   * @example
+   * // Get all surveys (default)
+   * const result = await LAMP.SurveyResponse.getSurveyResponses('participant_id', { filterType: 'all', surveyFilter: 'all' });
    */
   public async getSurveyResponses(
     participantId: Identifier,
@@ -183,6 +199,9 @@ export class SurveyResponseService {
     }
     if (filterParams.activityId !== undefined) {
       queryParams.set("activityId", filterParams.activityId)
+    }
+    if (filterParams.surveyFilter !== undefined) {
+      queryParams.set("surveyFilter", filterParams.surveyFilter)
     }
 
     const result = await Fetch.get<{ data: GroupedSurveyResponse | SingleActivitySurveyResponse }>(
@@ -477,6 +496,132 @@ export class SurveyResponseService {
     )
 
     return result.data || { success: false, message: "Unknown error" }
+  }
+
+  // ==================== SURVEY ACTIVITY PIN METHODS ====================
+
+  /**
+   * Pin a survey activity for a study
+   * @param studyId - The study ID
+   * @param activityId - The survey activity ID to pin
+   * @returns Promise<PinSurveyResponseResult>
+   * 
+   * @example
+   * const result = await LAMP.SurveyResponse.pinSurveyActivity('study_id', 'activity_id');
+   */
+  public async pinSurveyActivity(
+    studyId: Identifier,
+    activityId: string
+  ): Promise<PinSurveyResponseResult> {
+    if (studyId === null || studyId === undefined) {
+      throw new Error(
+        "Required parameter studyId was null or undefined when calling pinSurveyActivity."
+      )
+    }
+    if (!activityId) {
+      throw new Error("Required parameter activityId was null or undefined when calling pinSurveyActivity.")
+    }
+
+    if (this.configuration?.base === "https://demo.lamp.digital") {
+      // DEMO
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+
+    const result = await Fetch.post<{ data: PinSurveyResponseResult }>(
+      `/study/${studyId}/survey_activities/pin`,
+      {
+        activity_id: activityId,
+      },
+      this.configuration
+    )
+
+    return result.data || { success: false, message: "Unknown error" }
+  }
+
+  /**
+   * Unpin a survey activity for a study
+   * @param studyId - The study ID
+   * @param activityId - The survey activity ID to unpin
+   * @returns Promise<PinSurveyResponseResult>
+   * 
+   * @example
+   * const result = await LAMP.SurveyResponse.unpinSurveyActivity('study_id', 'activity_id');
+   */
+  public async unpinSurveyActivity(
+    studyId: Identifier,
+    activityId: string
+  ): Promise<PinSurveyResponseResult> {
+    if (studyId === null || studyId === undefined) {
+      throw new Error(
+        "Required parameter studyId was null or undefined when calling unpinSurveyActivity."
+      )
+    }
+    if (!activityId) {
+      throw new Error("Required parameter activityId was null or undefined when calling unpinSurveyActivity.")
+    }
+
+    if (this.configuration?.base === "https://demo.lamp.digital") {
+      // DEMO
+      return Promise.resolve({ error: "500.demo-restriction" } as any)
+    }
+
+    const result = await Fetch.delete<{ data: PinSurveyResponseResult }>(
+      `/study/${studyId}/survey_activities/pin`,
+      this.configuration,
+      {
+        activity_id: activityId,
+      }
+    )
+
+    return result.data || { success: false, message: "Unknown error" }
+  }
+
+  /**
+   * Get all pinned survey activities for a study
+   * @param studyId - The study ID
+   * @returns Promise<PinnedSurveyActivitiesResult>
+   * 
+   * @example
+   * const result = await LAMP.SurveyResponse.getPinnedSurveyActivities('study_id');
+   * console.log(result.activityIds); // ['activity_id_1', 'activity_id_2']
+   */
+  public async getPinnedSurveyActivities(
+    studyId: Identifier
+  ): Promise<PinnedSurveyActivitiesResult> {
+    if (studyId === null || studyId === undefined) {
+      throw new Error(
+        "Required parameter studyId was null or undefined when calling getPinnedSurveyActivities."
+      )
+    }
+
+    if (this.configuration?.base === "https://demo.lamp.digital") {
+      // DEMO
+      return Promise.resolve({ activityIds: [] })
+    }
+
+    const result = await Fetch.get<{ data: PinnedSurveyActivitiesResult }>(
+      `/study/${studyId}/survey_activities/pinned`,
+      this.configuration
+    )
+
+    return result.data || { activityIds: [] }
+  }
+
+  /**
+   * Get only pinned survey responses for pinned surveys only
+   * Combines surveyFilter: 'pinned' with filterType: 'all'
+   * @param participantId - The participant ID
+   * @returns Promise<GroupedSurveyResponse>
+   * 
+   * @example
+   * // Get responses only from pinned surveys
+   * const result = await LAMP.SurveyResponse.getPinnedSurveysResponses('participant_id');
+   */
+  public async getPinnedSurveysResponses(participantId: Identifier): Promise<GroupedSurveyResponse> {
+    return this.getSurveyResponses(participantId, {
+      filterType: "all",
+      surveyFilter: "pinned",
+    }) as Promise<GroupedSurveyResponse>
   }
 }
 
