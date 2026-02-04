@@ -22,7 +22,7 @@ export class ActivityService {
       return Promise.resolve(output)
     }
     return (await Fetch.get<{ data: any[] }>(`/activity`, this.configuration)).data?.map((x) =>
-      Object.assign(new Activity(), x)
+      Object.assign(new Activity(), x),
     )
   }
 
@@ -35,7 +35,7 @@ export class ActivityService {
     transform?: string,
     ignore_binary?: boolean,
     limit?: number,
-    offset?: number
+    offset?: number,
   ): Promise<{ data: Activity[]; total: number }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
@@ -51,7 +51,7 @@ export class ActivityService {
         let output = Demo.Activity.filter((x) =>
           Demo.Participant.filter((y) => y["id"] === participantId)
             ?.map((y) => y["#parent"])
-            .includes(x["#parent"])
+            .includes(x["#parent"]),
         )?.map((x) => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         // For demo, return all data with total count
@@ -74,7 +74,7 @@ export class ActivityService {
     const queryString = params.toString()
     const result: any = await Fetch.get<{ data: Activity[]; total?: number }>(
       `/participant/${participantId}/activity?${queryString}`,
-      this.configuration
+      this.configuration,
     )
 
     // Handle the response structure based on _select function behavior:
@@ -125,7 +125,7 @@ export class ActivityService {
         let output = Demo.Activity.filter((x) =>
           Demo.Study.filter((y) => y["#parent"] === researcherId)
             ?.map((y) => y["id"])
-            .includes(x["#parent"])
+            .includes(x["#parent"]),
         )?.map((x) => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
@@ -134,7 +134,7 @@ export class ActivityService {
       }
     }
     return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/activity`, this.configuration)).data?.map(
-      (x) => Object.assign(new Activity(), x)
+      (x) => Object.assign(new Activity(), x),
     )
   }
 
@@ -151,7 +151,7 @@ export class ActivityService {
     transform?: string,
     ignore_binary?: boolean,
     limit?: number,
-    offset?: number
+    offset?: number,
   ): Promise<Activity[] | { data: Activity[]; total: number }> {
     if (studyId === null || studyId === undefined)
       throw new Error("Required parameter studyId was null or undefined when calling activityAllByStudy.")
@@ -192,7 +192,7 @@ export class ActivityService {
 
     const result: any = await Fetch.get<{ data: Activity[]; total?: number }>(
       `/study/${studyId}/activity?${queryString}`,
-      this.configuration
+      this.configuration,
     )
 
     // Handle the response structure based on _select function behavior:
@@ -227,7 +227,7 @@ export class ActivityService {
     tab?: string,
     transform?: string,
     limit?: number,
-    offset?: number
+    offset?: number,
   ): Promise<{ data: any; total: number }> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling listActivities.")
@@ -241,7 +241,7 @@ export class ActivityService {
 
       if (Demo.Participant.filter((x) => x["id"] === participantId).length > 0) {
         let output = Demo.Activity.filter((x) => x["#parent"] === participantId)?.map((x) =>
-          Object.assign(new Activity(), x)
+          Object.assign(new Activity(), x),
         )
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve({ data: output, total: output.length } as any)
@@ -259,7 +259,7 @@ export class ActivityService {
 
     const result: any = await Fetch.get<{ data: any; total: number }>(
       `/activity/${participantId}/activity${queryString ? `?${queryString}` : ""}`,
-      this.configuration
+      this.configuration,
     )
 
     // Handle different response structures
@@ -400,7 +400,7 @@ export class ActivityService {
     }
     const result: any = await Fetch.get<{ data: Activity }>(
       `/activity/${activityId}?ignore_binary=${ignore_binary}`,
-      this.configuration
+      this.configuration,
     )
     // API returns { data: Activity } (single object, not array)
     if (result && result.data) {
@@ -418,7 +418,7 @@ export class ActivityService {
     moduleId: Identifier,
     participantId: Identifier,
     startTime?: number,
-    endTime?: number
+    endTime?: number,
   ): Promise<any[]> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling moduleByParticipant.")
@@ -434,7 +434,7 @@ export class ActivityService {
 
       if (Demo.Activity.filter((x) => x["id"] === moduleId).length > 0) {
         let output = Demo.Activity.filter((x) => x["#parent"] === moduleId)?.map((x) =>
-          Object.assign(new Activity(), x)
+          Object.assign(new Activity(), x),
         )
 
         return Promise.resolve(output)
@@ -452,7 +452,7 @@ export class ActivityService {
     const queryString = params.toString()
     const url = `/module/${moduleId}/${participantId}${queryString ? `?${queryString}` : ""}`
     return (await Fetch.get<{ data: any[] }>(url, this.configuration)).data?.map((x) =>
-      Object.assign(new Activity(), x)
+      Object.assign(new Activity(), x),
     )
   }
 
@@ -463,7 +463,7 @@ export class ActivityService {
   public async scheduledActivities(
     participantId: Identifier,
     transform?: string,
-    ignore_binary?: boolean
+    ignore_binary?: boolean,
   ): Promise<Activity[]> {
     if (participantId === null || participantId === undefined)
       throw new Error("Required parameter participantId was null or undefined when calling activityAllByParticipant.")
@@ -479,7 +479,7 @@ export class ActivityService {
         let output = Demo.Activity.filter((x) =>
           Demo.Participant.filter((y) => y["id"] === participantId)
             ?.map((y) => y["#parent"])
-            .includes(x["#parent"])
+            .includes(x["#parent"]),
         )?.map((x) => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
@@ -490,7 +490,7 @@ export class ActivityService {
 
     const result = (await Fetch.get<{ data: any[] }>(
       `/participant/${participantId}/activitySchedule?ignore_binary=${ignore_binary}`,
-      this.configuration
+      this.configuration,
     )) as any
     return result
   }
@@ -513,7 +513,7 @@ export class ActivityService {
         let output = Demo.Activity.filter((x) =>
           Demo.Participant.filter((y) => y["id"] === participantId)
             ?.map((y) => y["#parent"])
-            .includes(x["#parent"])
+            .includes(x["#parent"]),
         )?.map((x) => Object.assign(new Activity(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
@@ -524,7 +524,7 @@ export class ActivityService {
 
     const result = (await Fetch.get<{ data: any[] }>(
       `/participant/${participantId}/emptyTab`,
-      this.configuration
+      this.configuration,
     )) as any
     return result
   }
@@ -553,7 +553,7 @@ export class ActivityService {
 
       // Map "me" to the credential's origin if present
       const resolvedActivities = activities.map((id) =>
-        id === "me" && credential[0]["origin"] ? credential[0]["origin"] : id
+        id === "me" && credential[0]["origin"] ? credential[0]["origin"] : id,
       )
 
       // Track deleted and not-found IDs (for debugging or reporting)
@@ -604,7 +604,7 @@ export class ActivityService {
         let output = Demo.Activity.filter((x) =>
           Demo.Participant.filter((y) => y["id"] === participantId)
             ?.map((y) => y["#parent"])
-            .includes(x["#parent"])
+            .includes(x["#parent"]),
         )?.map((x) => Object.assign(new Activity(), x))
 
         return Promise.resolve(output)
@@ -613,7 +613,7 @@ export class ActivityService {
       }
     }
     return (await Fetch.post<{ data: any[] }>(`/feed/module/${participantId}`, this.configuration)).data?.map((x) =>
-      Object.assign(new Activity(), x)
+      Object.assign(new Activity(), x),
     )
   }
 
@@ -647,7 +647,7 @@ export class ActivityService {
 
     const result = await Fetch.get<{ data: string[] }>(
       `/participant/${participantId}/favorite_activities`,
-      this.configuration
+      this.configuration,
     )
     let output = result.data || []
     output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -730,7 +730,7 @@ export class ActivityService {
     const result = await Fetch.post<{ data: ActivityExportResult[] }>(
       `/activity/export`,
       activityIds,
-      this.configuration
+      this.configuration,
     )
     return result.data || []
   }
@@ -746,7 +746,7 @@ export class ActivityService {
   public async importActivities(
     studyId: Identifier,
     activitiesWithAttachments: ActivityExportResult[],
-    options?: ActivityImportOptions
+    options?: ActivityImportOptions,
   ): Promise<ActivityImportResult> {
     if (studyId === null || studyId === undefined) {
       throw new Error("Required parameter studyId was null or undefined when calling importActivities.")
@@ -773,8 +773,8 @@ export class ActivityService {
         const name = options?.namePrefix
           ? `${options.namePrefix}${item.activity.name}`
           : options?.nameSuffix
-          ? `${item.activity.name}${options.nameSuffix}`
-          : item.activity.name
+            ? `${item.activity.name}${options.nameSuffix}`
+            : item.activity.name
 
         Demo.Activity.push({
           "#type": "Activity",
@@ -808,7 +808,7 @@ export class ActivityService {
     const result = await Fetch.post<{ data: ActivityImportResult }>(
       `/study/${studyId}/activity/import`,
       { activities: activitiesWithAttachments, options },
-      this.configuration
+      this.configuration,
     )
     return (
       result.data || {
@@ -829,7 +829,7 @@ export class ActivityService {
     parentId: Identifier,
     binId: Identifier,
     isGlobalDelete: boolean = false,
-    isEdit: boolean = false
+    isEdit: boolean = false,
   ): Promise<Identifier> {
     if (parentId === null || parentId === undefined)
       throw new Error("Required parameter parentId was null or undefined.")
@@ -883,6 +883,15 @@ export class ActivityService {
       ? `/activity/bin/${parentId}/${binId}?${queryString}`
       : `/activity/bin/${parentId}/${binId}`
     return await Fetch.delete(route, this.configuration)
+  }
+
+  /**
+   * Edit Global bin.
+   */
+  public async editBin(studyId: Identifier, binId: Identifier, body: { label: string }): Promise<Identifier> {
+    if (studyId === null || studyId === undefined) throw new Error("Required parameter studyId was null or undefined.")
+    if (binId === null || binId === undefined) throw new Error("Required parameter binId was null or undefined.")
+    return await Fetch.put(`/activity/bin/${studyId}/${binId}`, body, this.configuration)
   }
 }
 

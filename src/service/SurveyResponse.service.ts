@@ -166,6 +166,8 @@ export class SurveyResponseService {
         return Promise.resolve({
           id: filterParams.activityId,
           title: "",
+          binName: undefined,
+          description: undefined,
           responses: [],
         })
       }
@@ -211,7 +213,13 @@ export class SurveyResponseService {
 
     // Return appropriate default based on whether activityId was provided
     if (filterParams.activityId) {
-      return result.data || { id: filterParams.activityId, title: "", responses: [] }
+      return result.data || { 
+        id: filterParams.activityId, 
+        title: "", 
+        binName: undefined,
+        description: undefined,
+        responses: [] 
+      }
     }
     return result.data || { groups: [], ungroupedSurveys: [] }
   }
