@@ -303,7 +303,11 @@ export class CredentialService {
     return await Fetch.post("/verify-2fa", {code}, this.configuration)
   }
 
-  public async clearTwoFactorConfiguration() {
-    throw new Error("Not implemented")
+  public async clearAccountSetup(origin: string|null, access_key: string) {
+    console.log("Let's clear account with: ", origin, access_key)
+    return await Fetch.post(
+      `/credential/clear-account-setup`,
+      {type_id: origin, access_key: access_key},
+      this.configuration)
   }
 }
