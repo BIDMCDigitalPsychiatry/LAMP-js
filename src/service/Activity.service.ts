@@ -893,6 +893,48 @@ export class ActivityService {
     if (binId === null || binId === undefined) throw new Error("Required parameter binId was null or undefined.")
     return await Fetch.put(`/activity/bin/${studyId}/${binId}`, body, this.configuration)
   }
+
+  /**
+   * Get formatted text content for lamp.textsurveyresponse activity.
+   * Replaces placeholders like {{1}}, {{2}} with participant's survey responses.
+   * @param participantId Participant identifier
+   * @param activityId Activity identifier (must be lamp.textsurveyresponse)
+   * @returns Formatted content string with placeholders replaced
+   */
+  public async getTextSurveyResponseContent(participantId: Identifier, activityId: Identifier): Promise<string> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling getTextSurveyResponseContent.")
+    if (activityId === null || activityId === undefined)
+      throw new Error("Required parameter activityId was null or undefined when calling getTextSurveyResponseContent.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
+      if (activityId === "me") activityId = credential.length > 0 ? credential[0]["origin"] : activityId
+
+      // Find the activity
+      const activity = Demo.Activity.find((x) => x["id"] === activityId)
+      if (!activity || activity["spec"] !== "lamp.textsurveyresponse") {
+        return Promise.resolve({ error: "404.not-found" } as any)
+      }
+
+      // Get content from settings
+      const settings = activity["settings"] || {}
+      const content = settings["content"] || ""
+
+      // In demo mode, return content as-is (no survey response replacement)
+      return Promise.resolve(content)
+    }
+
+    const result = await Fetch.get<{ data: string }>(
+      `/participant/${participantId}/activity/${activityId}/text-survey-content`,
+      this.configuration,
+    )
+    return result.data || ""
+  }
 }
 
 /**
