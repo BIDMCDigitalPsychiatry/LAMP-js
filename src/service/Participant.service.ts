@@ -279,4 +279,38 @@ export class ParticipantService {
       Object.assign(new Participant(), x)
     )[0]
   }
+
+  /**
+   * Get coordinators for a participant.
+   * @param participantId - The participant identifier
+   * @param transform - Optional JSONata transform string
+   * @returns Array of coordinator objects
+   */
+  public async coordinators(participantId: Identifier, transform?: string): Promise<any[]> {
+    if (participantId === null || participantId === undefined)
+      throw new Error("Required parameter participantId was null or undefined when calling participantCoordinators.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      // DEMO
+      let auth = (this.configuration.authorization || ":").split(":")
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
+      if (participantId === "me") participantId = credential.length > 0 ? credential[0]["origin"] : participantId
+
+      // Check if participant exists
+      if (Demo.Participant.filter(x => x["id"] === participantId).length > 0) {
+        // Return empty array for demo (no coordinators in demo data)
+        let output: any[] = []
+        output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
+        return Promise.resolve(output)
+      } else {
+        return Promise.resolve({ error: "404.not-found" } as any)
+      }
+    }
+    
+    const response = await Fetch.get<{ data: any[] }>(`/participant/${participantId}/coordinators`, this.configuration)
+    let output = response.data || []
+    output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
+    return output
+  }
 }
