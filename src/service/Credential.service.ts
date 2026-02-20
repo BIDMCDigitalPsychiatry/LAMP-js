@@ -290,4 +290,24 @@ export class CredentialService {
   public async logout(): Promise<any> {
     return await Fetch.post("/logout", {}, this.configuration)
   }
+
+  public async configureTwoFactor({email, phone}:{email: string|undefined, phone: string|undefined}) {
+    return await Fetch.post("/setup-2fa", {email: email, phone: phone}, this.configuration)
+  }
+  
+  public async sendTwoFactorCode() {
+    return await Fetch.post("/send-2fa", {}, this.configuration)
+  }
+
+  public async verifyTwoFactorCode(code:string) {
+    return await Fetch.post("/verify-2fa", {code}, this.configuration)
+  }
+
+  public async clearAccountSetup(origin: string|null, access_key: string) {
+    console.log("Let's clear account with: ", origin, access_key)
+    return await Fetch.post(
+      `/credential/clear-account-setup`,
+      {type_id: origin, access_key: access_key},
+      this.configuration)
+  }
 }
