@@ -32,7 +32,8 @@
     "start": "tsc-watch --onSuccess \"node -r source-map-support/register ./dist/index.js\"",
     "build": "tsc",
     "prepublishOnly": "tsc",
-    "test": "echo \"No tests to run...\" && exit 0"
+    "test": "echo \"No tests to run...\" && exit 0",
+    "prepare": "tsc"
   },
   "prettier": {
     "semi": false,

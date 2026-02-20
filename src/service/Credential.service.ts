@@ -17,7 +17,8 @@ export class CredentialService {
     typeId: Identifier,
     accessKey: string,
     secretKey: string,
-    description?: string
+    description?: string,
+    username?: string,
   ): Promise<Credential> {
     if (accessKey === null || accessKey === undefined)
       throw new Error("Required parameter accessKey was null or undefined when calling credentialCreate.")
@@ -66,7 +67,7 @@ export class CredentialService {
     }
     return await Fetch.post(
       `/type/${typeId}/credential`,
-      { origin: typeId, access_key: accessKey, secret_key: secretKey, description: description },
+      { origin: typeId, access_key: accessKey, secret_key: secretKey, description: description, username: username },
       this.configuration
     )
   }
@@ -262,7 +263,7 @@ export class CredentialService {
     const configuration: Configuration = { accesToken: refreshToken, base: base }
     return await Fetch.post("/renewToken", { refreshToken }, configuration)
   }
-  public async logout(token: string): Promise<any> {
-    return await Fetch.post("/logout", { token }, this.configuration)
+  public async logout(): Promise<any> {
+    return await Fetch.post("/logout", {}, this.configuration)
   }
 }
