@@ -14,6 +14,7 @@ import {
   StudyService,
   TypeService,
   ResearcherSettingsService,
+  OAuthProvider,
 } from "./service/index"
 import { Configuration, Fetch } from "./service/Fetch"
 import { Demo } from "./service/Demo"
@@ -141,6 +142,8 @@ export default class LAMP {
     public static _me: Researcher[] | Researcher | Participant | null | undefined
     public static _type: "admin" | "researcher" | "participant" | null = null
     public static _authScheme: "session" | "basic" | null = null
+    public static _configuredProviders: OAuthProvider[] = []
+    public static _requireAccountSetup: boolean = undefined
 
     static _get_base_address(serverAddress: string | null): string {
       return !!serverAddress ? `${LAMP.protocol}${serverAddress}` : `${LAMP.protocol}api.lamp.digital`
@@ -209,19 +212,27 @@ export default class LAMP {
       LAMP.configuration = {
         base: null
       }
+      this._requireAccountSetup = false
     }
 
     static async _load_self_information() {
-      // Get the "self" identity
       try {
-        // Get our 'me' context so we know what object type we are.
-        let typeData
-        try {
-          typeData = await LAMP.Type.parent("me")
-        } catch (e) {}
-
-        LAMP.Auth._type =
-          typeData.error === "400.context-substitution-failed"
+        if (this._authScheme === "session") {
+          const sessionInfoResult: any = await Fetch.get("/session-info", LAMP.configuration)
+          if (sessionInfoResult?.message !== "403.no-such-credentials") {
+            LAMP.Auth._type = sessionInfoResult.userType
+            LAMP.Auth._me = sessionInfoResult.me
+            this._requireAccountSetup = !sessionInfoResult?.isSetupComplete
+          } else {
+            throw new Error("Not logged in")
+          }
+        } else {
+          // Get our 'me' context so we know what object type we are.
+          let typeData
+          try {
+            typeData = await LAMP.Type.parent("me")
+          } catch (e) {}
+          LAMP.Auth._type = typeData.error === "400.context-substitution-failed"
             ? "admin"
             : Object.entries(typeData.data).length === 0
             ? "researcher"
@@ -229,33 +240,79 @@ export default class LAMP {
             ? "participant"
             : null
 
-        // Get our 'me' object now that we figured out our type.
-        LAMP.Auth._me = await (LAMP.Auth._type === "admin"
-          ? { id: this._auth.id }
-          : LAMP.Auth._type === "researcher"
-          ? LAMP.Researcher.view("me")
-          : LAMP.Participant.view("me"))
+          // Get our 'me' object now that we figured out our type.
+          LAMP.Auth._me = await (LAMP.Auth?._type === "admin"
+            ? { id: this._auth.id }
+            : LAMP.Auth?._type === "researcher"
+            ? LAMP.Researcher.view("me")
+            : LAMP.Participant.view("me"))
+          
+        }
 
         LAMP.dispatchEvent("LOGIN", {
           authorizationToken: LAMP.configuration.authorization,
-          // authorizationToken: LAMP.configuration.token,
           identityObject: LAMP.Auth._me,
           serverAddress: LAMP.configuration.base,
         })
-      } catch (err) {
+      } catch(err) {
+        
         console.log(`#####LAMP err`, err)
         // We failed: clear and propogate the authorization.
-        LAMP.Auth._auth = { id: null, password: null, serverAddress: null }
-        if (!!LAMP.configuration) LAMP.configuration.authorization = undefined
+        LAMP.Auth._auth = { id: null, password: null, serverAddress: LAMP.Auth._auth.serverAddress }
+        if (!!LAMP.configuration) {
+          LAMP.configuration.authorization = undefined
+        }
 
         // Delete the "self" identity and throw the error we received.
         LAMP.Auth._me = null
-        LAMP.Auth._type = null
+        LAMP.Auth._type = null        
         throw new Error("invalid id or password")
+
       } finally {
-        // Save the authorization in sessionStorage for later.
-        ;(global as any).sessionStorage?.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
+        (global as any).sessionStorage?.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
       }
+    }
+
+    public static async set_server(serverAddress:string) {
+      let serverInfoResult
+      try {
+        serverInfoResult = await Fetch.get("/server-info", {base: this._get_base_address(serverAddress)})
+        if ((serverInfoResult as any)?.authScheme === "session") {
+          this._authScheme = "session"
+          this._configuredProviders = serverInfoResult.configuredProviders
+        } else {
+          this._authScheme = "basic"
+        }
+      } catch (e) {
+        this._authScheme = "basic"
+      }
+
+      LAMP.configuration = {
+        base: this._get_base_address(serverAddress),
+        authType: this._authScheme
+      }
+      
+      LAMP.Auth._auth = {
+        id: null,
+        password: null,
+        serverAddress: serverAddress
+      }
+      
+      localStorage.setItem("lastServerSelected", serverAddress)
+    }
+
+    public static async clear_server() {
+      LAMP.Auth._auth = {
+        id: null,
+        password: null,
+        serverAddress: null
+      }
+      LAMP.configuration = {
+        base: null
+      }
+      this._configuredProviders = []
+      sessionStorage.setItem("LAMP._auth", JSON.stringify(LAMP.Auth._auth))
+      localStorage.removeItem("lastServerSelected")
     }
 
     /**
@@ -273,7 +330,6 @@ export default class LAMP {
         serverAddress: null,
       }, 
     ) {
-      // Check if the
       let authType
       try {
         const serverInfoResult = await Fetch.get("/server-info", {base: this._get_base_address(identity.serverAddress)})
@@ -320,21 +376,13 @@ export default class LAMP {
 
       // Get any credentials saved to the browser
       let _saved = JSON.parse((global as any).sessionStorage?.getItem("LAMP._auth") ?? "null") || LAMP.Auth._auth
-
-      // Propagate authorization
-      if (_saved.serverAddress && _saved.id && _saved.password) {
-        LAMP.configuration = {
-          base: this._get_base_address(_saved.serverAddress),
-          authType: "basic"
-        }
-      } else if (_saved.serverAddress) {
-        // If the server address is present, but the id and password are not, 
-        // assume we are logged in useing a session cookie
-        LAMP.configuration = {
-          base: this._get_base_address(_saved.serverAddress),
-          authType: "session"
-        }
+      if (!_saved.serverAddress && localStorage.getItem("lastServerSelected")) {
+        _saved.serverAddress = localStorage.getItem("lastServerSelected")
       }
+      if (_saved.serverAddress) {
+        await this.set_server(_saved.serverAddress)
+      }
+
       LAMP.Auth._auth = {
         id: _saved.id,
         password: _saved.password,
