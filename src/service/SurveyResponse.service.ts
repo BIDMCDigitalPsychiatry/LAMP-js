@@ -11,27 +11,35 @@ export interface QuestionAnswer {
 
 export interface SurveyResponse {
   timestamp: number
-  displayableAnswers: QuestionAnswer[] // Only answers from questions with displayInSurveyResponses: true
+  displayableAnswers: QuestionAnswer[]
   isPinned?: boolean
 }
 
-export interface SurveyItem {
+// Per-response entry inside a bin — merged across all surveys in the bin
+export interface BinResponseEntry {
+  surveyId: string
+  surveyTitle: string
+  timestamp: number
+  displayableAnswers: QuestionAnswer[]
+  isPinned: boolean
+}
+
+// Bin: groups a set of surveys, exposes merged responses sorted timestamp desc
+export interface SurveyBin {
   id: string
-  title: string
-  binName?: string
-  description?: string // Survey activity description
-  responses: SurveyResponse[]
+  label: string
+  description?: string
+  responses: BinResponseEntry[]
 }
 
 export interface SurveyGroup {
   id: string
   label: string
-  surveys: SurveyItem[]
+  bins: SurveyBin[]
 }
 
 export interface GroupedSurveyResponse {
   groups: SurveyGroup[]
-  ungroupedSurveys: SurveyItem[]
 }
 
 // Single activity response when activityId filter is provided
@@ -41,6 +49,15 @@ export interface SingleActivitySurveyResponse {
   binName?: string
   description?: string
   responses: SurveyResponse[]
+}
+
+// Response type for bin-based survey responses endpoint
+export interface BinSurveyResponse {
+  groupId: string
+  groupLabel: string
+  binLabel: string
+  binDescription?: string
+  responses: BinResponseEntry[]
 }
 
 // Filter types for survey responses
@@ -56,9 +73,20 @@ export interface FilterParams {
   toDate?: number // For weekly custom range
   month?: number // For monthly filter (1-12)
   year?: number // For monthly filter
-  limit?: number // Limit number of responses per survey (e.g., 5 for latest 5)
+  limit?: number // Limit number of responses bin-wide (latest N across all surveys in the bin)
   activityId?: string // Filter by specific survey activity ID
   surveyFilter?: SurveyFilter // Filter surveys by pinned status (default: "all")
+}
+
+// Filter params for bin-based endpoint (no activityId / surveyFilter / pinned filterType)
+export interface BinFilterParams {
+  filterType?: Exclude<FilterType, "pinned">
+  date?: number
+  fromDate?: number
+  toDate?: number
+  month?: number
+  year?: number
+  limit?: number // Latest N responses bin-wide after merging all surveys
 }
 
 export interface PinSurveyResponseParams {
@@ -171,10 +199,7 @@ export class SurveyResponseService {
           responses: [],
         })
       }
-      return Promise.resolve({
-        groups: [],
-        ungroupedSurveys: [],
-      })
+      return Promise.resolve({ groups: [] })
     }
 
     // Build query parameters
@@ -221,7 +246,7 @@ export class SurveyResponseService {
         responses: [] 
       }
     }
-    return result.data || { groups: [], ungroupedSurveys: [] }
+    return result.data || { groups: [] }
   }
 
   /**
@@ -630,6 +655,106 @@ export class SurveyResponseService {
       filterType: "all",
       surveyFilter: "pinned",
     }) as Promise<GroupedSurveyResponse>
+  }
+
+  /**
+   * Get all survey responses under a specific bin, merged across all surveys in the bin
+   * and sorted by timestamp descending.
+   *
+   * The bin is identified by its `id` field from the researcher's surveyDisplayConfig
+   * (groups[].bins[].id). Each response entry includes `surveyId` and `surveyTitle`
+   * so the caller knows which survey it came from.
+   *
+   * When `limit` is provided it applies bin-wide — the latest N responses across
+   * all surveys in the bin are returned (not N per survey).
+   *
+   * @param participantId - The participant ID
+   * @param binId - The bin ID (bin.id from surveyDisplayConfig)
+   * @param filterParams - Optional filter parameters
+   * @returns Promise<BinSurveyResponse>
+   *
+   * @example
+   * // Get all responses under a bin (no date filter)
+   * const result = await LAMP.SurveyResponse.getBinSurveyResponses('participant_id', 'bin_id');
+   *
+   * @example
+   * // Get latest 5 responses across all surveys in the bin
+   * const result = await LAMP.SurveyResponse.getBinSurveyResponses('participant_id', 'bin_id', { limit: 5 });
+   *
+   * @example
+   * // Get responses for the current week
+   * const result = await LAMP.SurveyResponse.getBinSurveyResponses('participant_id', 'bin_id', {
+   *   filterType: 'weekly'
+   * });
+   *
+   * @example
+   * // Get responses for a specific month
+   * const result = await LAMP.SurveyResponse.getBinSurveyResponses('participant_id', 'bin_id', {
+   *   filterType: 'monthly',
+   *   month: 3,
+   *   year: 2026
+   * });
+   */
+  public async getBinSurveyResponses(
+    participantId: Identifier,
+    binId: string,
+    filterParams: BinFilterParams = { filterType: "all" }
+  ): Promise<BinSurveyResponse> {
+    if (participantId === null || participantId === undefined) {
+      throw new Error(
+        "Required parameter participantId was null or undefined when calling getBinSurveyResponses."
+      )
+    }
+    if (!binId) {
+      throw new Error(
+        "Required parameter binId was null or undefined when calling getBinSurveyResponses."
+      )
+    }
+
+    if (this.configuration?.base === "https://demo.lamp.digital") {
+      return Promise.resolve({
+        groupId: "",
+        groupLabel: "",
+        binLabel: "",
+        binDescription: undefined,
+        responses: [],
+      })
+    }
+
+    const queryParams = new URLSearchParams()
+    queryParams.set("filterType", filterParams.filterType ?? "all")
+
+    if (filterParams.date !== undefined) {
+      queryParams.set("date", String(filterParams.date))
+    }
+    if (filterParams.fromDate !== undefined) {
+      queryParams.set("fromDate", String(filterParams.fromDate))
+    }
+    if (filterParams.toDate !== undefined) {
+      queryParams.set("toDate", String(filterParams.toDate))
+    }
+    if (filterParams.month !== undefined) {
+      queryParams.set("month", String(filterParams.month))
+    }
+    if (filterParams.year !== undefined) {
+      queryParams.set("year", String(filterParams.year))
+    }
+    if (filterParams.limit !== undefined) {
+      queryParams.set("limit", String(filterParams.limit))
+    }
+
+    const result = await Fetch.get<{ data: BinSurveyResponse }>(
+      `/participant/${participantId}/survey_responses/bin/${binId}?${queryParams.toString()}`,
+      this.configuration
+    )
+
+    return result.data || {
+      groupId: "",
+      groupLabel: "",
+      binLabel: "",
+      binDescription: undefined,
+      responses: [],
+    }
   }
 }
 
