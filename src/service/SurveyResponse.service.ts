@@ -69,8 +69,8 @@ export type SurveyFilter = "pinned" | "all"
 export interface FilterParams {
   filterType: FilterType
   date?: number // For daily filter - specific date timestamp
-  fromDate?: number // For weekly custom range
-  toDate?: number // For weekly custom range
+  fromDate?: number // Custom range start — overrides filterType date calculation when both fromDate and toDate are set
+  toDate?: number // Custom range end — overrides filterType date calculation when both fromDate and toDate are set
   month?: number // For monthly filter (1-12)
   year?: number // For monthly filter
   limit?: number // Limit number of responses bin-wide (latest N across all surveys in the bin)
@@ -78,15 +78,16 @@ export interface FilterParams {
   surveyFilter?: SurveyFilter // Filter surveys by pinned status (default: "all")
 }
 
-// Filter params for bin-based endpoint (no activityId / surveyFilter / pinned filterType)
+// Filter params for bin-based endpoint (same options as main endpoint, no activityId)
 export interface BinFilterParams {
-  filterType?: Exclude<FilterType, "pinned">
-  date?: number
-  fromDate?: number
-  toDate?: number
-  month?: number
-  year?: number
+  filterType?: FilterType // 'weekly' | 'daily' | 'monthly' | 'all' | 'pinned'
+  date?: number // For daily filter - specific date timestamp
+  fromDate?: number // Custom range start — overrides filterType date calculation when both fromDate and toDate are set
+  toDate?: number // Custom range end — overrides filterType date calculation when both fromDate and toDate are set
+  month?: number // For monthly filter (1-12)
+  year?: number // For monthly filter
   limit?: number // Latest N responses bin-wide after merging all surveys
+  surveyFilter?: SurveyFilter // 'pinned' | 'all' - restrict to pinned survey activities only
 }
 
 export interface PinSurveyResponseParams {
@@ -114,7 +115,7 @@ export interface PinSurveyResponseResult {
 }
 
 export interface PinnedSurveyActivitiesResult {
-  activityIds: string[]
+  binIds: string[]
 }
 
 export class SurveyResponseService {
@@ -531,28 +532,28 @@ export class SurveyResponseService {
     return result.data || { success: false, message: "Unknown error" }
   }
 
-  // ==================== SURVEY ACTIVITY PIN METHODS ====================
+  // ==================== SURVEY BIN PIN METHODS ====================
 
   /**
-   * Pin a survey activity for a study
+   * Pin a survey bin for a study
    * @param studyId - The study ID
-   * @param activityId - The survey activity ID to pin
+   * @param binId - The survey bin ID to pin
    * @returns Promise<PinSurveyResponseResult>
    * 
    * @example
-   * const result = await LAMP.SurveyResponse.pinSurveyActivity('study_id', 'activity_id');
+   * const result = await LAMP.SurveyResponse.pinSurveyActivity('study_id', 'bin_id');
    */
   public async pinSurveyActivity(
     studyId: Identifier,
-    activityId: string
+    binId: string
   ): Promise<PinSurveyResponseResult> {
     if (studyId === null || studyId === undefined) {
       throw new Error(
         "Required parameter studyId was null or undefined when calling pinSurveyActivity."
       )
     }
-    if (!activityId) {
-      throw new Error("Required parameter activityId was null or undefined when calling pinSurveyActivity.")
+    if (!binId) {
+      throw new Error("Required parameter binId was null or undefined when calling pinSurveyActivity.")
     }
 
     if (this.configuration?.base === "https://demo.lamp.digital") {
@@ -563,7 +564,7 @@ export class SurveyResponseService {
     const result = await Fetch.post<{ data: PinSurveyResponseResult }>(
       `/study/${studyId}/survey_activities/pin`,
       {
-        activity_id: activityId,
+        bin_id: binId,
       },
       this.configuration
     )
@@ -572,25 +573,25 @@ export class SurveyResponseService {
   }
 
   /**
-   * Unpin a survey activity for a study
+   * Unpin a survey bin for a study
    * @param studyId - The study ID
-   * @param activityId - The survey activity ID to unpin
+   * @param binId - The survey bin ID to unpin
    * @returns Promise<PinSurveyResponseResult>
    * 
    * @example
-   * const result = await LAMP.SurveyResponse.unpinSurveyActivity('study_id', 'activity_id');
+   * const result = await LAMP.SurveyResponse.unpinSurveyActivity('study_id', 'bin_id');
    */
   public async unpinSurveyActivity(
     studyId: Identifier,
-    activityId: string
+    binId: string
   ): Promise<PinSurveyResponseResult> {
     if (studyId === null || studyId === undefined) {
       throw new Error(
         "Required parameter studyId was null or undefined when calling unpinSurveyActivity."
       )
     }
-    if (!activityId) {
-      throw new Error("Required parameter activityId was null or undefined when calling unpinSurveyActivity.")
+    if (!binId) {
+      throw new Error("Required parameter binId was null or undefined when calling unpinSurveyActivity.")
     }
 
     if (this.configuration?.base === "https://demo.lamp.digital") {
@@ -602,7 +603,7 @@ export class SurveyResponseService {
       `/study/${studyId}/survey_activities/pin`,
       this.configuration,
       {
-        activity_id: activityId,
+        bin_id: binId,
       }
     )
 
@@ -610,13 +611,13 @@ export class SurveyResponseService {
   }
 
   /**
-   * Get all pinned survey activities for a study
+   * Get all pinned survey bins for a study
    * @param studyId - The study ID
    * @returns Promise<PinnedSurveyActivitiesResult>
    * 
    * @example
    * const result = await LAMP.SurveyResponse.getPinnedSurveyActivities('study_id');
-   * console.log(result.activityIds); // ['activity_id_1', 'activity_id_2']
+   * console.log(result.binIds); // ['bin_id_1', 'bin_id_2']
    */
   public async getPinnedSurveyActivities(
     studyId: Identifier
@@ -629,7 +630,7 @@ export class SurveyResponseService {
 
     if (this.configuration?.base === "https://demo.lamp.digital") {
       // DEMO
-      return Promise.resolve({ activityIds: [] })
+      return Promise.resolve({ binIds: [] })
     }
 
     const result = await Fetch.get<{ data: PinnedSurveyActivitiesResult }>(
@@ -637,7 +638,7 @@ export class SurveyResponseService {
       this.configuration
     )
 
-    return result.data || { activityIds: [] }
+    return result.data || { binIds: [] }
   }
 
   /**
@@ -694,6 +695,19 @@ export class SurveyResponseService {
    *   month: 3,
    *   year: 2026
    * });
+   *
+   * @example
+   * // Get only pinned responses in the bin
+   * const result = await LAMP.SurveyResponse.getBinSurveyResponses('participant_id', 'bin_id', {
+   *   filterType: 'pinned'
+   * });
+   *
+   * @example
+   * // Get responses from pinned survey activities only
+   * const result = await LAMP.SurveyResponse.getBinSurveyResponses('participant_id', 'bin_id', {
+   *   filterType: 'all',
+   *   surveyFilter: 'pinned'
+   * });
    */
   public async getBinSurveyResponses(
     participantId: Identifier,
@@ -741,6 +755,9 @@ export class SurveyResponseService {
     }
     if (filterParams.limit !== undefined) {
       queryParams.set("limit", String(filterParams.limit))
+    }
+    if (filterParams.surveyFilter !== undefined) {
+      queryParams.set("surveyFilter", filterParams.surveyFilter)
     }
 
     const result = await Fetch.get<{ data: BinSurveyResponse }>(
