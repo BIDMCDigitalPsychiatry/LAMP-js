@@ -530,6 +530,60 @@ export class ActivityService {
   }
 
   /**
+   * Create an async activity export job (v2 API).
+   * POST /v2/researcher/:researcher_id/activity-export
+   * @param researcherId Researcher identifier
+   * @param body Request body: { activityIds?: string[], studyIds?: string[], specs?: string[], format?: string }
+   * @returns API response with data.jobId (and optionally data.error)
+   */
+  public async createActivityExportJob(
+    researcherId: Identifier,
+    body: { activityIds?: string[]; studyIds?: string[]; specs?: string[]; format?: string },
+  ): Promise<{ data?: { jobId: string; error?: string }; error?: string }> {
+    if (researcherId === null || researcherId === undefined)
+      throw new Error("Required parameter researcherId was null or undefined when calling createActivityExportJob.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({
+        data: { jobId: "demo-export-" + Date.now() },
+      } as any)
+    }
+    return Fetch.post<{ data: { jobId: string; error?: string }; error?: string }>(
+      `/v2/researcher/${researcherId}/activity-export`,
+      body,
+      this.configuration,
+    )
+  }
+
+  /**
+   * Create an async activity import job (v2 API).
+   * POST /v2/study/:study_id/activity-import
+   * @param studyId Study identifier to import activities into
+   * @param activities Array of activity objects (from export JSON)
+   * @returns API response with data.jobId, data.status, data.totalActivities (and optionally data.error)
+   */
+  public async createActivityImportJob(
+    studyId: Identifier,
+    activities: any[],
+  ): Promise<{
+    data?: { jobId: string; status: string; totalActivities: number; error?: string };
+    error?: string;
+  }> {
+    if (studyId === null || studyId === undefined)
+      throw new Error("Required parameter studyId was null or undefined when calling createActivityImportJob.")
+
+    if (this.configuration.base === "https://demo.lamp.digital") {
+      return Promise.resolve({
+        data: { jobId: "demo-import-" + Date.now(), status: "pending", totalActivities: activities.length },
+      } as any)
+    }
+    return Fetch.post<{
+      data: { jobId: string; status: string; totalActivities: number; error?: string };
+      error?: string;
+    }>(`/v2/study/${studyId}/activity-import`, { activities }, this.configuration)
+  }
+
+  /**
    * Delete multiple activities.
    * @param activities
    */
