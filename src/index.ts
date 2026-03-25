@@ -19,6 +19,7 @@ import {
 import { Configuration, Fetch } from "./service/Fetch"
 import { Demo } from "./service/Demo"
 import { AccountSetupState, SessionInfo } from "./model/Session"
+import { ApiKeyService } from "./service/ApiKey.service"
 
 export * from "./service/index"
 export * from "./model/index"
@@ -41,6 +42,7 @@ const _bus: HTMLElement | undefined = (global as any).document?.createElement("_
  */
 export default class LAMP {
   public static API = new APIService()
+  public static ApiKey = new ApiKeyService()
   public static Type = new TypeService()
   public static Credential = new CredentialService()
   public static Researcher = new ResearcherService()
@@ -58,6 +60,7 @@ export default class LAMP {
   }
   private static set configuration(configuration: Configuration | undefined) {
     LAMP.API.configuration = configuration
+    LAMP.ApiKey.configuration = configuration
     LAMP.Activity.configuration = configuration
     LAMP.ActivityEvent.configuration = configuration
     LAMP.ActivitySpec.configuration = configuration
