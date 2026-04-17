@@ -1,5 +1,5 @@
 import "isomorphic-fetch"
-import { Researcher, Participant, Identifier } from "./model/index"
+import { Researcher, Participant } from "./model/index"
 import {
   APIService,
   ActivityService,
@@ -135,7 +135,7 @@ export default class LAMP {
 
     LAMP.configuration = !!LAMP.Auth._auth.id  ? {
       base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
-      authorization: `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` 
+      authorization: `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}`
     } : {
       base: !!identity.serverAddress ? `https://${identity.serverAddress}` : "https://api.lamp.digital",
     }

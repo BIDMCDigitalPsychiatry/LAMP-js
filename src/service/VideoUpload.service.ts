@@ -3,9 +3,16 @@ import { Identifier } from "../model/Type"
 import { PartEtagData, VideoMetadata, VideoUpload } from "../model/VideoUpload"
 import { invariant } from "../utils/invariant"
 
-// const VIDEO_UPLOAD_API_BASE = "https://video.dev.lamp.digital"
+function getVideoUploadServiceConfig(config: Record<string, any>) : Configuration {
+  const global : Record<string, any> = globalThis
+  const overrides : Configuration = global.VIDEO_UPLOAD_SERVICE_CONFIG || {}
 
-const VIDEO_UPLOAD_API_BASE = "http://localhost:8099"
+  return {
+    ...config,
+    ...overrides
+  }
+}
+
 
 function isIdentifier(val: any) : boolean {
   return (typeof val === 'string' && val.length > 0)
@@ -36,10 +43,7 @@ export class VideoUploadService {
       {
         metadata: videoMetadata
       },
-      { // Note: temp override of base; remove after LAMP-server integration
-        ... this.configuration,
-        base: VIDEO_UPLOAD_API_BASE
-      },
+      getVideoUploadServiceConfig(this.configuration || {})
     )
   }
 
@@ -54,42 +58,41 @@ export class VideoUploadService {
    * file contents it received.
    * 
    * @param participantId The id of the participant to which the uploaded file belongs.
-   * @param uploadId The identifier of the VideoUpload returned by `VideoUploadService.initiate`
+   * @param id The identifier of the VideoUpload returned by `VideoUploadService.initiate`
    * @param parts 
    * @returns 
    */
   public async complete(
     participantId: Identifier,
-    uploadId: Identifier,
+    id: Identifier,
     parts: PartEtagData[]
-  ): Promise<{ status: string, sha256: string, uploadId: Identifier }> {
+  ): Promise<void> {
 
     invariant(isIdentifier(participantId), "Required parameter `participantId` missing or empty when calling VideoUploadService.complete")
-    invariant(isIdentifier(uploadId), "Required parameter `uploadId` missing or empty when calling VideoUploadService.complete")
+    invariant(isIdentifier(id), "Required parameter `id` missing or empty when calling VideoUploadService.complete")
     invariant(Array.isArray(parts) && parts.length > 0, "Required parameter `parts` is missing or empty when calling VideoUploadService.complete" )
     invariant((this.configuration?.base != "https://demo.lamp.digital"), "VideoUploadService.complete is not available in the demo")
 
-    return (await Fetch.post<{ status: string, sha256: string, uploadId: Identifier }>(
+    const response = await Fetch.post(
       `/participant/${participantId}/video/upload/complete`,
       {
-        uploadId,
+        id,
         parts
       },
-      { // Note: temp override of base; remove after LAMP-server integration
-        ... this.configuration,
-        base: VIDEO_UPLOAD_API_BASE
-      }
-    ))
+      getVideoUploadServiceConfig(this.configuration || {})
+    )
+
+    return
   }
 
   public async refreshUrls(
     participantId: Identifier,
-    uploadId: Identifier,
+    id: Identifier,
     partNumbers: number[]
   ): Promise<VideoUpload> {
 
     invariant(isIdentifier(participantId), "Required parameter `participantId` missing or empty when calling VideoUploadService.refreshUrls")
-    invariant(isIdentifier(uploadId), "Required parameter `uploadId` missing or empty when calling VideoUploadService.refreshUrls")
+    invariant(isIdentifier(id), "Required parameter `id` missing or empty when calling VideoUploadService.refreshUrls")
     invariant(
       (
         Array.isArray(partNumbers) &&
@@ -101,13 +104,10 @@ export class VideoUploadService {
     return await Fetch.post<VideoUpload>(
       `/participant/${participantId}/video/upload/refresh-urls`,
       {
-        uploadId,
+        id,
         partNumbers: partNumbers
       },
-      { // Note: temp override of base; remove after LAMP-server integration
-        ... this.configuration,
-        base: VIDEO_UPLOAD_API_BASE
-      }
+      getVideoUploadServiceConfig(this.configuration || {})
     )
   }
 
@@ -120,32 +120,29 @@ export class VideoUploadService {
    *   - The multipart upload has already been completed
    * 
    * @param participantId Required. The owner of the target video upload.
-   * @param uploadId Required. The target video upload.
+   * @param id Required. The target video upload.
    */
   public async abort(
     participantId: Identifier,
-    uploadId: Identifier
+    id: Identifier
   ) : Promise<void> {
     invariant(isIdentifier(participantId), "Required parameter `participantId` missing or empty when calling VideoUploadService.abort")
-    invariant(isIdentifier(uploadId), "Required parameter `uploadId` missing or empty when calling VideoUploadService.abort")
+    invariant(isIdentifier(id), "Required parameter `id` missing or empty when calling VideoUploadService.abort")
     invariant((this.configuration?.base != "https://demo.lamp.digital"), "VideoUploadService.abort not available in the demo")
-
-    // Note: temp override of base; remove after LAMP-server integration
-    const shouldUseDemoVideoUploadApi = true
-    const apiBase = shouldUseDemoVideoUploadApi ? VIDEO_UPLOAD_API_BASE : this.configuration?.base
 
     // Note: using unwrapped `fetch` call here to surface the http status code returned
     // Warning! this may break with pending auth changes (TODO, FIXME)
     const headers : Record<string, string> = {}
     headers["Content-Type"] = "application/json"
-    if (this.configuration && this.configuration.authorization) {
-      headers["Authorization"] = `Basic ${this.configuration.authorization}`
+    const config = getVideoUploadServiceConfig(this.configuration || {})
+    if (config.authorization) {
+      headers["Authorization"] = `Basic ${config.authorization}`
     }
 
-    const response = await fetch(`${apiBase}/participant/${participantId}/video/upload/abort`, {
+    const response = await fetch(`${config.base}/participant/${participantId}/video/upload/abort`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ uploadId }),
+      body: JSON.stringify({ id }),
     })
 
     if (! response.ok) {

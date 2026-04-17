@@ -81,7 +81,7 @@ export interface VideoUpload {
   /**
    * The upload id of the video upload.
    */
-  uploadId: Identifier
+  id: Identifier
 
   /**
    * An array of PartUploadInstructions required by this VideoUpload.
