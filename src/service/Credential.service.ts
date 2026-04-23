@@ -5,6 +5,8 @@ import { Credential } from "../model/Credential"
 import { Demo } from "./Demo"
 import jsonata from "jsonata"
 
+export type OAuthProvider = "google" | "apple" | "microsoft"
+
 export class CredentialService {
   public configuration?: Configuration
 
@@ -17,7 +19,8 @@ export class CredentialService {
     typeId: Identifier,
     accessKey: string,
     secretKey: string,
-    description?: string
+    description?: string,
+    username?: string,
   ): Promise<Credential> {
     if (accessKey === null || accessKey === undefined)
       throw new Error("Required parameter accessKey was null or undefined when calling credentialCreate.")
@@ -66,7 +69,7 @@ export class CredentialService {
     }
     return await Fetch.post(
       `/type/${typeId}/credential`,
-      { origin: typeId, access_key: accessKey, secret_key: secretKey, description: description },
+      { origin: typeId, access_key: accessKey, secret_key: secretKey, description: description, username: username },
       this.configuration
     )
   }
@@ -258,11 +261,53 @@ export class CredentialService {
     return await Fetch.post("/login", { accessKey, secretKey }, this.configuration)
   }
 
+  /**
+   * Starts the authentication process with the specified provider
+   * Returns a redirect url
+   * @param providerKey - name of the oauth provider (google, microsoft, apple)
+   */
+  public async startOAuth(providerKey: string) {
+    return await Fetch.post(`/login/${providerKey}`, {}, this.configuration)
+  }
+
+  /**
+   * Exchanges the oneTimeToken for the session cookie
+   * @param oneTimeToken - oneTimeToken provided by the server after a successful authentication using oauth
+   */
+  public async finishOAuth(oneTimeToken: string) {
+    return await Fetch.get(`/login/one-time-token/${oneTimeToken}`, this.configuration)
+  }
+
   public async renewToken(refreshToken: string, base: string): Promise<any> {
     const configuration: Configuration = { accesToken: refreshToken, base: base }
     return await Fetch.post("/renewToken", { refreshToken }, configuration)
   }
-  public async logout(token: string): Promise<any> {
-    return await Fetch.post("/logout", { token }, this.configuration)
+
+  public async linkAccount(providerKey: string) {
+    return await Fetch.post(`/link-social/${providerKey}`, {}, this.configuration)
+  }
+
+  public async logout(): Promise<any> {
+    return await Fetch.post("/logout", {}, this.configuration)
+  }
+
+  public async configureTwoFactor({email, phone}:{email: string|undefined, phone: string|undefined}) {
+    return await Fetch.post("/setup-2fa", {email: email, phone: phone}, this.configuration)
+  }
+  
+  public async sendTwoFactorCode() {
+    return await Fetch.post("/send-2fa", {}, this.configuration)
+  }
+
+  public async verifyTwoFactorCode(code:string) {
+    return await Fetch.post("/verify-2fa", {code}, this.configuration)
+  }
+
+  public async clearAccountSetup(origin: string|null, access_key: string) {
+    console.log("Let's clear account with: ", origin, access_key)
+    return await Fetch.post(
+      `/credential/clear-account-setup`,
+      {type_id: origin, access_key: access_key},
+      this.configuration)
   }
 }
