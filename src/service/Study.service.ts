@@ -14,16 +14,14 @@ export class StudyService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
 
-      let output = Demo.Study.map((x) => Object.assign(new Study(), x))
+      let output = Demo.Study.map(x => Object.assign(new Study(), x))
       output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
       return Promise.resolve(output)
     }
-    return (await Fetch.get<{ data: any[] }>(`/study`, this.configuration)).data.map((x) =>
-      Object.assign(new Study(), x)
-    )
+    return (await Fetch.get<{ data: any[] }>(`/study`, this.configuration)).data.map(x => Object.assign(new Study(), x))
   }
 
   /**
@@ -37,19 +35,19 @@ export class StudyService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
-      if (Demo.Researcher.filter((x) => x["id"] === researcherId).length > 0) {
-        let output = Demo.Study.filter((x) => x["#parent"] === researcherId).map((x) => Object.assign(new Study(), x))
+      if (Demo.Researcher.filter(x => x["id"] === researcherId).length > 0) {
+        let output = Demo.Study.filter(x => x["#parent"] === researcherId).map(x => Object.assign(new Study(), x))
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
         return Promise.resolve(output)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/study`, this.configuration)).data.map((x) =>
+    return (await Fetch.get<{ data: any[] }>(`/researcher/${researcherId}/study`, this.configuration)).data.map(x =>
       Object.assign(new Study(), x)
     )
   }
@@ -68,11 +66,11 @@ export class StudyService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (researcherId === "me") researcherId = credential.length > 0 ? credential[0]["origin"] : researcherId
 
-      if (Demo.Researcher.filter((x) => x["id"] === researcherId).length > 0) {
+      if (Demo.Researcher.filter(x => x["id"] === researcherId).length > 0) {
         return Promise.resolve({ error: "500.demo-restriction" } as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
@@ -92,11 +90,11 @@ export class StudyService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
-      if (Demo.Study.filter((x) => x["id"] === studyId).length > 0) {
+      if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
         return Promise.resolve({ error: "500.demo-restriction" } as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
@@ -119,11 +117,11 @@ export class StudyService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
-      if (Demo.Study.filter((x) => x["id"] === studyId).length > 0) {
+      if (Demo.Study.filter(x => x["id"] === studyId).length > 0) {
         return Promise.resolve({ error: "500.demo-restriction" } as any)
       } else {
         return Promise.resolve({ error: "404.not-found" } as any)
@@ -143,11 +141,11 @@ export class StudyService {
     if (this.configuration.base === "https://demo.lamp.digital") {
       // DEMO
       let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
+      let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
 
-      let data = Demo.Study.filter((x) => x["id"] === studyId).map((x) => Object.assign(new Study(), x))
+      let data = Demo.Study.filter(x => x["id"] === studyId).map(x => Object.assign(new Study(), x))
       if (data.length > 0) {
         let output = data[0]
         output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
@@ -156,34 +154,8 @@ export class StudyService {
         return Promise.resolve({ error: "404.not-found" } as any)
       }
     }
-    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}`, this.configuration)).data.map((x) =>
+    return (await Fetch.get<{ data: any[] }>(`/study/${studyId}`, this.configuration)).data.map(x =>
       Object.assign(new Study(), x)
     )[0]
-  }
-  /**
-   * Get a single study, by identifier.
-   * @param studyId
-   */
-  public async lookup(studyId: Identifier, mode: number, transform?: string): Promise<any> {
-    if (studyId === null || studyId === undefined)
-      throw new Error("Required parameter studyId was null or undefined when calling studyView.")
-
-    if (this.configuration.base === "https://demo.lamp.digital") {
-      // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
-      let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
-      if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
-      if (studyId === "me") studyId = credential.length > 0 ? credential[0]["origin"] : studyId
-
-      let data = Demo.Study.filter((x) => x["id"] === studyId).map((x) => Object.assign(new Study(), x))
-      if (data.length > 0) {
-        let output = data[0]
-        output = typeof transform === "string" ? jsonata(transform).evaluate(output) : output
-        return Promise.resolve(output)
-      } else {
-        return Promise.resolve({ error: "404.not-found" } as any)
-      }
-    }
-    return await Fetch.get<{ data: any[] }>(`/study/${studyId}/_lookup/participant/mode/${mode}`, this.configuration)
   }
 }

@@ -29,11 +29,11 @@ bower_components
 # Editors
 .idea
 *.iml
-.vscode
 
 # OS metadata
 .DS_Store
 Thumbs.db
+__MACOSX
 
 # ignore yarn.lock
 yarn.lock
