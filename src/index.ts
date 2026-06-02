@@ -30,7 +30,7 @@ export * from "./model/index"
 interface IAuth {
   id: string | null
   password: string | null
-  serverAddress: string | undefined
+  serverAddress: string | undefined | null
   token?: string | undefined
 }
 
@@ -187,7 +187,7 @@ export default class LAMP {
       }
 
       // Call await login
-      const loginResult = await LAMP.Credential.login(id, password)
+      return await LAMP.Credential.login(id, password)
     }
 
     static async _logout_basic() {
@@ -243,14 +243,8 @@ export default class LAMP {
             : LAMP.Auth?._type === "researcher"
             ? LAMP.Researcher.view("me")
             : LAMP.Participant.view("me"))
-          
         }
 
-        LAMP.dispatchEvent("LOGIN", {
-          authorizationToken: LAMP.configuration.authorization,
-          identityObject: LAMP.Auth._me,
-          serverAddress: LAMP.configuration.base,
-        })
       } catch(err) {
         
         console.log(`#####LAMP err`, err)
@@ -357,14 +351,27 @@ export default class LAMP {
       }
 
       // Attempt to log in
+      let sessionLoginResult = undefined
       if (authType === "session") {
-        await this._login_session(identity.id, identity.password, identity.serverAddress)
+        sessionLoginResult = await this._login_session(identity.id, identity.password, identity.serverAddress)
       } else {
         await this._login_basic(identity.id, identity.password, identity.serverAddress)
       }
 
       // Set self identity
       await this._load_self_information()
+      const loginEventPayload: any = {
+        authScheme: LAMP.Auth._authScheme,
+        identityObject: LAMP.Auth._me,
+        serverAddress: LAMP.configuration?.base,
+      }
+      if (LAMP.Auth._authScheme === "session") {
+        loginEventPayload.accessToken = sessionLoginResult?.mobileAuth.accessToken,
+        loginEventPayload.refreshToken = sessionLoginResult?.mobileAuth.refreshToken
+      } else {
+        loginEventPayload.authorizationToken = LAMP.configuration?.authorization
+      }
+      LAMP.dispatchEvent("LOGIN", loginEventPayload)
     }
 
     public static async refresh_identity() {
@@ -384,6 +391,14 @@ export default class LAMP {
         id: _saved.id,
         password: _saved.password,
         serverAddress: _saved.serverAddress
+      }
+
+      if (LAMP.Auth._authScheme === "basic") {
+        LAMP.configuration = {
+          base: this._get_base_address(_saved.serverAddress),
+          authType: "basic",
+          authorization: !!LAMP.Auth._auth.id ? `${LAMP.Auth._auth.id}:${LAMP.Auth._auth.password}` : undefined
+        }
       }
 
       // Attempt to set self information
@@ -409,7 +424,31 @@ export default class LAMP {
         return null
       }
     }
+
   }
+
+  /**
+   * Retreives the session cookie from the server using a one time token
+   * Emits the "LOGIN" event includinng mobile auth tokens if any are returned by the server
+   */
+  public static async finalizeLogin(oneTimeToken: string) {
+    if (LAMP.Auth._authScheme === "session") {
+      const result: any = await Fetch.get(`/login/one-time-token/${oneTimeToken}`, LAMP.configuration) 
+      if (result.mobileAuth) {
+        LAMP.dispatchEvent("LOGIN", {
+          authScheme: LAMP.Auth._authScheme,
+          identityObject: LAMP.Auth._me,
+          serverAddress: LAMP.configuration?.base,
+          accessToken: result.mobileAuth?.accessToken,
+          refreshToken: result.mobileAuth?.refreshToken
+        })
+      }
+      return result
+    }
+    return undefined
+  }
+  
+  
 }
 
 export const main = () => {

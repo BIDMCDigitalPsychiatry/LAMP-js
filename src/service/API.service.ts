@@ -9,7 +9,7 @@ export class APIService {
    * Query the LAMP Database.
    */
   public async query(transform: string): Promise<{}> {
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (this.configuration?.base === "https://demo.lamp.digital") {
       // DEMO
       return Promise.resolve({ error: "500.demo-unavailable" } as any)
     }
@@ -20,7 +20,7 @@ export class APIService {
    * View the API schema document.
    */
   public async schema(): Promise<{}> {
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (this.configuration?.base === "https://demo.lamp.digital") {
       // DEMO
       return Promise.resolve({ error: "500.demo-unavailable" } as any)
     }

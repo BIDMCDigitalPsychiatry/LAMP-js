@@ -27,14 +27,14 @@ export class CredentialService {
     if (secretKey === null || secretKey === undefined)
       throw new Error("Required parameter secretKey was null or undefined when calling credentialCreate.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (this.configuration?.base === "https://demo.lamp.digital") {
       // DEMO
-      let auth = (this.configuration.authorization || ":").split(":")
+      let auth = (this.configuration?.authorization || ":").split(":")
       let credential = Demo.Credential.filter((x) => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
-      const token = this.configuration.token
+      const token = this.configuration?.token
       if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any)
 
       let decoded
@@ -83,14 +83,14 @@ export class CredentialService {
     if (accessKey === null || accessKey === undefined)
       throw new Error("Required parameter accessKey was null or undefined when calling credentialDelete.")
 
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (this.configuration?.base === "https://demo.lamp.digital") {
       // DEMO
       // let auth = (this.configuration.authorization || ":").split(":")
       // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       // if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
-      const token = this.configuration.token
+      const token = this.configuration?.token
       if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any)
 
       let decoded
@@ -121,14 +121,14 @@ export class CredentialService {
    * @param typeId
    */
   public async list(typeId: Identifier, transform?: string): Promise<Credential[]> {
-    if (this.configuration.base === "https://demo.lamp.digital") {
+    if (this.configuration?.base === "https://demo.lamp.digital") {
       // DEMO
       // let auth = (this.configuration.authorization || ":").split(":")
       // let credential = Demo.Credential.filter(x => x["access_key"] === auth[0] && x["secret_key"] === auth[1])
       // if (credential.length === 0) return Promise.resolve({ error: "403.invalid-credentials" } as any)
       // if (typeId === "me") typeId = credential.length > 0 ? credential[0]["origin"] : typeId
 
-      const token = this.configuration.token
+      const token = this.configuration?.token
       if (!token) return Promise.resolve({ error: "401.missing-credentials" } as any)
 
       let decoded
@@ -270,15 +270,8 @@ export class CredentialService {
     return await Fetch.post(`/login/${providerKey}`, {}, this.configuration)
   }
 
-  /**
-   * Exchanges the oneTimeToken for the session cookie
-   * @param oneTimeToken - oneTimeToken provided by the server after a successful authentication using oauth
-   */
-  public async finishOAuth(oneTimeToken: string) {
-    return await Fetch.get(`/login/one-time-token/${oneTimeToken}`, this.configuration)
-  }
-
   public async renewToken(refreshToken: string, base: string): Promise<any> {
+    // NOTE: Remove this if it is not needed by the demo server
     const configuration: Configuration = { accesToken: refreshToken, base: base }
     return await Fetch.post("/renewToken", { refreshToken }, configuration)
   }
@@ -304,7 +297,6 @@ export class CredentialService {
   }
 
   public async clearAccountSetup(origin: string|null, access_key: string) {
-    console.log("Let's clear account with: ", origin, access_key)
     return await Fetch.post(
       `/credential/clear-account-setup`,
       {type_id: origin, access_key: access_key},
