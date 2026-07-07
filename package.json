@@ -20,7 +20,7 @@
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
     "jose": "^5.8.0",
-    "jsonata": "^1.8.4",
+    "jsonata": "^2.2.0",
     "url-search-params-polyfill": "^7.0.0"
   },
   "devDependencies": {
