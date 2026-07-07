@@ -6,10 +6,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 20.x
       - run: |
           npm install
       - run: npm test
@@ -17,15 +17,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version: 20.x
           registry-url: https://registry.npmjs.org/
       - name: Autoincrement version
         run: |
-          # from refs/tags/v1.2.3 get 1.2.3
-          VERSION=$(echo $GITHUB_REF | sed 's#.*/##')
+          # from refs/tags/v1.2.3 or refs/tags/1.2.3 get 1.2.3
+          VERSION=$(echo $GITHUB_REF | sed -E 's#.*/v?##')
           npm version --no-git-tag-version $VERSION
         shell: bash
       - run: npm install
