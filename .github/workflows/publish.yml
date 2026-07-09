@@ -1,7 +1,13 @@
 name: Publish
 on:
   release:
-    types: [created]
+    types: [published] # fires for direct creation AND draft-then-publish (types: [created] misses drafts)
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g. 3.0.1) — required for manual runs"
+        required: true
+        type: string
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,19 +22,26 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # OIDC trusted publishing — no npm token secret needed
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
           registry-url: https://registry.npmjs.org/
-      - name: Autoincrement version
+      # OIDC trusted publishing requires npm >= 11.5.1; node 20 bundles npm 10
+      - run: npm install -g npm@latest
+      - name: Set version
         run: |
-          # from refs/tags/v1.2.3 or refs/tags/1.2.3 get 1.2.3
-          VERSION=$(echo $GITHUB_REF | sed -E 's#.*/v?##')
+          # manual runs pass an explicit version; release runs derive it from
+          # the tag (refs/tags/v1.2.3 or refs/tags/1.2.3 -> 1.2.3)
+          VERSION="${{ inputs.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION=$(echo $GITHUB_REF | sed -E 's#.*/v?##')
+          fi
           npm version --no-git-tag-version $VERSION
         shell: bash
       - run: npm install
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
