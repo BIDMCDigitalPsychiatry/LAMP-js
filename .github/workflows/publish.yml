@@ -31,8 +31,8 @@ jobs:
         with:
           node-version: 20.x
           registry-url: https://registry.npmjs.org/
-      # OIDC trusted publishing requires npm >= 11.5.1; node 20 bundles npm 10
-      - run: npm install -g npm@latest
+      # OIDC trusted publishing requires npm >= 11.5.1; node 20 bundles npm 10.
+      - run: npm install -g npm@11
       - name: Set version
         run: |
           # manual runs pass an explicit version; release runs derive it from
