@@ -44,4 +44,4 @@ jobs:
           npm version --no-git-tag-version $VERSION
         shell: bash
       - run: npm install
-      - run: npm publish
+      - run: npm publish --tag latest # explicit: old date-style versions (2025.x) are semver-higher than 3.x
