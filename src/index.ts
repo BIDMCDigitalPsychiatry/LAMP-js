@@ -366,8 +366,8 @@ export default class LAMP {
         serverAddress: LAMP.configuration?.base,
       }
       if (LAMP.Auth._authScheme === "session") {
-        loginEventPayload.accessToken = sessionLoginResult?.mobileAuth.accessToken,
-        loginEventPayload.refreshToken = sessionLoginResult?.mobileAuth.refreshToken
+        loginEventPayload.accessToken = sessionLoginResult?.mobileAuth?.accessToken
+        loginEventPayload.refreshToken = sessionLoginResult?.mobileAuth?.refreshToken
       } else {
         loginEventPayload.authorizationToken = LAMP.configuration?.authorization
       }
@@ -433,8 +433,13 @@ export default class LAMP {
    */
   public static async finalizeLogin(oneTimeToken: string) {
     if (LAMP.Auth._authScheme === "session") {
-      const result: any = await Fetch.get(`/login/one-time-token/${oneTimeToken}`, LAMP.configuration) 
+      const result: any = await Fetch.get(`/login/one-time-token/${oneTimeToken}`, LAMP.configuration)
       if (result.mobileAuth) {
+        // On this flow the page has just loaded and _me has not been populated
+        // yet. The native mobile bridges DISCARD any LOGIN message without
+        // identityObject.id, so load self information before emitting — same
+        // as set_identity does.
+        await LAMP.Auth._load_self_information()
         LAMP.dispatchEvent("LOGIN", {
           authScheme: LAMP.Auth._authScheme,
           identityObject: LAMP.Auth._me,
