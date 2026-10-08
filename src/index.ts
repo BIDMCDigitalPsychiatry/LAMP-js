@@ -319,7 +319,9 @@ export default class LAMP {
         id: null,
         password: null,
         serverAddress: null,
-      }, 
+      },
+      // Only for ?a= logins from mobile apps that predate session auth
+      includeCredentialsInLoginEvent: boolean = false,
     ) {
       let authType
       try {
@@ -368,6 +370,9 @@ export default class LAMP {
       if (LAMP.Auth._authScheme === "session") {
         loginEventPayload.accessToken = sessionLoginResult?.mobileAuth?.accessToken
         loginEventPayload.refreshToken = sessionLoginResult?.mobileAuth?.refreshToken
+        if (includeCredentialsInLoginEvent) {
+          loginEventPayload.authorizationToken = `${identity.id}:${identity.password}`
+        }
       } else {
         loginEventPayload.authorizationToken = LAMP.configuration?.authorization
       }
