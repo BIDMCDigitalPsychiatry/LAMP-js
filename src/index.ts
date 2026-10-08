@@ -217,7 +217,9 @@ export default class LAMP {
       try {
         if (this._authScheme === "session") {
           const sessionInfoResult: any = await Fetch.get("/session-info", LAMP.configuration)
-          if (sessionInfoResult?.message !== "403.no-such-credentials") {
+          // 403 from older servers
+          const notLoggedIn = ["401.no-such-credentials", "403.no-such-credentials"].includes(sessionInfoResult?.message)
+          if (!notLoggedIn) {
             LAMP.Auth._type = sessionInfoResult.userType
             LAMP.Auth._me = sessionInfoResult.me
           } else {
